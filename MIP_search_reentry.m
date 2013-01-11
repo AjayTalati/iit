@@ -175,7 +175,7 @@ for i=1: floor(N_M/2)
                         %Larissa: distributions that are identical anyways
                         %are empty for option 6
 %                         denom_p = sort([concept_MIP_M{M2_i}{indm}{:,1,1}]);
-%                         denom_f = sort([concept_MIP_M{M2_i}{indm}{:,1,2}]);
+%                         denom_f = sort([concept_MIP_M{M2_i}{indm}{:,1,2}]);  
                         cutfdist = expand_prob(prob_M{M2_i,1}{indm}{2},M,M2);   %wrong expand_prob
                         BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} cutfdist}; %future might have changed
 

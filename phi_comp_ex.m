@@ -16,7 +16,7 @@ for i=1: num_states_subsys-1
             [phi_MIP(i,:) prob_cand{i} prob_prod_MIP_cand{i} MIP_cand{i} network] ...
                 = phi_comp_bORf(numerator,denom,whole_sys_state,network,2);
         else
-            uniform_dist = ones(1,num_states_subsys)/num_states_subsys;
+            uniform_dist = ones(num_states_subsys,1)/num_states_subsys;
             prob_cand{i} = {uniform_dist; uniform_dist};
             prob_prod_MIP_cand{i} = cell(2,1);
             MIP_cand{i} = cell(2,2,2);
@@ -59,7 +59,7 @@ for i = 1:2
     else
         denom = xf;
     end
-    if length(denom) ~= num_nodes_subsys
+    if length(denom) ~= num_nodes_subsys %Larissa: prob should already have the length of denominator states, if not something is wrong!
         prob{i} = expand_prob(prob{i},subsystem,denom);
         prob_prod_MIP{i} = expand_prob(prob_prod_MIP{i},subsystem,denom);
     end

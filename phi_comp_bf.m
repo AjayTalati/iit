@@ -399,7 +399,7 @@ function Norm = Normalization(denom_part1,denom_part2,numerator_part1,numerator_
 
 if nargin == 4
     Norm = min(length(numerator_part1),length(denom_part2)) + min(length(numerator_part2),length(denom_part1));
-else
+else %Larissa: this is outdated
     Norm = min(length(numerator_part1),length(denom_part2)) + min(length(numerator_part2),length(denom_part1)) ...
         + min(length(numerator_part1),length(xf_2)) + min(length(numerator_part2),length(xf_1));
 end

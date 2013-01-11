@@ -61,7 +61,7 @@ end
     
 prob = cell(2,1);
 prob{bf} = prob_w(:);
-uniform_dist = ones(1,length(prob_w))/length(prob_w);
+uniform_dist = ones(size(prob{bf}))/length(prob{bf});
 if bf == 1
     prob{2} = uniform_dist;
 elseif bf == 2
