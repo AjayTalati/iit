@@ -16,7 +16,7 @@ num_nodes_numerator = length(numerator);
 % prob_w_old = Rs{convi(numerator),convi(denom)};
 
 % current = convi(numerator); other = convi(denom);
-current = sum(2.^(numerator-1))+1; other = sum(2.^(denom-1))+1;
+current = sum(2.^(numerator-1))+1; other = sum(2.^(denom-1))+1; %Larissa: This is probably a step where only binary works!
 
 if (bf == 1)
     if isempty(network.BRs{current,other})
@@ -171,35 +171,10 @@ for i = 1:num_denom_partitions % past or future
                 prob_p_test = bsxfun(@times,prob_p1,prob_p2);
                 prob_p = prob_p_test(:);
             end
-                    
-%             if isempty(prob_p1)
-%                 prob_p_test = prob_p2(:);
-%             elseif isempty(prob_p2)
-%                 prob_p_test = prob_p1(:);
-%             else
-% 
-%                 prob_p_test = bsxfun(@times,prob_p1,prob_p2);
-%                 prob_p_test = prob_p_test(:);
-%             end
-                
+                                  
             prob_prod_vec{i,j,bf} = prob_p;
             if (op_small_phi == 0)
                 phi = KLD(prob{bf},prob_p);
-%                 phi2 = KLD_old(prob{bf},prob_p);
-%                 if (phi ~= phi2)
-%                     disp('ERRROR')
-%                                         disp(phi)
-%                     disp(phi2)
-%                     disp(prob{bf})
-%                     disp(prob_p)
-%                 end
-%                 prob_whole = prob{bf};
-%                 prob_p(prob_p==0) = 1; % avoid log0 when computing entropy
-%                 H1 = - sum(prob_whole.*log2(prob_p)) ;
-% 
-%                 prob_whole(prob_whole==0) = 1;
-%                 H2 = - sum(prob_whole.*log2(prob_whole));
-%                 phi = H1 - H2;
             elseif (op_small_phi == 1)
                 phi = emd_hat_gd_metric_mex(prob{bf},prob_p,gen_dist_matrix(length(prob_p)));
             elseif (op_small_phi == 2)

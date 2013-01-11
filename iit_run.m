@@ -148,9 +148,7 @@ for z = 1:state_max
         
         Big_phi_M_st{z} = NaN;
         Big_phi_MIP_st{z} = NaN;
-        
-        % SET OTHERS
-        
+    
     else
         
         fprintf('\tComputing state...\n')
@@ -159,14 +157,7 @@ for z = 1:state_max
         % THIS OPTION NEEDS TO BE WORKED OUT!
         if op_complex == 0 
 
-%             [BRs FRs] = comp_pers(this_state,tpm,b_table,options);
-%             (network.full_system,this_state,tpm,network.b_table,network.options)
             [Big_phi phi prob_cell MIPs M_IRR network] = big_phi_comp_fb(network.full_system,this_state,network);
-            % irreducible points
-%             [IRR_REP IRR_phi IRR_MIP M_IRR] = IRR_points(prob_cell,phi,MIPs,M, 0,op_fb);
-%             plot_REP(Big_phi, IRR_REP,IRR_phi,IRR_MIP, 1, M, options)
-
-
             Big_phi_M_st{z} = Big_phi;
             
             % TODO: WE NEED TO HANDLE MIP IN THIS CASE EVEN WE DON'T FIND
@@ -175,31 +166,17 @@ for z = 1:state_max
         % find the complex
         elseif op_complex == 1
             
-            
-            
-            
-            
             [Big_phi_M phi_M prob_M M_cell concept_MIP_M purviews_M network] = big_phi_all(network, this_state); %Larissa: this_state should be obsolete as it is in network
-                                                                
+                                                              
             % complex search
             [Big_phi_MIP MIP Complex M_i_max  Big_phi_MIP_M complex_MIP_M Big_phi_MIP_all_M complex_MIP_M_all] = ...
                 complex_search(Big_phi_M,M_cell, purviews_M, network.num_nodes,prob_M,phi_M,network.options,concept_MIP_M,network);
             
-            
-            
-            
-            
-            
-            
-            
-            
             Big_phi_M_st{z} = Big_phi_M;
 %             output_data.results.state(z).Phi = Big_phi_M; 
-            
             Big_phi_MIP_st{z} = Big_phi_MIP_M;
 %             output_data.results.state(z).Phi_MIP = Phi_MIP;
-            
-            % it looks like MIP is never  used
+            % it looks like MIP is never used
             MIP_st{z} = MIP;
             
             Complex_st{z} = Complex;
@@ -209,7 +186,6 @@ for z = 1:state_max
 %             output_data.results(z).concepts = concepts;
             
             phi_M_st{z} = phi_M;
-            
             
             concept_MIP_M_st{z} = concept_MIP_M;
             complex_MIP_M_st{z} = complex_MIP_M;
@@ -260,5 +236,3 @@ iit_explorer(output_data)
 if op_parallel
     matlabpool close force;
 end
-
-

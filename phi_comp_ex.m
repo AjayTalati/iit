@@ -1,28 +1,15 @@
 function [phi prob prob_prod_MIP MIP network] = phi_comp_ex(subsystem,numerator,whole_sys_state,subsets_subsys,network)
-
-
-% subsets_subsys: power set of subsystem
-% op_disp = 1;
-% op_single = 1;
-
-
-op_context = network.options(6);
-op_big_phi = network.options(11);
-
+%% compute small phi for a purview
 num_nodes_subsys = length(subsystem);
 num_states_subsys = prod([network.nodes([subsystem]).num_states]);
-
-subsets_subsys{num_states_subsys} = []; % add empty set Larissa; where do we need that actually??
-
-
-    
+   
 phi_MIP = zeros(num_states_subsys-1,2);
 prob_cand = cell(num_states_subsys-1,1);
 prob_prod_MIP_cand = cell(num_states_subsys-1,1);
 MIP_cand = cell(num_states_subsys-1,1);
 
 for i=1: num_states_subsys-1
-    %Larissa smart purviews: Only test those connections that actually exist
+    %Smart purviews: Only test those connections that actually exist
     denom = subsets_subsys{i};
     if nnz(sum(network.connect_mat(numerator,denom),1) == 0) > 0 % some denom is not input of numerator (numerator) --> no phiBR
         if nnz(sum(network.connect_mat(denom,numerator),2) == 0) == 0 % but denom is output
@@ -45,7 +32,7 @@ for i=1: num_states_subsys-1
     end    
 end
 
-% exlusion principle
+%% exlusion principle
 max_phi_MIP_bf = zeros(2,1); % backward and forward phi
 MIP = cell(2,2,2);
 prob = cell(2,1);
@@ -61,30 +48,20 @@ for bf = 1:2
         xf = subsets_subsys{j_max};
     end
 end
+
 phi = [0 max_phi_MIP_bf']; % phi = [overall backwards forwards]
-
-if (op_big_phi == 1)
-   phi(1) = max_phi_MIP_bf(1);
-
-else
-   phi(1) = min(max_phi_MIP_bf(1),max_phi_MIP_bf(2));
-end
-
-%     phi(find(phi < 10e-4)) = 0;
-
+phi(1) = min(max_phi_MIP_bf(1),max_phi_MIP_bf(2));
 
 %% imposing maxent on units outside of perspectives
-if op_context == 0
-    for i = 1:2
-        if i == 1
-            denom = xp;
-        else
-            denom = xf;
-        end
-        if length(denom) ~= num_nodes_subsys
-            prob{i} = expand_prob(prob{i},subsystem,denom);
-            prob_prod_MIP{i} = expand_prob(prob_prod_MIP{i},subsystem,denom);
-        end
+for i = 1:2
+    if i == 1
+        denom = xp;
+    else
+        denom = xf;
+    end
+    if length(denom) ~= num_nodes_subsys
+        prob{i} = expand_prob(prob{i},subsystem,denom);
+        prob_prod_MIP{i} = expand_prob(prob_prod_MIP{i},subsystem,denom);
     end
 end
 
