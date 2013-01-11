@@ -14,8 +14,8 @@ function [phi_MIP prob network] = phi_comp_bORf_unidir(M1,M2,numerator,denom,who
 % FRs
 bf = 1; %Larissa: That's only there to keep the dimensions as before, should be updated!
 
-op_normalize = network.options(14);
-op_small_phi = network.options(16);
+op_normalize = network.options(6);
+op_small_phi = network.options(4);
 
 
 num_nodes_denom = length(denom);
@@ -200,11 +200,11 @@ for i = 1:num_denom_partitions % past or future
             if (op_small_phi == 0)
                 phi = KLD(prob,prob_p);
             elseif (op_small_phi == 1)
-                phi = emd_hat_gd_metric_mex(prob,prob_p,gen_dist_matrix(length(prob_p)));
-            elseif op_small_phi == 2
-                phi = k_distance(prob,prob_p);
-            elseif (op_small_phi == 3)
                 phi = L1norm(prob,prob_p);
+            elseif op_small_phi == 2
+                phi = emd_hat_gd_metric_mex(prob,prob_p,gen_dist_matrix(length(prob_p)));
+%             elseif (op_small_phi == 3)
+%                 phi = k_distance(prob,prob_p);
             end
 
         else

@@ -1,7 +1,7 @@
 function [Big_phi_M phi_M prob_M subsets MIP_M M_IRR_M network] = big_phi_all(network,whole_sys_state)
 % compute Big-phi in every possible subset
 
-op_console = network.options(10); %(1: display the results, 0: not)
+op_console = network.options(8); %(1: display the results, 0: not)
 
 % global b_table
 % global BRs, global FRs

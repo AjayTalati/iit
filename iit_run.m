@@ -23,7 +23,7 @@ if matlabpool('size')
 end
 
 % if parallel option is on, open a new pool
-op_parallel = in_options(19);
+op_parallel = in_options(1);
 
 if op_parallel
     matlabpool;
@@ -80,7 +80,7 @@ end
 %% setup main function call
 
 % determine if we are averaging over all states or just one
-op_average = network.options(18);
+op_average = network.options(2);
 if op_average == 0
     state_max = 1;
 %     network.states(:,1) = current_state;
@@ -96,7 +96,7 @@ end
 % end
 
 % find main complex (do system partitions)
-op_complex = network.options(15);
+op_complex = network.options(3);
 
 
 % init output structs - NEW WAY!

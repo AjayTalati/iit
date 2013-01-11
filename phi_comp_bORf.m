@@ -2,8 +2,8 @@ function [phi_MIP prob prob_prod_MIP MIP network] = phi_comp_bORf(numerator,deno
 % Larissa: for smart purviews, op_context is assumed 0, op_min is assumed
 % bf is back/forward flag (back = 1, forward = 2)
 
-op_normalize = network.options(14);
-op_small_phi = network.options(16);
+op_normalize = network.options(6);
+op_small_phi = network.options(4);
 
 % global BRs, global FRs
 % global BRs_check FRs_check
@@ -176,11 +176,11 @@ for i = 1:num_denom_partitions % past or future
             if (op_small_phi == 0)
                 phi = KLD(prob{bf},prob_p);
             elseif (op_small_phi == 1)
-                phi = emd_hat_gd_metric_mex(prob{bf},prob_p,gen_dist_matrix(length(prob_p)));
-            elseif (op_small_phi == 2)
-                phi = k_distance(prob{bf},prob_p);
-            elseif (op_small_phi == 3)
                 phi = L1norm(prob{bf},prob_p);
+            elseif (op_small_phi == 2)
+                phi = emd_hat_gd_metric_mex(prob{bf},prob_p,gen_dist_matrix(length(prob_p)));
+%             elseif (op_small_phi == 3)
+%                 phi = k_distance(prob{bf},prob_p);
             end
             
             

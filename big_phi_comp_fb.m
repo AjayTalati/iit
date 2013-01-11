@@ -7,12 +7,8 @@ function [Big_phi phi_all_values prob_cell MIP M_IRR network] = big_phi_comp_fb(
 num_nodes_subsys = length(subsystem);
 num_states_subsys = prod([network.nodes(subsystem).num_states]);
 
-op_single = network.options(4);     % just needed for console output
-op_context = network.options(6);    % just needed in make_title
-op_min = network.options(9);        % just needed in make_title
-op_console = network.options(10);   %(1: display the results, 0: not)
-%op_big_phi = network.options(11);
-
+op_single = network.options(11);     % just needed for console output
+op_console = network.options(8);   %(1: display the results, 0: not)
 
 %% numerator data
 % ???This is where we build subsets_subsys of purviews (power-set exclude empty
@@ -119,7 +115,7 @@ if op_console
 %             fprintf('C=%s: nodes lack input or output \n',mod_mat2str(C))
         else
             if i > 1 || op_single == 1        
-                [string_p string] = make_title_fb(MIP{i_C},op_context,op_min);
+                [string_p string] = make_title_fb(MIP{i_C},0,1); % op_context = 0; op_min = 1
                 fprintf('C = %s: Core Concept: %s\n',mod_mat2str(C),string{3});
                 fprintf('MIP = %s\n', string_p{3});
                 fprintf('\tPast: phi_b = %f\n',phi_all_values(i_C,2));

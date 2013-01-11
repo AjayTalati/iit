@@ -1,7 +1,7 @@
 function [Big_phi_MIP MIP Complex M_i_max Big_phi_MIP_M MIP_M Big_phi_MIP_all_M MIP_all_M] = complex_search(Big_phi_M,M_cell,M_IRR_M,N,prob_M, phi_M,options,concept_MIP_M,network)
 %% Find complex
 
-op_console = options(10);
+op_console = options(8);
 
 Big_phi_MIP_M = zeros(2^N-1,1);
 Big_phi_MIP_all_M = cell(2^N-1,1);

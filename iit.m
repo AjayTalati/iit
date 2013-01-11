@@ -24,7 +24,7 @@ function varargout = iit(varargin)
 
 % Edit the above text to modify the response to help iit
 
-% Last Modified by GUIDE v2.5 29-Nov-2012 11:00:25
+% Last Modified by GUIDE v2.5 11-Jan-2013 15:14:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -395,10 +395,7 @@ function run_button_Callback(hObject, eventdata, handles)
 
 % THIS WILL GET CHANGED WHEN OPTIONS ARE NAILED DOWN
 
-op_big_phi = get(handles.big_phi_alg_menu,'Value');
-if op_big_phi < 3
-    op_big_phi = op_big_phi - 1;
-end
+op_big_phi = get(handles.big_phi_alg_menu,'Value') - 1;
 
 op_normalize = get(handles.normalization_menu,'Value');
 op_normalize_small_phi = 0;
@@ -416,13 +413,13 @@ if op_complex == 2
 end
 
 op_small_phi = get(handles.small_phi_func_menu,'Value') - 1;
-op_big_phi_dist = get(handles.big_phi_func_menu,'Value') - 1;
-
 op_ave = get(handles.state_option_menu,'Value') - 1;
 op_parallel = get(handles.parallel_option_menu,'Value') - 1;
 
-options = [3 1 2 1 1 0 0 1 1 0 op_big_phi 0 ...
-           op_normalize_big_phi op_normalize_small_phi op_complex op_small_phi op_big_phi_dist op_ave op_parallel];
+%options = [3 1 2 1 1 0 0 1 1 0 op_big_phi 0 ...
+%           op_normalize_big_phi op_normalize_small_phi op_complex op_small_phi op_ave op_parallel];
+options = [op_parallel op_ave op_complex op_small_phi op_big_phi op_normalize_small_phi ...
+           op_normalize_big_phi 0 1 3 1 2 1 0 0 1 1 0];
        
 
 tpm_choices = cellstr(get(handles.tpm_type_menu,'String'));
@@ -1210,4 +1207,11 @@ function big_phi_alg_menu_KeyPressFcn(hObject, eventdata, handles)
 %	Key: name of the key that was pressed, in lower case
 %	Character: character interpretation of the key(s) that was pressed
 %	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function Untitled_1_Callback(hObject, eventdata, handles)
+% hObject    handle to Untitled_1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)

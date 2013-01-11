@@ -18,3 +18,4 @@ for i = 1:N
 end
 
 numerator = M_cell{index};
+end
