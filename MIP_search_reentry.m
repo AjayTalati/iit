@@ -71,10 +71,24 @@ for j = 1:N_Bp
 
                 cutpdist = expand_prob(prob_M{M1_i,1}{indm}{1},M,M1);
                 BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} cutpdist};
-
-                cutfdist = expand_prob(prob_M{M1_i,1}{indm}{2},M,M1);   %Larissa: Check Expand Probabilities for future. I'm still not convinced this is correct
-                % The above is not correct, the result here should
-                % not be a flat max ent but a forward maxent...
+                
+                %compute the max ent forward dist (or the marginal forward
+                %of M2
+%                 if isempty(network.FRs{[],sum(2.^(M2-1))+1})
+                    forward_max_ent_M2 = comp_pers_cpt(network.nodes,[],M2,[],'forward');
+%                 else
+%                     forward_max_ent_M2 = network.FRs{1,sum(2.^(M2-1))+1};
+%                 end
+                cutfdist = expand_prob_general(prob_M{M1_i,1}{indm}{2},M,M1,forward_max_ent_M2(:));
+                
+                % for debugging
+%                 M
+%                 M1
+%                 M2
+%                 prob_M{M1_i,1}{indm}{2}
+%                 forward_max_ent_M2(:)
+%                 cutfdist
+                
                 FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} cutfdist};
                 BRcut_phi(k) = phi_BRcut;
                 FRcut_phi(k) = phi_FRcut;
@@ -94,7 +108,23 @@ for j = 1:N_Bp
                 %are empty for option 1
     %                         denom_p = sort([concept_MIP_M{M2_i}{indm}{:,1,1}]);
     %                         denom_f = sort([concept_MIP_M{M2_i}{indm}{:,1,2}]);  
-                cutfdist = expand_prob(prob_M{M2_i,1}{indm}{2},M,M2);   %wrong expand_prob
+                %compute the max ent forward dist (or the marginal forward
+                %of M2
+%                 if isempty(network.FRs{[],sum(2.^(M1-1))+1})
+                    forward_max_ent_M1 = comp_pers_cpt(network.nodes,[],M1,[],'forward');
+%                 else
+%                     forward_max_ent_M1 = network.FRs{1,sum(2.^(M1-1))+1};
+%                 end
+                cutfdist = expand_prob_general(prob_M{M2_i,1}{indm}{2},M,M2,forward_max_ent_M1(:));
+                
+                % for debugging
+%                 M
+%                 M1
+%                 M2
+%                 prob_M{M2_i,1}{indm}{2}
+%                 forward_max_ent_M1(:)
+%                 cutfdist
+                
                 BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} cutfdist}; %future might have changed
 
                 cutpdist = expand_prob(prob_M{M2_i,1}{indm}{1},M,M2); 
@@ -202,7 +232,8 @@ for j = 1:N_Bp
         
     elseif op_big_phi == 1
         back_maxent = expand_prob([],M,[]);
-        forward_maxent = expand_prob([],M,[]); %Larissa: WRONG!!
+        forward_maxend_joint = bsxfun(@times,forward_max_ent_M1,forward_max_ent_M2);
+        forward_maxent = expand_prob_general([],M,[],forward_maxend_joint(:));
 
         BRcut_Phi = 0;
         FRcut_Phi = 0;
@@ -225,7 +256,8 @@ for j = 1:N_Bp
           
     elseif op_big_phi == 2  %earth movers for concepts
         back_maxent = expand_prob([],M,[]);
-        forward_maxent = expand_prob([],M,[]); %Larissa: WRONG!!
+        forward_maxend_joint = bsxfun(@times,forward_max_ent_M1,forward_max_ent_M2);
+        forward_maxent = expand_prob_general([],M,[],forward_maxend_joint(:));
 %             indBR = find(BRcut_phi);
 %             indFR = find(FRcut_phi);
 %             BRcut_phi = BRcut_phi(indBR);
