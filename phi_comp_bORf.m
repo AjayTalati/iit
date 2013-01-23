@@ -61,10 +61,11 @@ end
     
 prob = cell(2,1);
 prob{bf} = prob_w(:);
-uniform_dist = ones(size(prob{bf}))/length(prob{bf});
-if bf == 1
-    prob{2} = uniform_dist;
+if bf == 1 %backward is calculated, forward is maxent
+    forward_maxent_dist = comp_pers_cpt(network.nodes,[],denom,[],'forward');
+    prob{2} = forward_maxent_dist;
 elseif bf == 2
+    uniform_dist = ones(size(prob{bf}))/length(prob{bf});
     prob{1} = uniform_dist;
 end
 

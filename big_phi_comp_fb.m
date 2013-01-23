@@ -58,8 +58,9 @@ for ci=1: num_states_subsys-1  % loop over purview subsets_subsys
     else
         phi_all_values(ci,:) = [0 0 0];
         uniform_dist = ones(num_states_subsys,1)/num_states_subsys;
-        prob{ci} = {uniform_dist, uniform_dist}; 
-        prob_prod{ci} = {uniform_dist, uniform_dist}; 
+        forward_maxent_dist = comp_pers_cpt(network.nodes,[],subsystem,[],'forward');
+        prob{ci} = {uniform_dist, forward_maxent_dist(:)}; 
+        prob_prod{ci} = {uniform_dist, forward_maxent_dist(:)}; 
         MIP{ci} = cell(2,2,2); % should we change these to uniform, full sys... etc
     end    
 end

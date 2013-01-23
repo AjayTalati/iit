@@ -27,8 +27,8 @@ for i=1: num_states_subsys-1
         if nnz(sum(network.connect_mat(denom,numerator),2) == 0) == 0 % denom is output
             [phi_MIP(i) prob_cand{i} network] = phi_comp_bORf_unidir(M1,M2,numerator,denom,whole_sys_state,network,bf_option,bfcut_option);
         else 
-            uniform_dist = ones(num_states_subsys,1)/num_states_subsys;
-            prob_cand{i} = uniform_dist;
+            forward_maxent_dist = comp_pers_cpt(network.nodes,[],subsystem,[],'forward');
+            prob_cand{i} = forward_maxent_dist(:);
         end
     end  
 end
@@ -38,7 +38,13 @@ end
 denom = subsets_subsys{j_max};
 prob = prob_cand{j_max};
 if length(denom) ~= N
-    prob = expand_prob(prob,subsystem,denom);
+    if strcmp(bf_option,'backward')
+        prob = expand_prob(prob,subsystem,denom);
+    elseif strcmp(bf_option,'forward')
+        denom_rest = pick_rest(subsystem,denom);
+        fmaxent_denom_rest = comp_pers_cpt(network.nodes,[],denom_rest,[],'forward');
+        prob = expand_prob_general(prob,subsystem,denom,fmaxent_denom_rest(:));
+    end
 end
 end
 

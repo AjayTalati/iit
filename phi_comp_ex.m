@@ -16,8 +16,9 @@ for i=1: num_states_subsys-1
             [phi_MIP(i,:) prob_cand{i} prob_prod_MIP_cand{i} MIP_cand{i} network] ...
                 = phi_comp_bORf(numerator,denom,whole_sys_state,network,2);
         else
-            uniform_dist = ones(num_states_subsys,1)/num_states_subsys;
-            prob_cand{i} = {uniform_dist; uniform_dist};
+            uniform_dist = ones(num_states_subsys,1)/num_states_subsys; % for BR uniform maxent, for FR forward maxent
+            forward_maxent_dist = comp_pers_cpt(network.nodes,[],subsystem,[],'forward');
+            prob_cand{i} = {uniform_dist; forward_maxent_dist(:)};
             prob_prod_MIP_cand{i} = cell(2,1);
             MIP_cand{i} = cell(2,2,2);
         end
@@ -56,13 +57,21 @@ phi(1) = min(max_phi_MIP_bf(1),max_phi_MIP_bf(2));
 for i = 1:2
     if i == 1
         denom = xp;
+        if length(denom) ~= num_nodes_subsys %Larissa: in principle it could happen that although the denominator is smaller prob is already expanded 
+                                             %(if there were no connections and it was set to maxent, but
+                                             %that should not happen, as it wouldn't j_max
+            prob{i} = expand_prob(prob{i},subsystem,denom);
+            prob_prod_MIP{i} = expand_prob(prob_prod_MIP{i},subsystem,denom);
+        end
     else
         denom = xf;
-    end
-    if length(denom) ~= num_nodes_subsys %Larissa: prob should already have the length of denominator states, if not something is wrong!
-        prob{i} = expand_prob(prob{i},subsystem,denom);
-        prob_prod_MIP{i} = expand_prob(prob_prod_MIP{i},subsystem,denom);
-    end
+        if length(denom) ~= num_nodes_subsys 
+            denom_rest = pick_rest(subsystem,denom);
+            fmaxent_denom_rest = comp_pers_cpt(network.nodes,[],denom_rest,[],'forward');
+            prob{i} = expand_prob_general(prob{i},subsystem,denom,fmaxent_denom_rest(:));
+            prob_prod_MIP{i} = expand_prob_general(prob_prod_MIP{i},subsystem,denom,fmaxent_denom_rest(:));
+        end
+    end 
 end
 
 % if op_console

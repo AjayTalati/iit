@@ -419,7 +419,7 @@ set(handles.partition_list,'Value',MIP_index)
 
 
 
-
+%Larissa: This still needs to be checked if quali plot is correct!
 function plot_partition(handles)
 
 subset = handles.data.subset; subset_index = handles.data.subset_index;
@@ -511,13 +511,18 @@ for k = 1:length(parts_phi_all)
         %we could change the if below to check against k instead...
         if(z <= sum(handles.data.small_phi_M{state_index}{partition1_index}(:,1) ~= 0))
             p_concept_dists_p(:,z) = expand_prob(handles.data.concepts_M{state_index}{partition1_index,1}{k}{1},subset,partition1);
-            p_concept_dists_f(:,z) = expand_prob(handles.data.concepts_M{state_index}{partition1_index,1}{k}{2},subset,partition1);
+            
+            partition_rest = pick_rest(subset,partition1);
+            fmaxent_rest = comp_pers_cpt(handles.data.network.nodes,[],partition_rest,[],'forward');                       
+            p_concept_dists_f(:,z) = expand_prob_general(handles.data.concepts_M{state_index}{partition1_index,1}{k}{2},subset,partition1,fmaxent_rest(:));
         else
             k_offset = k - size(handles.data.small_phi_M{state_index}{partition1_index},1);
             p_concept_dists_p(:,z) = ...
                 expand_prob(handles.data.concepts_M{state_index}{partition2_index,1}{k_offset}{1},subset,partition2);
-            p_concept_dists_f(:,z) = ...
-                expand_prob(handles.data.concepts_M{state_index}{partition2_index,1}{k_offset}{2},subset,partition2);
+            
+            partition_rest = pick_rest(subset,partition2);
+            fmaxent_rest = comp_pers_cpt(handles.data.network.nodes,[],partition_rest,[],'forward');                       
+            p_concept_dists_f(:,z) = expand_prob_general(handles.data.concepts_M{state_index}{partition2_index,1}{k_offset}{2},subset,partition2,fmaxent_rest(:));
         end
         z = z + 1;
 
