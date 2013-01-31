@@ -50,7 +50,7 @@ for j = 1:N_Bp
 
     %Big_phi_partition = Big_phi_M(M1_i) + Big_phi_M(M2_i);
     PhiCutSum = [0; 0];  %Larissa: cutting first M1 <- M2 (causes on M1, effects from M2) and then M1 -> M2 (causes on M2, effects from M1)
-    if (any(op_big_phi == [1 2]))
+    if op_big_phi ~= 0
         BRcut_dist = cell(length(phi_w_concepts), 2, 2); %dim1: per concept, dim2: past/future, dim2: whole/cut
         BRcut_phi = zeros(length(phi_w_concepts),1);
         FRcut_dist = cell(length(phi_w_concepts), 2, 2);
@@ -64,7 +64,7 @@ for j = 1:N_Bp
             indm = concept2index(IRR_w,M1);
             phi_BRcut = min(phi_M{M1_i}(indm,2), phi_M{whole_i}(concept_numind(k),3));
             phi_FRcut = min(phi_M{whole_i}(concept_numind(k),2), phi_M{M1_i}(indm,3));
-            if (any(op_big_phi == [1 2])) %L1 or Earthmover
+            if op_big_phi ~= 0 %L1 or Earthmover
                 %Larissa: distributions that are identical anyways are empty
     %                         denom_p = sort([concept_MIP_M{M1_i}{indm}{:,1,1}]);
     %                         denom_f = sort([concept_MIP_M{M1_i}{indm}{:,1,2}]);
@@ -89,7 +89,7 @@ for j = 1:N_Bp
             indm = concept2index(IRR_w,M2);
             phi_BRcut = min(phi_M{whole_i}(concept_numind(k),2), phi_M{M2_i}(indm,3));
             phi_FRcut = min(phi_M{M2_i}(indm,2), phi_M{whole_i}(concept_numind(k),3));
-            if (any(op_big_phi == [1 2])) %L1 or Earthmover
+            if op_big_phi ~= 0 %L1 or Earthmover
                 %Larissa: distributions that are identical anyways
                 %are empty for option 1
     %                         denom_p = sort([concept_MIP_M{M2_i}{indm}{:,1,1}]);
@@ -169,7 +169,7 @@ for j = 1:N_Bp
     %                     if phi_BRcut ~= 0
     %                         [M1; M2; IRR_w; denom_p; denom_pnew]
     %                     end
-            if (any(op_big_phi == [1 2])) %L1 or Earthmover
+            if op_big_phi ~= 0 %L1 or Earthmover
                 if ~isempty(BRcut_pdist)
                     BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} BRcut_pdist};
                 elseif op_big_phi == 2
@@ -210,7 +210,7 @@ for j = 1:N_Bp
 
         BRcut_Phi = 0;
         FRcut_Phi = 0;
-        for k = 1:size(BRcut_phi)
+        for k = 1:length(phi_w_concepts)
             if ~isempty(BRcut_dist{k,1,1}) %backward repertoires (if empty they stayed the same!)
                 BRcut_Phi = BRcut_Phi + L1norm(BRcut_dist{k,1,1},BRcut_dist{k,1,2})*BRcut_phi(k) + L1norm(BRcut_dist{k,1,1},back_maxent)*(phi_w_concepts(k)-BRcut_phi(k));
             end
@@ -267,6 +267,30 @@ for j = 1:N_Bp
         %FRcut_Phi
         FRcut_Phi = sum(FRcut_Phi); 
 
+        d_Big_phi = min(BRcut_Phi, FRcut_Phi);
+        
+    elseif op_big_phi == 3
+        back_maxent = expand_prob([],M,[]);
+        forward_maxent = comp_pers_cpt(network.nodes,[],M,[],'forward');
+        forward_maxent = forward_maxent(:);
+
+        BRcut_Phi = 0;
+        FRcut_Phi = 0;
+        for k = 1:length(phi_w_concepts)
+            if ~isempty(BRcut_dist{k,1,1}) %backward repertoires (if empty they stayed the same!)
+                BRcut_Phi = BRcut_Phi + KLD(BRcut_dist{k,1,1},BRcut_dist{k,1,2});
+            end
+            if ~isempty(BRcut_dist{k,2,1}) %forward repertoires
+                BRcut_Phi = BRcut_Phi + KLD(BRcut_dist{k,2,1},BRcut_dist{k,2,2});
+            end
+
+            if ~isempty(FRcut_dist{k,1,1}) %backward repertoires (if empty they stayed the same!)
+                FRcut_Phi = FRcut_Phi + KLD(FRcut_dist{k,1,1},FRcut_dist{k,1,2});
+            end
+            if ~isempty(FRcut_dist{k,2,1}) %forward repertoires
+                FRcut_Phi = FRcut_Phi + KLD(FRcut_dist{k,2,1},FRcut_dist{k,2,2});
+            end
+        end 
         d_Big_phi = min(BRcut_Phi, FRcut_Phi);
     end 
 

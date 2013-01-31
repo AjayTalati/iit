@@ -2,6 +2,7 @@ function [Big_phi_M phi_M prob_M subsets MIP_M M_IRR_M network] = big_phi_all(ne
 % compute Big-phi in every possible subset
 
 op_console = network.options(8); %(1: display the results, 0: not)
+op_parfor = network.options(9); % used by Animat program
 
 % global b_table
 % global BRs, global FRs
@@ -24,27 +25,47 @@ prob_M = cell(network.num_states-1,2);
 MIP_M = cell(network.num_states-1,1); % the partition that gives Big_phi_MIP for each subset
 M_IRR_M = cell(network.num_states-1,1);
 
-% Larissa: other option would be to output network from big_phi_comp_fb here
-% Then the parfor doesn't work though, but the Complex Search could access
+% With parfor it's probably faster for a single simulation, if many simulations are run in parallel,
+% then it's better to do the for loop which enables the back-passing of network, so BR and FR don't 
+% have to be calculated in each loop and the Complex Search can later access
 % all the distributions in BRs and FRs
-parfor sub_index = 1:network.num_states-1 % for all non empty subsets of the system\
-    this_subset = subsets{sub_index}; % get the subset
-    
-    if op_console
-        fprintf('--------------------------------------------------------------\n\n')
-        fprintf('System = %s\n\n',mod_mat2str(this_subset));
+if op_parfor == 1
+    parfor sub_index = 1:network.num_states-1 % for all non empty subsets of the system\
+        this_subset = subsets{sub_index}; % get the subset
+
+        if op_console
+            fprintf('--------------------------------------------------------------\n\n')
+            fprintf('System = %s\n\n',mod_mat2str(this_subset));
+        end
+
+        [Big_phi phi prob_cell MIP M_IRR] = big_phi_comp_fb(this_subset,whole_sys_state,network); 
+
+        MIP_M{sub_index} = MIP;
+        Big_phi_M(sub_index) = Big_phi; % Big_phi for each subset
+        phi_M{sub_index} = phi; % Set of small_phis for each purview of each subset
+        M_IRR_M{sub_index} = M_IRR; % numerators of purviews with non-zero/positive phi
+        % concept distributions
+        prob_M(sub_index,:) = prob_cell(:); % first layer is subset, second is purview, third is backward/forward  
     end
-    
-    [Big_phi phi prob_cell MIP M_IRR] = big_phi_comp_fb(this_subset,whole_sys_state,network); 
+else
+    for sub_index = 1:network.num_states-1 % for all non empty subsets of the system\
+        this_subset = subsets{sub_index}; % get the subset
 
-    MIP_M{sub_index} = MIP;
-    Big_phi_M(sub_index) = Big_phi; % Big_phi for each subset
-    phi_M{sub_index} = phi; % Set of small_phis for each purview of each subset
-    M_IRR_M{sub_index} = M_IRR; % numerators of purviews with non-zero/positive phi
-    % concept distributions
-    prob_M(sub_index,:) = prob_cell(:); % first layer is subset, second is purview, third is backward/forward  
+        if op_console
+            fprintf('--------------------------------------------------------------\n\n')
+            fprintf('System = %s\n\n',mod_mat2str(this_subset));
+        end
+
+        [Big_phi phi prob_cell MIP M_IRR network] = big_phi_comp_fb(this_subset,whole_sys_state,network); 
+
+        MIP_M{sub_index} = MIP;
+        Big_phi_M(sub_index) = Big_phi; % Big_phi for each subset
+        phi_M{sub_index} = phi; % Set of small_phis for each purview of each subset
+        M_IRR_M{sub_index} = M_IRR; % numerators of purviews with non-zero/positive phi
+        % concept distributions
+        prob_M(sub_index,:) = prob_cell(:); % first layer is subset, second is purview, third is backward/forward  
+    end
 end
-
 %% display
 if op_console
     fprintf('\n')

@@ -16,7 +16,7 @@ function iit_run(tpm, in_connect_mat, current_state, in_noise, in_options, in_no
 %   see also set_options
 
 %% parallel computing
-
+% in_options(9) = 0;
 % if a pool is open, close it
 if matlabpool('size')
     matlabpool close force;

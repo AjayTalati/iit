@@ -1,4 +1,5 @@
 function state = index2state(index, state_size_vec)
+% state_size_vec is vector of number of states e.g. [2 2 2 2 2 2] for 6 nodes with binary states
 
 num_nodes = length(state_size_vec);
 state = zeros(num_nodes,1);

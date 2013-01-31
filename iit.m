@@ -415,11 +415,13 @@ end
 op_small_phi = get(handles.small_phi_func_menu,'Value') - 1;
 op_ave = get(handles.state_option_menu,'Value') - 1;
 op_parallel = get(handles.parallel_option_menu,'Value') - 1;
+op_parfor = get(handles.parfor_option_menu,'Value');
+
 
 %options = [3 1 2 1 1 0 0 1 1 0 op_big_phi 0 ...
 %           op_normalize_big_phi op_normalize_small_phi op_complex op_small_phi op_ave op_parallel];
 options = [op_parallel op_ave op_complex op_small_phi op_big_phi op_normalize_small_phi ...
-           op_normalize_big_phi 0 1 3 1 2 1 0 0 1 1 0];
+           op_normalize_big_phi 0 op_parfor 3 1 2 1 0 0 1 1 0];
        
 
 tpm_choices = cellstr(get(handles.tpm_type_menu,'String'));
