@@ -22,22 +22,29 @@ num_nodes_denom = length(denom);
 num_nodes_numerator = length(numerator);
 
 %% unpartitioned transition repertoire
-denomM1 = denom(ismember(denom,M1));
-denomM2 = denom(ismember(denom,M2));
-otherM1 = sum(2.^(denomM1-1))+1;    %will be 1 if empty!
-otherM2 = sum(2.^(denomM2-1))+1;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Rule: M1 <- M2 noised --> past: M1M2/M1 x M2/M1M2 future: M1/M1M2 x M1M2/M2%
+%      M1 -> M2 noised --> future: M1/M1M2 X M1M1/M2 past: M1M2/M1 x M2/M1M2%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %M1 <- M2 noised and past, or M1 -> M2 noised and future
 if (strcmp(bfcut_option,'BRcut') && strcmp(bf_option,'backward')) || (strcmp(bfcut_option,'FRcut') && strcmp(bf_option,'forward')) 
     numeratorM1 = numerator;
     numeratorM2 = numerator(ismember(numerator, M2));
+    denomM1 = denom(ismember(denom,M1));
+    denomM2 = denom;
 %M1 <- M2 noised and future, or M1 -> M2 noised and past
 elseif (strcmp(bfcut_option,'BRcut') && strcmp(bf_option,'forward')) || (strcmp(bfcut_option,'FRcut') && strcmp(bf_option,'backward'))   
     numeratorM1 = numerator(ismember(numerator, M1));
     numeratorM2 = numerator;
+    denomM1 = denom;
+    denomM2 = denom(ismember(denom,M2));
 end
-currentM1 = sum(2.^(numeratorM1-1))+1;
-currentM2 = sum(2.^(numeratorM2-1))+1;
+currentM1 = sum(2.^(numeratorM1-1))+1;  %index of BR/FR matrix
+currentM2 = sum(2.^(numeratorM2-1))+1;  %will be 1 if empty!
+otherM1 = sum(2.^(denomM1-1))+1;    
+otherM2 = sum(2.^(denomM2-1))+1;    
 
 if strcmp(bf_option,'backward')
     if isempty(network.BRs{currentM1,otherM1}) && otherM1 > 1
@@ -85,11 +92,7 @@ phi_zero_found = 0;
 for i = 1:num_denom_partitions % past or future
     denom_part1 = denom_partitions1{i};
     denom_part2 = denom_partitions2{i};
-    denomM1_part1 = denom_part1(ismember(denom_part1,M1));
-    denomM2_part1 = denom_part1(ismember(denom_part1,M2));
-    denomM1_part2 = denom_part2(ismember(denom_part2,M1));
-    denomM2_part2 = denom_part2(ismember(denom_part2,M2));
-       
+    
     for j=1: num_numerator_partitions % present
         numerator_part1 = numerator_partitions1{j};
         numerator_part2 = numerator_partitions2{j};
@@ -104,12 +107,20 @@ for i = 1:num_denom_partitions % past or future
                 numeratorM2_part1 = numerator_part1(ismember(numerator_part1, M2));
                 numeratorM1_part2 = numerator_part2;
                 numeratorM2_part2 = numerator_part2(ismember(numerator_part2, M2));
+                denomM1_part1 = denom_part1(ismember(denom_part1,M1));
+                denomM2_part1 = denom_part1;
+                denomM1_part2 = denom_part2(ismember(denom_part2,M1));
+                denomM2_part2 = denom_part2;
             %M1 <- M2 noised and future, or M1 -> M2 noised and past
             elseif (strcmp(bfcut_option,'BRcut') && strcmp(bf_option,'forward')) || (strcmp(bfcut_option,'FRcut') && strcmp(bf_option,'backward'))   
                 numeratorM1_part1 = numerator_part1(ismember(numerator_part1, M1));
                 numeratorM2_part1 = numerator_part1;
                 numeratorM1_part2 = numerator_part2(ismember(numerator_part2, M1));
                 numeratorM2_part2 = numerator_part2;
+                denomM1_part1 = denom_part1;
+                denomM2_part1 = denom_part1(ismember(denom_part1,M2));
+                denomM1_part2 = denom_part2;
+                denomM2_part2 = denom_part2(ismember(denom_part2,M2));
             end
             
             currentM1_1 = sum(2.^(numeratorM1_part1-1))+1;

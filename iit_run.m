@@ -76,9 +76,7 @@ for i = 0:network.num_states - 1
     network.states(:,i+1) = dec2multibase(i,[network.nodes(network.full_system).num_states]);
 end
 
-
 %% setup main function call
-
 % determine if we are averaging over all states or just one
 op_average = network.options(2);
 if op_average == 0
@@ -115,17 +113,14 @@ complex_MIP_M_st = cell(state_max,1);
 Big_phi_MIP_all_M_st = cell(state_max,1);
 complex_MIP_all_M_st = cell(state_max,1);
 purviews_M_st = cell(state_max,1);
-
-
-
-
+BFCut_st = cell(state_max,1);
+BFCut_M_st = cell(state_max,1);
 
 %% main loop over states
 
 % for each state
 for z = 1:state_max
-    
-    
+      
     if op_average
         this_state = network.states(:,z);
     else
@@ -204,7 +199,7 @@ for z = 1:state_max
             if op_PHIconcept_fig ==1 
                 [CutDistr] = PHI_Cut_concepts(Complex,MIP{1},BFCut,purviews_M, prob_M, phi_M,concept_MIP_M, network); 
             end                     
-                    BFCut
+                    
         end
     end
 

@@ -7,9 +7,18 @@ function [Big_phi phi_all_values prob_cell MIP M_IRR network] = big_phi_comp_fb(
 num_nodes_subsys = length(subsystem);
 num_states_subsys = prod([network.nodes(subsystem).num_states]);
 
-op_single = network.options(11);     % just needed for console output
+op_single = network.options(12);     % just needed for console output
 op_console = network.options(8);   %(1: display the results, 0: not)
+op_removal = network.options(11);
 
+if op_removal == 0
+   % % make new function similar to big_phi_all
+                % but: cut J and redefine nodes and mechanisms for each
+                % subset --> BRs and FRs cannot be passed (but with parfor
+                % that isn't done anyways. 
+    % Already here the nodes have to be changed!!! For the correct max
+    % entropty distribution
+end
 %% numerator data
 % ???This is where we build subsets_subsys of purviews (power-set exclude empty
 % set)
@@ -49,7 +58,8 @@ for ci=1: num_states_subsys-1  % loop over purview subsets_subsys
     numerator = subsets_subsys{ci}; % given data of numerator
     %Smart purviews: if any element inside the numerator does not have inputs or outputs,
     %no need to calculate purview
-    Nconnect = [sum(network.connect_mat(numerator,:),2) sum(network.connect_mat(:,numerator))'];
+    %Larissa: actually one only needs to check WITHIN the Subsystem!!!
+    Nconnect = [sum(network.connect_mat(numerator,subsystem),2) sum(network.connect_mat(subsystem,numerator))'];
     EmptyCon(ci) = numel(Nconnect)-nnz(Nconnect);
     %EmptyCon(ci) =0; % Old version without smart purviews, to check
     if EmptyCon(ci) == 0

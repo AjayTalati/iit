@@ -2,6 +2,7 @@ function [CutDistr] = PHI_Cut_concepts(M,MIP,BFCut,M_IRR_M,prob_M, phi_M,concept
 %%
 % Recompute distributrions of PHI cut
 %%
+op_strongconn = network.options(10);
 whole_i = subsystem2index(M);     % Full system index
 
 phi_whole = phi_M{whole_i}(:,1)';
@@ -19,13 +20,13 @@ if BFCut == 1 %M1 <- M2 is cut
     BRcut_dist = cell(length(phi_w_concepts), 2, 2); %dim1: per concept, dim2: past/future, dim2: whole/cut
     for k = 1:length(phi_w_concepts)
         IRR_w = IRR_whole{k};
-        if all(ismember(IRR_w,M1)) 
+        if all(ismember(IRR_w,M1)) && op_strongconn ~= 0 %~isempty(prob_M{M1_i,1})
             % for M1 <- M2 cut take BR of M1 and FR from M
             indm = concept2index(IRR_w,M1);
             cutpdist = expand_prob(prob_M{M1_i,1}{indm}{1},M,M1);
             BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} cutpdist};
             BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}}; 
-        elseif all(ismember(IRR_w,M2))
+        elseif all(ismember(IRR_w,M2))  && op_strongconn ~= 0 % ~isempty(prob_M{M2_i,1})
             indm = concept2index(IRR_w,M2);
             %Larissa: distributions that are identical anyways
 
@@ -120,7 +121,7 @@ else %M1 -> M2 is cut
             if ~isempty(FRcut_pdist)
                 FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} FRcut_pdist};
             else
-                FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} FRcut_pdist};
+                FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}};
             end
             if ~isempty(FRcut_fdist)
                 FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} FRcut_fdist};

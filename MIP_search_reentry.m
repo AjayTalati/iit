@@ -11,6 +11,7 @@ function [Big_phi_MIP MIP Big_phi_cand MIP_cand BFCut] = MIP_search_reentry(M,N,
 op_big_phi = options(5);
 op_normalize = options(7);
 op_console = options(8);
+op_strongconn = options(10);
 
 N_M = length(M);
 
@@ -59,7 +60,7 @@ for j = 1:N_Bp
     end    
     for k = 1:length(phi_w_concepts)
         IRR_w = IRR_whole{k};
-        if all(ismember(IRR_w,M1)) 
+        if all(ismember(IRR_w,M1)) && op_strongconn ~= 0 %~isempty(prob_M{M1_i,1}) %Larissa: Change Strongconn to removal once everything is working
             % for M1 <- M2 cut take BR of M1 and FR from M
 
             indm = concept2index(IRR_w,M1);
@@ -79,13 +80,12 @@ for j = 1:N_Bp
                 
                 BRcut_phi(k) = phi_BRcut;
                 FRcut_phi(k) = phi_FRcut;
-                if op_big_phi == 2
-                    %Larissa: Maybe more efficient to leave it [] but hopefully doesn't matter much
-                    BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}}; 
-                    FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}}; 
-                end    
+                
+                %Larissa: These have to be there. Maybe there is a more efficient way though
+                BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}}; 
+                FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}}; 
             end    
-        elseif all(ismember(IRR_w,M2))
+        elseif all(ismember(IRR_w,M2)) && op_strongconn ~= 0 %~isempty(prob_M{M2_i,1})
 
             indm = concept2index(IRR_w,M2);
             phi_BRcut = min(phi_M{whole_i}(concept_numind(k),2), phi_M{M2_i}(indm,3));
@@ -105,11 +105,10 @@ for j = 1:N_Bp
 
                 BRcut_phi(k) = phi_BRcut;
                 FRcut_phi(k) = phi_FRcut;
-                if op_big_phi == 2
-                    %Larissa: Maybe more efficient to leave it [] but hopefully doesn't matter much
-                    BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}}; %back is the same
-                    FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}}; %back might have changed, future is the same
-               end 
+
+                %Larissa: These have to be there. Maybe there is a more efficient way though
+                BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}}; %back is the same
+                FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}}; %back might have changed, future is the same
             end   
         else % if numerator has elements from both sides
             denom_p = sort([concept_MIP_M{whole_i}{concept_numind(k)}{:,1,1}]);    %Larissa: The sort may be important 
@@ -173,23 +172,23 @@ for j = 1:N_Bp
             if op_big_phi ~= 0 %L1 or Earthmover
                 if ~isempty(BRcut_pdist)
                     BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} BRcut_pdist};
-                elseif op_big_phi == 2
+                else
                     BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}};
                 end
                 if ~isempty(BRcut_fdist)
                     BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} BRcut_fdist};
-                elseif op_big_phi == 2    
+                else
                     BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}};
                 end
                 if ~isempty(FRcut_pdist)
                     FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} FRcut_pdist};
-                elseif op_big_phi == 2    
+                else
                     FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}};
                 end
                 if ~isempty(FRcut_fdist)
                     FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} FRcut_fdist};
-                elseif op_big_phi == 2    
-                        FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}};
+                else
+                    FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}};
                 end
 
                 BRcut_phi(k) = phi_BRcut;
@@ -211,20 +210,16 @@ for j = 1:N_Bp
 
         BRcut_Phi = 0;
         FRcut_Phi = 0;
-        for k = 1:length(phi_w_concepts)
-            if ~isempty(BRcut_dist{k,1,1}) %backward repertoires (if empty they stayed the same!)
-                BRcut_Phi = BRcut_Phi + L1norm(BRcut_dist{k,1,1},BRcut_dist{k,1,2})*BRcut_phi(k) + L1norm(BRcut_dist{k,1,1},back_maxent)*(phi_w_concepts(k)-BRcut_phi(k));
-            end
-            if ~isempty(BRcut_dist{k,2,1}) %forward repertoires
-                BRcut_Phi = BRcut_Phi + L1norm(BRcut_dist{k,2,1},BRcut_dist{k,2,2})*BRcut_phi(k) + L1norm(BRcut_dist{k,2,1},forward_maxent)*(phi_w_concepts(k)-BRcut_phi(k));
-            end
-
-            if ~isempty(FRcut_dist{k,1,1}) %backward repertoires (if empty they stayed the same!)
-                FRcut_Phi = FRcut_Phi + L1norm(FRcut_dist{k,1,1},FRcut_dist{k,1,2})*FRcut_phi(k) + L1norm(FRcut_dist{k,1,1},back_maxent)*(phi_w_concepts(k)-FRcut_phi(k));
-            end
-            if ~isempty(FRcut_dist{k,2,1}) %forward repertoires
-                FRcut_Phi = FRcut_Phi + L1norm(FRcut_dist{k,2,1},FRcut_dist{k,2,2})*FRcut_phi(k) + L1norm(FRcut_dist{k,2,1},forward_maxent)*(phi_w_concepts(k)-FRcut_phi(k));
-            end
+        for k = 1:length(phi_w_concepts) %Larissa: Can maybe made more efficient if cut_phi is 0, cause then I don't need to do the distance
+%                 BRcut_Phi = BRcut_Phi + L1norm(BRcut_dist{k,1,1},BRcut_dist{k,1,2})*BRcut_phi(k) + L1norm(BRcut_dist{k,1,1},back_maxent)*(phi_w_concepts(k)-BRcut_phi(k));
+%                 BRcut_Phi = BRcut_Phi + L1norm(BRcut_dist{k,2,1},BRcut_dist{k,2,2})*BRcut_phi(k) + L1norm(BRcut_dist{k,2,1},forward_maxent)*(phi_w_concepts(k)-BRcut_phi(k));
+%                 FRcut_Phi = FRcut_Phi + L1norm(FRcut_dist{k,1,1},FRcut_dist{k,1,2})*FRcut_phi(k) + L1norm(FRcut_dist{k,1,1},back_maxent)*(phi_w_concepts(k)-FRcut_phi(k));
+%                 FRcut_Phi = FRcut_Phi + L1norm(FRcut_dist{k,2,1},FRcut_dist{k,2,2})*FRcut_phi(k) + L1norm(FRcut_dist{k,2,1},forward_maxent)*(phi_w_concepts(k)-FRcut_phi(k));
+%                 
+                BRcut_Phi = BRcut_Phi + emd_hat_gd_metric_mex(BRcut_dist{k,1,1},BRcut_dist{k,1,2},gen_dist_matrix(length(BRcut_dist{k,1,1})))*BRcut_phi(k) + emd_hat_gd_metric_mex(BRcut_dist{k,1,1},back_maxent,gen_dist_matrix(length(BRcut_dist{k,1,1})))*(phi_w_concepts(k)-BRcut_phi(k));
+                BRcut_Phi = BRcut_Phi + emd_hat_gd_metric_mex(BRcut_dist{k,2,1},BRcut_dist{k,2,2},gen_dist_matrix(length(BRcut_dist{k,1,1})))*BRcut_phi(k) + emd_hat_gd_metric_mex(BRcut_dist{k,2,1},forward_maxent,gen_dist_matrix(length(BRcut_dist{k,1,1})))*(phi_w_concepts(k)-BRcut_phi(k));
+                FRcut_Phi = FRcut_Phi + emd_hat_gd_metric_mex(FRcut_dist{k,1,1},FRcut_dist{k,1,2},gen_dist_matrix(length(BRcut_dist{k,1,1})))*FRcut_phi(k) + emd_hat_gd_metric_mex(FRcut_dist{k,1,1},back_maxent,gen_dist_matrix(length(BRcut_dist{k,1,1})))*(phi_w_concepts(k)-FRcut_phi(k));
+                FRcut_Phi = FRcut_Phi + emd_hat_gd_metric_mex(FRcut_dist{k,2,1},FRcut_dist{k,2,2},gen_dist_matrix(length(BRcut_dist{k,1,1})))*FRcut_phi(k) + emd_hat_gd_metric_mex(FRcut_dist{k,2,1},forward_maxent,gen_dist_matrix(length(BRcut_dist{k,1,1})))*(phi_w_concepts(k)-FRcut_phi(k));
         end 
         [d_Big_phi, indexCut] = min([BRcut_Phi, FRcut_Phi]);
           
@@ -249,8 +244,8 @@ for j = 1:N_Bp
         BRphiDiff = sum(phi_w_concepts)-sum(BRcut_phi);
         tempVphi = [phi_w_concepts'; 0];
         tempVphicut = [BRcut_phi; BRphiDiff];
-        BRcut_Phi(1) = emd_hat_gd_metric_mex([tempVphi; zeros(size(tempVphi))],[zeros(size(tempVphicut));tempVphi],BRDistMat_past);
-        BRcut_Phi(2) = emd_hat_gd_metric_mex([tempVphi; zeros(size(tempVphi))],[zeros(size(tempVphicut));tempVphi],BRDistMat_fut);
+        BRcut_Phi(1) = emd_hat_gd_metric_mex([tempVphi; zeros(size(tempVphi))],[zeros(size(tempVphicut));tempVphicut],BRDistMat_past);
+        BRcut_Phi(2) = emd_hat_gd_metric_mex([tempVphi; zeros(size(tempVphi))],[zeros(size(tempVphicut));tempVphicut],BRDistMat_fut);
         %BRcut_Phi
         BRcut_Phi = sum(BRcut_Phi); 
 
@@ -263,8 +258,8 @@ for j = 1:N_Bp
         FRphiDiff = sum(phi_w_concepts)-sum(FRcut_phi);
 
         tempVphicut = [FRcut_phi; FRphiDiff];
-        FRcut_Phi(1) = emd_hat_gd_metric_mex([tempVphi; zeros(size(tempVphi))],[zeros(size(tempVphicut));tempVphi],FRDistMat_past);
-        FRcut_Phi(2) = emd_hat_gd_metric_mex([tempVphi; zeros(size(tempVphi))],[zeros(size(tempVphicut));tempVphi],FRDistMat_fut);
+        FRcut_Phi(1) = emd_hat_gd_metric_mex([tempVphi; zeros(size(tempVphi))],[zeros(size(tempVphicut));tempVphicut],FRDistMat_past);
+        FRcut_Phi(2) = emd_hat_gd_metric_mex([tempVphi; zeros(size(tempVphi))],[zeros(size(tempVphicut));tempVphicut],FRDistMat_fut);
         %FRcut_Phi
         FRcut_Phi = sum(FRcut_Phi); 
 
@@ -273,7 +268,7 @@ for j = 1:N_Bp
     elseif op_big_phi == 3
         BRcut_Phi = 0;
         FRcut_Phi = 0;
-        for k = 1:length(phi_w_concepts)
+        for k = 1:length(phi_w_concepts)    %Larissa: Now no empty distr. could be made more efficient, or take out option again
             if ~isempty(BRcut_dist{k,1,1}) %backward repertoires (if empty they stayed the same!)
                 BRcut_Phi = BRcut_Phi + KLD(BRcut_dist{k,1,1},BRcut_dist{k,1,2});
             end
