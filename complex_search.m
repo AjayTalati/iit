@@ -1,4 +1,4 @@
-function [Big_phi_MIP MIP Complex M_i_max Big_phi_MIP_M MIP_M Big_phi_MIP_all_M MIP_all_M] = complex_search(Big_phi_M,M_cell,M_IRR_M,N,prob_M, phi_M,options,concept_MIP_M,network)
+function [Big_phi_MIP MIP Complex M_i_max BFCut Big_phi_MIP_M MIP_M Big_phi_MIP_all_M MIP_all_M BFCut_M] = complex_search(Big_phi_M,M_cell,M_IRR_M,N,prob_M, phi_M,options,concept_MIP_M,network)
 %% Find complex
 
 op_console = options(8);
@@ -22,7 +22,7 @@ parfor M_i = 1: 2^N-1
 %         [Big_phi_MIP_M(M_i) MIP_M{M_i} Big_phi_MIP_all_M{M_i} MIP_all_M{M_i}] = ...
 %                                     MIP_search(M,N,Big_phi_M, M_IRR_M, prob_M, phi_M,options);
 %For reentry uncomment this and comment the one above!                                
-         [Big_phi_MIP_M(M_i) MIP_M{M_i} Big_phi_MIP_all_M{M_i} MIP_all_M{M_i}] = ...
+         [Big_phi_MIP_M(M_i) MIP_M{M_i} Big_phi_MIP_all_M{M_i} MIP_all_M{M_i} BFCut_M{M_i}] = ...
                                      MIP_search_reentry(M,N,Big_phi_M, M_IRR_M, prob_M, phi_M,options,concept_MIP_M, network);                                
     else
         
@@ -30,6 +30,7 @@ parfor M_i = 1: 2^N-1
         MIP_M{M_i} = M;
         Big_phi_MIP_all_M{M_i} = Big_phi_M(M_i);
         MIP_all_M{M_i} = M;
+        BFCut_M{M_i} = 0;
         
     end
     
@@ -42,6 +43,7 @@ Complex = M_cell{M_i_max};
 MIP = cell(2,1);
 MIP{1} = MIP_M{M_i_max};
 Big_phi = Big_phi_M(M_i_max);
+BFCut = BFCut_M{M_i_max};
 
 MIP{2} = pick_rest(Complex,MIP{1});
 

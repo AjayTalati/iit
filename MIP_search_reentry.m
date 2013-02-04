@@ -1,4 +1,4 @@
-function [Big_phi_MIP MIP Big_phi_cand MIP_cand] = MIP_search_reentry(M,N,Big_phi_M,M_IRR_M,prob_M, phi_M,options, concept_MIP_M, network)
+function [Big_phi_MIP MIP Big_phi_cand MIP_cand BFCut] = MIP_search_reentry(M,N,Big_phi_M,M_IRR_M,prob_M, phi_M,options, concept_MIP_M, network)
 %%
 % Find the Big-phi MIP in a subset M
 % M: a subset where Big_phi_MIP is computed
@@ -31,6 +31,7 @@ N_Bp = size(C,1);   %Number of possible PHI partitions
 
 Big_phi_cand = zeros(N_Bp,2);
 MIP_cand = cell(N_Bp,1);
+M_indexCut = zeros(N_Bp,1);
 
 whole_i = subsystem2index(M);     % Full system index
 Big_phi_w = Big_phi_M(whole_i);
@@ -197,7 +198,7 @@ for j = 1:N_Bp
         end % if 
         PhiCutSum = PhiCutSum + [phi_BRcut; phi_FRcut];
     end %for k 
-    Big_phi_partition = max(PhiCutSum);       % max here means the minimum of the difference between whole and partitioned system   
+    [Big_phi_partition, indexCut] = max(PhiCutSum);       % max here means the minimum of the difference between whole and partitioned system   
     
     if op_big_phi == 0
         % 07-06-12 CHANGED TO ABS VALUE
@@ -225,7 +226,7 @@ for j = 1:N_Bp
                 FRcut_Phi = FRcut_Phi + L1norm(FRcut_dist{k,2,1},FRcut_dist{k,2,2})*FRcut_phi(k) + L1norm(FRcut_dist{k,2,1},forward_maxent)*(phi_w_concepts(k)-FRcut_phi(k));
             end
         end 
-        d_Big_phi = min(BRcut_Phi, FRcut_Phi);
+        [d_Big_phi, indexCut] = min([BRcut_Phi, FRcut_Phi]);
           
     elseif op_big_phi == 2  %earth movers for concepts
         back_maxent = expand_prob([],M,[]);
@@ -267,13 +268,9 @@ for j = 1:N_Bp
         %FRcut_Phi
         FRcut_Phi = sum(FRcut_Phi); 
 
-        d_Big_phi = min(BRcut_Phi, FRcut_Phi);
+        [d_Big_phi, indexCut] = min([BRcut_Phi, FRcut_Phi]);
         
     elseif op_big_phi == 3
-        back_maxent = expand_prob([],M,[]);
-        forward_maxent = comp_pers_cpt(network.nodes,[],M,[],'forward');
-        forward_maxent = forward_maxent(:);
-
         BRcut_Phi = 0;
         FRcut_Phi = 0;
         for k = 1:length(phi_w_concepts)
@@ -291,7 +288,7 @@ for j = 1:N_Bp
                 FRcut_Phi = FRcut_Phi + KLD(FRcut_dist{k,2,1},FRcut_dist{k,2,2});
             end
         end 
-        d_Big_phi = min(BRcut_Phi, FRcut_Phi);
+        [d_Big_phi, indexCut] = min([BRcut_Phi, FRcut_Phi]);
     end 
 
     % Norm = min(length(M1),length(M2)) + min(length(M1),length(M2));
@@ -300,6 +297,7 @@ for j = 1:N_Bp
     Big_phi_cand(l,1) = d_Big_phi;
     Big_phi_cand(l,2) = d_Big_phi/Norm;
     MIP_cand{l} = M1;
+    M_indexCut(l) = indexCut;
 
 %         if N_M == N
 %             fprintf('M1=%s-%s: ',mod_mat2str(M1),mod_mat2str(M2));
@@ -323,6 +321,7 @@ end
 
 MIP = MIP_cand{i_phi_min};
 M2 = pick_rest(M,MIP);
+BFCut = M_indexCut(i_phi_min);
 
 if (op_console && Big_phi_MIP ~= 0)
     fprintf('M = %s\nMIP = %s-%s, Big_phi_MIP = %f\n',mat2str(M),mod_mat2str(MIP),mod_mat2str(M2),Big_phi_MIP);

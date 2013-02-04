@@ -24,7 +24,7 @@ end
 
 % if parallel option is on, open a new pool
 op_parallel = in_options(1);
-
+op_PHIconcept_fig = 1;
 if op_parallel
     matlabpool;
 end
@@ -169,7 +169,7 @@ for z = 1:state_max
             [Big_phi_M phi_M prob_M M_cell concept_MIP_M purviews_M network] = big_phi_all(network, this_state); %Larissa: this_state should be obsolete as it is in network
                                                               
             % complex search
-            [Big_phi_MIP MIP Complex M_i_max  Big_phi_MIP_M complex_MIP_M Big_phi_MIP_all_M complex_MIP_M_all] = ...
+            [Big_phi_MIP MIP Complex M_i_max BFCut Big_phi_MIP_M complex_MIP_M Big_phi_MIP_all_M complex_MIP_M_all BFCut_M] = ...
                 complex_search(Big_phi_M,M_cell, purviews_M, network.num_nodes,prob_M,phi_M,network.options,concept_MIP_M,network);
             
             Big_phi_M_st{z} = Big_phi_M;
@@ -187,15 +187,24 @@ for z = 1:state_max
             
             phi_M_st{z} = phi_M;
             
+            BFCut_st{z} = BFCut; %M1->M2 noised, or M1<-M2
+            BFCut_M_st{z} = BFCut_M;
+            
             concept_MIP_M_st{z} = concept_MIP_M;
             complex_MIP_M_st{z} = complex_MIP_M;
             Big_phi_MIP_all_M_st{z} = Big_phi_MIP_all_M;
             complex_MIP_all_M_st{z} = complex_MIP_M_all;
             purviews_M_st{z} = purviews_M;
-                
+            
+            %BFcut not in rewrap_data, but then we need to restructure this
+            %anyways
             output_data.results.state(z) = rewrap_data(Big_phi_M, phi_M, prob_M, M_cell, concept_MIP_M, purviews_M,...
                         Big_phi_MIP, MIP, Complex, M_i_max,  Big_phi_MIP_M, complex_MIP_M, Big_phi_MIP_all_M, complex_MIP_M_all);
                     
+            if op_PHIconcept_fig ==1 
+                [CutDistr] = PHI_Cut_concepts(Complex,MIP{1},BFCut,purviews_M, prob_M, phi_M,concept_MIP_M, network); 
+            end                     
+                    BFCut
         end
     end
 
@@ -207,6 +216,7 @@ output_data.network = network;
 
 output_data.Big_phi_M = Big_phi_M_st;
 output_data.Big_phi_MIP = Big_phi_MIP_st;
+output_data.BFCut = BFCut_st;
 % KILL THIS ONE BELOW
 output_data.MIP = MIP_st;
 output_data.Complex = Complex_st;
@@ -218,6 +228,7 @@ output_data.M_cell = M_cell;
 output_data.Big_phi_MIP_all_M = Big_phi_MIP_all_M_st;
 output_data.complex_MIP_all_M = complex_MIP_all_M_st;
 output_data.purviews_M = purviews_M_st;
+output_data.BFCut_M = BFCut_M_st;
 
 
 %% finish & cleanup: stop timer, save data, open explorer gui, close matlabpool
