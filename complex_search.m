@@ -1,6 +1,6 @@
 function [Big_phi_MIP MIP Complex M_i_max BFCut Big_phi_MIP_M MIP_M Big_phi_MIP_all_M MIP_all_M BFCut_M] = complex_search(Big_phi_M,M_cell,M_IRR_M,N,prob_M, phi_M,options,concept_MIP_M,network)
 %% Find complex
-
+op_removal = options(11);
 op_console = options(8);
 
 Big_phi_MIP_M = zeros(2^N-1,1);
@@ -21,9 +21,16 @@ parfor M_i = 1: 2^N-1
         
 %         [Big_phi_MIP_M(M_i) MIP_M{M_i} Big_phi_MIP_all_M{M_i} MIP_all_M{M_i}] = ...
 %                                     MIP_search(M,N,Big_phi_M, M_IRR_M, prob_M, phi_M,options);
-%For reentry uncomment this and comment the one above!                                
+%For reentry uncomment this and comment the one above!       
+
+    if op_removal == 0 && N ~= numel(M)
+        rem_network = network.removal_networks{M_i};
+        [Big_phi_MIP_M(M_i) MIP_M{M_i} Big_phi_MIP_all_M{M_i} MIP_all_M{M_i} BFCut_M{M_i}] = ...
+                                     MIP_search_reentry(M,N,Big_phi_M, M_IRR_M, prob_M, phi_M,options,concept_MIP_M, rem_network); 
+    else
          [Big_phi_MIP_M(M_i) MIP_M{M_i} Big_phi_MIP_all_M{M_i} MIP_all_M{M_i} BFCut_M{M_i}] = ...
                                      MIP_search_reentry(M,N,Big_phi_M, M_IRR_M, prob_M, phi_M,options,concept_MIP_M, network);                                
+    end                                 
     else
         
         Big_phi_MIP_M(M_i) = Big_phi_M(M_i);

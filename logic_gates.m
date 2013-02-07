@@ -14,9 +14,12 @@ if nargin == 3
     noise = in_noise;
 end
 
-
+% broken mechanism outputting 0 always
+if logic_type == 0
+    output = 0;
+    
 % AND
-if logic_type == 1
+elseif logic_type == 1
     
     output = all(input);
 
@@ -62,7 +65,17 @@ elseif logic_type == 8
 elseif logic_type == 9
     
     output = mod(sum(input),2) == 1;
+
+%Linear Threshold unit, threshold is logic_type -10. I.e. '12' means threshold '2'    
+elseif logic_type >= 10 && logic_type < 20
     
+    output = sum(input) >= logic_type-10;
+
+%below Threshold unit, threshold is logic_type -20. I.e. '22' means under threshold '2'    
+elseif logic_type >= 20
+    
+    output = sum(input) < logic_type-20;   
+        
 end
 
 output = abs(output - noise);

@@ -474,10 +474,14 @@ connectivity_matrix = get(handles.connectivity_mat,'Data');
 
 % setup node strucs and cpts for each node
 %inputs = struct('num',{1 2},'name',{'A_p' 'B_p'},'num_states',{2 2},'state_names',{{'0' '1'}},'logic_type',{2 3})
-logic_types = get(handles.logic_types,'Data');
+if strcmp(tpm_choice, tpm_choices(3)) == 1
+    logic_types = num2cell(get(handles.logic_types,'Data'));
+else
+    logic_types = cell(num_nodes,1);
+end    
 % init struct array
 nodes(2*num_nodes) = struct('num',2*num_nodes,'name',[num2str(num_nodes) '_c'],'num_states',2,...
-                            'state_names',{{'0' '1'}},'logic_type',logic_types(num_nodes),'cpt',[],...
+                            'state_names',{{'0' '1'}},'logic_type',logic_types{num_nodes},'cpt',[],...
                             'num_sys_nodes',num_nodes,'input_nodes',[]);
                         
                         
@@ -485,7 +489,7 @@ nodes(2*num_nodes) = struct('num',2*num_nodes,'name',[num2str(num_nodes) '_c'],'
 for i = 1:num_nodes
     
     nodes(i) = struct('num',i,'name',[num2str(i) '_p'],'num_states',2,...
-                            'state_names',{{'0' '1'}},'logic_type',logic_types(i),'cpt',[],...
+                            'state_names',{{'0' '1'}},'logic_type',logic_types{i},'cpt',[],...
                             'num_sys_nodes',num_nodes,'input_nodes',[]);
     
 end
@@ -494,17 +498,13 @@ end
 for i = 1:num_nodes
     
     nodes(num_nodes + i) = struct('num',num_nodes + i,'name',[num2str(i) '_c'],'num_states',2,...
-                            'state_names',{{'0' '1'}},'logic_type',logic_types(i),'cpt',[],...
+                            'state_names',{{'0' '1'}},'logic_type',logic_types{i},'cpt',[],...
                             'num_sys_nodes',num_nodes,'input_nodes',[]);
 
 	input_nodes = 1:num_nodes;
     input_nodes_indices = input_nodes(logical(connectivity_matrix(i,:)));
     nodes(num_nodes + i).input_nodes = input_nodes_indices;
-    
-%     input_nodes = nodes(input_nodes_indices);
-%     nodes(num_nodes + i).cpt = cpt_factory_mechs(nodes(num_nodes + i),input_nodes,2*num_nodes,noise);
-%     disp(nodes(num_nodes + i).cpt)
-%     test_cpt = cpt_factory_tpm(nodes(num_nodes + i), input_nodes_indices, nodes, 2*num_nodes, tpm);
+
     nodes(num_nodes + i).cpt = cpt_factory_tpm(nodes(num_nodes + i), input_nodes_indices, nodes, 2*num_nodes, tpm);
     
 %     if any(nodes(num_nodes + i).cpt ~= test_cpt)
@@ -761,7 +761,7 @@ if (filename ~= 0)
     
     tpm_def = 1;
     set(handles.net_definition_method,'Value',tpm_def);
-    net_definition_method_Callback(handles.net_definitioactn_method, eventdata, handles);
+    net_definition_method_Callback(handles.net_definition_method, eventdata, handles);
     set(handles.num_nodes,'String',num_nodes)
     num_nodes_Callback(handles.num_nodes,eventdata,handles)
     

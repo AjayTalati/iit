@@ -1,6 +1,7 @@
 function cpt = cpt_factory_tpm(this_node, inputs, nodes, num_total_nodes, tpm)
 
 % THIS FUNCTION CURRENTLY ONLY WORKS FOR BINARY NODES!
+% Because it takes the state x nodes tpm
 
 num_sys_nodes = num_total_nodes/2;
 

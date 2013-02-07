@@ -1,4 +1,4 @@
-function [Big_phi_MIP MIP Big_phi_cand MIP_cand BFCut] = MIP_search_reentry(M,N,Big_phi_M,M_IRR_M,prob_M, phi_M,options, concept_MIP_M, network)
+function [Big_phi_MIP MIP Big_phi_cand MIP_cand BFCut] = MIP_search_reentry(subsystem,N,Big_phi_M,M_IRR_M,prob_M, phi_M,options, concept_MIP_M, network)
 %%
 % Find the Big-phi MIP in a subset M
 % M: a subset where Big_phi_MIP is computed
@@ -12,12 +12,20 @@ op_big_phi = options(5);
 op_normalize = options(7);
 op_console = options(8);
 op_strongconn = options(10);
+op_removal = options(11);
 
-N_M = length(M);
+N_M = length(subsystem);
+
+if op_removal == 0 && N ~= length(subsystem)
+    M = 1:length(subsystem);
+else
+    M = subsystem;
+end  
+
 
 C = [];
 for i=1: floor(N_M/2)
-    C_temp = nchoosek(M,i);
+    C_temp = nchoosek(M,i); 
     if i == floor(N_M/2) && mod(N_M,2) == 0 
         % if M is even only half of the partitions have to be evaluated, the others already appeared 
         % eg. M1 = [1 2] -> M2 = [3 4] doesn't need to be calculated
@@ -34,7 +42,7 @@ Big_phi_cand = zeros(N_Bp,2);
 MIP_cand = cell(N_Bp,1);
 M_indexCut = zeros(N_Bp,1);
 
-whole_i = subsystem2index(M);     % Full system index
+whole_i = subsystem2index(subsystem);     % Full system index
 Big_phi_w = Big_phi_M(whole_i);
 
 phi_whole = phi_M{whole_i}(:,1)';
@@ -60,8 +68,9 @@ for j = 1:N_Bp
     end    
     for k = 1:length(phi_w_concepts)
         IRR_w = IRR_whole{k};
-        if all(ismember(IRR_w,M1)) && op_strongconn ~= 0 %~isempty(prob_M{M1_i,1}) %Larissa: Change Strongconn to removal once everything is working
+        if op_removal ~= 0 && all(ismember(IRR_w,M1)) && op_strongconn ~= 0 %~isempty(prob_M{M1_i,1}) %Larissa: Change Strongconn to removal once everything is working
             % for M1 <- M2 cut take BR of M1 and FR from M
+            % THIS DOES NOT WORK FOR REMOVALS!!
 
             indm = concept2index(IRR_w,M1);
             phi_BRcut = min(phi_M{M1_i}(indm,2), phi_M{whole_i}(concept_numind(k),3));
@@ -85,7 +94,7 @@ for j = 1:N_Bp
                 BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}}; 
                 FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}}; 
             end    
-        elseif all(ismember(IRR_w,M2)) && op_strongconn ~= 0 %~isempty(prob_M{M2_i,1})
+        elseif op_removal ~= 0 && all(ismember(IRR_w,M2)) && op_strongconn ~= 0 %~isempty(prob_M{M2_i,1})
 
             indm = concept2index(IRR_w,M2);
             phi_BRcut = min(phi_M{whole_i}(concept_numind(k),2), phi_M{M2_i}(indm,3));
@@ -291,7 +300,13 @@ for j = 1:N_Bp
     Norm = 2^min(length(M1),length(M2))-1;
     Big_phi_cand(l,1) = d_Big_phi;
     Big_phi_cand(l,2) = d_Big_phi/Norm;
-    MIP_cand{l} = M1;
+    
+    if op_removal == 0 && N ~= length(subsystem)
+        MIP_cand{l} = subsystem(M1);
+    else
+        MIP_cand{l} = M1;
+    end
+    
     M_indexCut(l) = indexCut;
 
 %         if N_M == N
@@ -315,8 +330,10 @@ else
 end
 
 MIP = MIP_cand{i_phi_min};
-M2 = pick_rest(M,MIP);
+M2 = pick_rest(subsystem,MIP);
+
 BFCut = M_indexCut(i_phi_min);
+
 
 if (op_console && Big_phi_MIP ~= 0)
     fprintf('M = %s\nMIP = %s-%s, Big_phi_MIP = %f\n',mat2str(M),mod_mat2str(MIP),mod_mat2str(M2),Big_phi_MIP);

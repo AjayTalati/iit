@@ -25,6 +25,7 @@ end
 % if parallel option is on, open a new pool
 op_parallel = in_options(1);
 op_PHIconcept_fig = 1;
+op_removal = in_options(11);
 if op_parallel
     matlabpool;
 end
@@ -161,7 +162,7 @@ for z = 1:state_max
         % find the complex
         elseif op_complex == 1
             
-            [Big_phi_M phi_M prob_M M_cell concept_MIP_M purviews_M network] = big_phi_all(network, this_state); %Larissa: this_state should be obsolete as it is in network
+            [Big_phi_M phi_M prob_M M_cell concept_MIP_M purviews_M network concept_MIP_M_subs] = big_phi_all(network, this_state); %Larissa: this_state should be obsolete as it is in network
                                                               
             % complex search
             [Big_phi_MIP MIP Complex M_i_max BFCut Big_phi_MIP_M complex_MIP_M Big_phi_MIP_all_M complex_MIP_M_all BFCut_M] = ...
@@ -184,6 +185,20 @@ for z = 1:state_max
             
             BFCut_st{z} = BFCut; %M1->M2 noised, or M1<-M2
             BFCut_M_st{z} = BFCut_M;
+            
+            % For removals, the concepts don't yet have the right node
+            % names
+            if op_removal == 0
+               for i = 1:size(Big_phi_M,1)-1 %all except full system
+                   if ~isempty(network.removal_networks{i})
+                        this_subset = network.removal_networks{i}.this_subset;
+                        for j = 1:size(purviews_M{i},1)
+                            purviews_M{i}{j} = this_subset(purviews_M{i}{j});
+                        end    
+                    end
+               end
+               concept_MIP_M = {concept_MIP_M_subs{1:end-1} concept_MIP_M{end}};
+             end    
             
             concept_MIP_M_st{z} = concept_MIP_M;
             complex_MIP_M_st{z} = complex_MIP_M;
