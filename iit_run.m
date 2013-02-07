@@ -116,6 +116,7 @@ complex_MIP_all_M_st = cell(state_max,1);
 purviews_M_st = cell(state_max,1);
 BFCut_st = cell(state_max,1);
 BFCut_M_st = cell(state_max,1);
+M_cell = cell(network.num_subsets-1,1);
 
 %% main loop over states
 

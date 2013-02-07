@@ -1016,9 +1016,9 @@ function logic_types_CellEditCallback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 logic_vec = get(hObject,'Data');
-if (eventdata.NewData < 1 || eventdata.NewData > 10)
+if (eventdata.NewData < 0 || eventdata.NewData > 30)
     
-    set(handles.warning,'String','Logic Types must be between 1 and 9')
+    set(handles.warning,'String','Logic Types must be between 1 and 29')
     logic_vec(eventdata.Indices(2)) = eventdata.PreviousData;
     set(hObject,'Data',logic_vec)
     

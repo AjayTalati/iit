@@ -23,7 +23,7 @@ if isempty(network.nodes(1).logic_type) %if tpm is loaded and logic_types are no
     excluded_nodes = setdiff(1:N,this_subset);
     %take TPM for all excluded elements = 0. 
     ind0 = find(sum(states(:,excluded_nodes),2) == 0);
-    new_tpm = tpm(ind0,this_subset);   
+    new_tpm = network.tpm(ind0,this_subset);   
 else    
     % Check remaining inputs to each node and redefine logic gates
     for i = 1:numel(this_subset)
