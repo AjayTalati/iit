@@ -74,6 +74,7 @@ elseif isempty(prob_M2)
     prob = prob_M1(:);
 else
     prob_test = bsxfun(@times,prob_M1,prob_M2);
+    prob_test = prob_test ./ sum(prob_test(:));
     prob = prob_test(:);
 end 
 %% more than one
@@ -186,6 +187,7 @@ for i = 1:num_denom_partitions % past or future
                 prob_p1 = probM1_p1;
             else
                 prob_p1 = bsxfun(@times,probM1_p1,probM2_p1); 
+                prob_p1 = prob_p1 ./ sum(prob_p1(:));
             end
             % then part 2
              %Don't flatten matrices here, because bsxfun below needs it in high dimension
@@ -195,6 +197,7 @@ for i = 1:num_denom_partitions % past or future
                 prob_p2 = probM1_p2;
             else
                 prob_p2 = bsxfun(@times,probM1_p2,probM2_p2);
+                prob_p2 = prob_p2 ./ sum(prob_p2(:));
             end
             % then multiply partition
             if isempty(prob_p1)
@@ -203,6 +206,7 @@ for i = 1:num_denom_partitions % past or future
                 prob_p = prob_p1(:);
             else
                 prob_p_test = bsxfun(@times,prob_p1,prob_p2);
+                prob_p_test = prob_p_test ./ sum(prob_p_test(:));
                 prob_p = prob_p_test(:);
             end
             

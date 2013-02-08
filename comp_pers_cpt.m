@@ -69,19 +69,21 @@ if strcmp(bf_option,'backward')
     
     prob_current_state = 1;
     
+    % Choose dimensions that are congruent with current state (dim 1 if OFF, dim 2 if ON)
     for i = 1:length(num_nodes_indices)
         
         this_node_conditioning_indices = conditioning_indices;
         this_node_conditioning_indices{numerator_nodes(i).num} = numerator_state(numerator_nodes(i).num - num_sys_nodes) + 1;
         next_num_node_distribution = numerator_nodes(i).cpt(this_node_conditioning_indices{:});
-        
+        %Larissa: This doesn't seem to do anything...
         prob_current_state = prob_current_state * sum(next_num_node_distribution(:));
 
         % marginalize over nodes not in denom, these nodes are outside the
         % system for this iteration or they are outside a partition - either
         % way we apply maxent prior/marginalization
         for j = 1:num_sys_nodes
-
+            %if j is not a denominator but it is an input to i then
+            %collapse this dimension
             if ~any(j == denom_nodes_indices) && any(j == numerator_nodes(i).input_nodes)
                 next_num_node_distribution = ...
                     sum(next_num_node_distribution,j)./size(next_num_node_distribution,j);
