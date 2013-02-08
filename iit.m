@@ -210,8 +210,6 @@ if strcmp(tpm_choice,'State X State')
     names = cell(1,tpm_size_new);
     for i = 1:tpm_size_new
         names{i} = dec2bin(i-1,nNodes);
-% LarissaTPM = char(trans2(i-1,num_nodes)'+'0');
-
     end
     set(handles.TPM,'ColumnName',names,'RowName',names);
     set(handles.TPM,'ColumnEditable',true(1,tpm_size_new));
@@ -232,7 +230,6 @@ elseif strcmp(tpm_choice,'State X Node')
     row_names = cell(1,2^nNodes);
     for i = 1:2^nNodes
         row_names{i} = dec2bin(i-1,nNodes);
-        % LarissaTPM = char(trans2(i-1,num_nodes)'+'0');
     end
     set(handles.TPM,'RowName',row_names);
     col_names = cell(1,nNodes);
@@ -445,7 +442,7 @@ if size(tpm,2) == num_states
             for k = 1:num_states
                 
                 state = dec2bin(k-1,num_nodes);
-                % LarissaTPM = char(trans2(i-1,num_nodes)'+'0');
+                
                 if strcmp(state(j),'1')
                     new_tpm(i,j) = new_tpm(i,j) + tpm(i,k);
                 end
@@ -822,7 +819,7 @@ if strcmp(tpm_choice,'State X State') && size(tpm,2) == num_nodes
         for j = 1:num_states
             
             state = num2str(dec2bin(j-1,num_nodes));
-            % LarissaTPM = char(trans2(i-1,num_nodes)'+'0');
+            
             for k = 1:num_nodes
                 if strcmp(state(k),'1')
                     new_tpm(i,j) = new_tpm(i,j) * tpm(i,k);
@@ -845,7 +842,7 @@ elseif strcmp(tpm_choice,'State X Node') && size(tpm,2) == num_states
             for k = 1:num_states
                 
                 state = dec2bin(k-1,num_nodes);
-                % LarissaTPM = char(trans2(i-1,num_nodes)'+'0');
+                
                 if strcmp(state(j),'1')
                     new_tpm(i,j) = new_tpm(i,j) + tpm(i,k);
                 end
