@@ -8,10 +8,10 @@ function [Big_phi_MIP MIP Big_phi_cand MIP_cand BFCut] = MIP_search_reentry(subs
 % phi - phi values for each purview in prob
 
 %%
-op_small_phi = options(4);
 op_big_phi = options(5);
 op_normalize = options(7);
 op_console = options(8);
+op_strongconn = options(10);
 op_removal = options(11);
 
 N_M = length(subsystem);
@@ -68,69 +68,57 @@ for j = 1:N_Bp
     end    
     for k = 1:length(phi_w_concepts)
         IRR_w = IRR_whole{k};
-        if all(ismember(IRR_w,M1)) 
+        if op_removal ~= 0 && all(ismember(IRR_w,M1)) && op_strongconn ~= 0 %~isempty(prob_M{M1_i,1}) %Larissa: Change Strongconn to removal once everything is working
             % for M1 <- M2 cut take BR of M1 and FR from M
-            if op_removal == 0 || isempty(prob_M{M1_i,1})
-                % need to compute R/Rf for BRcut and R/Rb for FRcut
-                [phi_BRcut_BR, cutpdist, denom_pnew, network] = phi_comp_ex_unidir(M,M1,M2,IRR_w,network.current_state,network,'backward','BRcut');
-                [phi_FRcut_FR, cutfdist, denom_fnew, network] = phi_comp_ex_unidir(M,M1,M2,IRR_w,network.current_state,network,'forward','FRcut');
-                phi_BRcut = min(phi_BRcut_BR, phi_M{whole_i}(concept_numind(k),3));
-                phi_FRcut = min(phi_M{whole_i}(concept_numind(k),2),phi_FRcut_FR);
-                   
-            else  % M1 complex was already computed
-                indm = concept2index(IRR_w,M1);
-                phi_BRcut = min(phi_M{M1_i}(indm,2), phi_M{whole_i}(concept_numind(k),3));
-                phi_FRcut = min(phi_M{whole_i}(concept_numind(k),2), phi_M{M1_i}(indm,3));
-                if op_big_phi ~= 0 %L1 or Earthmover
-                    %Larissa: distributions that are identical anyways are empty
-        %                         denom_p = sort([concept_MIP_M{M1_i}{indm}{:,1,1}]);
-        %                         denom_f = sort([concept_MIP_M{M1_i}{indm}{:,1,2}]);
+            % THIS DOES NOT WORK FOR REMOVALS!!
 
-                    cutpdist = expand_prob(prob_M{M1_i,1}{indm}{1},M,M1);
-                    %compute the max ent forward dist (or the marginal forward) of M2
-                    forward_max_ent_M2 = comp_pers_cpt(network.nodes,[],M2,[],'forward');
-                    cutfdist = expand_prob_general(prob_M{M1_i,1}{indm}{2},M,M1,forward_max_ent_M2(:));               
-                end                       
-            end    
-            if op_big_phi ~= 0
+            indm = concept2index(IRR_w,M1);
+            phi_BRcut = min(phi_M{M1_i}(indm,2), phi_M{whole_i}(concept_numind(k),3));
+            phi_FRcut = min(phi_M{whole_i}(concept_numind(k),2), phi_M{M1_i}(indm,3));
+            if op_big_phi ~= 0 %L1 or Earthmover
+                %Larissa: distributions that are identical anyways are empty
+    %                         denom_p = sort([concept_MIP_M{M1_i}{indm}{:,1,1}]);
+    %                         denom_f = sort([concept_MIP_M{M1_i}{indm}{:,1,2}]);
+
+                cutpdist = expand_prob(prob_M{M1_i,1}{indm}{1},M,M1);
+                BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} cutpdist};
+                %compute the max ent forward dist (or the marginal forward) of M2
+                forward_max_ent_M2 = comp_pers_cpt(network.nodes,[],M2,[],'forward');
+                cutfdist = expand_prob_general(prob_M{M1_i,1}{indm}{2},M,M1,forward_max_ent_M2(:));               
+                FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} cutfdist};
+                
                 BRcut_phi(k) = phi_BRcut;
                 FRcut_phi(k) = phi_FRcut;
-                BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} cutpdist};
-                FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} cutfdist};
+                
                 %Larissa: These have to be there. Maybe there is a more efficient way though
                 BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}}; 
                 FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}}; 
             end    
-        elseif all(ismember(IRR_w,M2))
-            
-            if op_removal == 0 || isempty(prob_M{M2_i,1})
-                % need to compute R/Rf for BRcut and R/Rb for FRcut
-                [phi_BRcut_FR, cutfdist, denom_pnew, network] = phi_comp_ex_unidir(M,M1,M2,IRR_w,network.current_state,network,'forward','BRcut');
-                [phi_FRcut_BR, cutpdist, denom_fnew, network] = phi_comp_ex_unidir(M,M1,M2,IRR_w,network.current_state,network,'backward','FRcut');
-                phi_BRcut = min(phi_M{whole_i}(concept_numind(k),2), phi_BRcut_FR);
-                phi_FRcut = min(phi_FRcut_BR, phi_M{whole_i}(concept_numind(k),3));
-                
-            else  % M2 complex was already computed
-                indm = concept2index(IRR_w,M2);
-                phi_BRcut = min(phi_M{whole_i}(concept_numind(k),2), phi_M{M2_i}(indm,3));
-                phi_FRcut = min(phi_M{M2_i}(indm,2), phi_M{whole_i}(concept_numind(k),3));
-                if op_big_phi ~= 0 %L1 or Earthmover
-                    %compute the max ent forward dist (or the marginal forward) of M1
-                    forward_max_ent_M1 = comp_pers_cpt(network.nodes,[],M1,[],'forward');
-                    cutfdist = expand_prob_general(prob_M{M2_i,1}{indm}{2},M,M2,forward_max_ent_M1(:));
-                    cutpdist = expand_prob(prob_M{M2_i,1}{indm}{1},M,M2); 
-                end   
-            end
+        elseif op_removal ~= 0 && all(ismember(IRR_w,M2)) && op_strongconn ~= 0 %~isempty(prob_M{M2_i,1})
+
+            indm = concept2index(IRR_w,M2);
+            phi_BRcut = min(phi_M{whole_i}(concept_numind(k),2), phi_M{M2_i}(indm,3));
+            phi_FRcut = min(phi_M{M2_i}(indm,2), phi_M{whole_i}(concept_numind(k),3));
             if op_big_phi ~= 0 %L1 or Earthmover
-                    BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} cutfdist}; %future might have changed
-                    FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} cutpdist}; %back might have changed, future is the same 
-                    BRcut_phi(k) = phi_BRcut;
-                    FRcut_phi(k) = phi_FRcut;
-                    %Larissa: These have to be there. Maybe there is a more efficient way though
-                    BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}}; %back is the same
-                    FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}}; %back might have changed, future is the same
-            end 
-             
+                %Larissa: distributions that are identical anyways
+                %are empty for option 1
+    %                         denom_p = sort([concept_MIP_M{M2_i}{indm}{:,1,1}]);
+    %                         denom_f = sort([concept_MIP_M{M2_i}{indm}{:,1,2}]); 
+    
+                %compute the max ent forward dist (or the marginal forward) of M1
+                forward_max_ent_M1 = comp_pers_cpt(network.nodes,[],M1,[],'forward');
+                cutfdist = expand_prob_general(prob_M{M2_i,1}{indm}{2},M,M2,forward_max_ent_M1(:));
+                BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} cutfdist}; %future might have changed
+                cutpdist = expand_prob(prob_M{M2_i,1}{indm}{1},M,M2); 
+                FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} cutpdist}; %back might have changed, future is the same
+
+                BRcut_phi(k) = phi_BRcut;
+                FRcut_phi(k) = phi_FRcut;
+
+                %Larissa: These have to be there. Maybe there is a more efficient way though
+                BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}}; %back is the same
+                FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}}; %back might have changed, future is the same
+            end   
         else % if numerator has elements from both sides
             denom_p = sort([concept_MIP_M{whole_i}{concept_numind(k)}{:,1,1}]);    %Larissa: The sort may be important 
             denom_f = sort([concept_MIP_M{whole_i}{concept_numind(k)}{:,1,2}]);
@@ -232,17 +220,15 @@ for j = 1:N_Bp
         BRcut_Phi = 0;
         FRcut_Phi = 0;
         for k = 1:length(phi_w_concepts) %Larissa: Can maybe made more efficient if cut_phi is 0, cause then I don't need to do the distance
-            if op_small_phi == 1    %L1 for distributions = distances between concepts in qualia space and on constellation
-                BRcut_Phi = BRcut_Phi + L1norm(BRcut_dist{k,1,1},BRcut_dist{k,1,2})*BRcut_phi(k) + L1norm(BRcut_dist{k,1,1},back_maxent)*(phi_w_concepts(k)-BRcut_phi(k));
-                BRcut_Phi = BRcut_Phi + L1norm(BRcut_dist{k,2,1},BRcut_dist{k,2,2})*BRcut_phi(k) + L1norm(BRcut_dist{k,2,1},forward_maxent)*(phi_w_concepts(k)-BRcut_phi(k));
-                FRcut_Phi = FRcut_Phi + L1norm(FRcut_dist{k,1,1},FRcut_dist{k,1,2})*FRcut_phi(k) + L1norm(FRcut_dist{k,1,1},back_maxent)*(phi_w_concepts(k)-FRcut_phi(k));
-                FRcut_Phi = FRcut_Phi + L1norm(FRcut_dist{k,2,1},FRcut_dist{k,2,2})*FRcut_phi(k) + L1norm(FRcut_dist{k,2,1},forward_maxent)*(phi_w_concepts(k)-FRcut_phi(k));
-            elseif op_small_phi == 2 %L1 only on constellations     
+%                 BRcut_Phi = BRcut_Phi + L1norm(BRcut_dist{k,1,1},BRcut_dist{k,1,2})*BRcut_phi(k) + L1norm(BRcut_dist{k,1,1},back_maxent)*(phi_w_concepts(k)-BRcut_phi(k));
+%                 BRcut_Phi = BRcut_Phi + L1norm(BRcut_dist{k,2,1},BRcut_dist{k,2,2})*BRcut_phi(k) + L1norm(BRcut_dist{k,2,1},forward_maxent)*(phi_w_concepts(k)-BRcut_phi(k));
+%                 FRcut_Phi = FRcut_Phi + L1norm(FRcut_dist{k,1,1},FRcut_dist{k,1,2})*FRcut_phi(k) + L1norm(FRcut_dist{k,1,1},back_maxent)*(phi_w_concepts(k)-FRcut_phi(k));
+%                 FRcut_Phi = FRcut_Phi + L1norm(FRcut_dist{k,2,1},FRcut_dist{k,2,2})*FRcut_phi(k) + L1norm(FRcut_dist{k,2,1},forward_maxent)*(phi_w_concepts(k)-FRcut_phi(k));
+%                 
                 BRcut_Phi = BRcut_Phi + emd_hat_gd_metric_mex(BRcut_dist{k,1,1},BRcut_dist{k,1,2},gen_dist_matrix(length(BRcut_dist{k,1,1})))*BRcut_phi(k) + emd_hat_gd_metric_mex(BRcut_dist{k,1,1},back_maxent,gen_dist_matrix(length(BRcut_dist{k,1,1})))*(phi_w_concepts(k)-BRcut_phi(k));
                 BRcut_Phi = BRcut_Phi + emd_hat_gd_metric_mex(BRcut_dist{k,2,1},BRcut_dist{k,2,2},gen_dist_matrix(length(BRcut_dist{k,1,1})))*BRcut_phi(k) + emd_hat_gd_metric_mex(BRcut_dist{k,2,1},forward_maxent,gen_dist_matrix(length(BRcut_dist{k,1,1})))*(phi_w_concepts(k)-BRcut_phi(k));
                 FRcut_Phi = FRcut_Phi + emd_hat_gd_metric_mex(FRcut_dist{k,1,1},FRcut_dist{k,1,2},gen_dist_matrix(length(BRcut_dist{k,1,1})))*FRcut_phi(k) + emd_hat_gd_metric_mex(FRcut_dist{k,1,1},back_maxent,gen_dist_matrix(length(BRcut_dist{k,1,1})))*(phi_w_concepts(k)-FRcut_phi(k));
                 FRcut_Phi = FRcut_Phi + emd_hat_gd_metric_mex(FRcut_dist{k,2,1},FRcut_dist{k,2,2},gen_dist_matrix(length(BRcut_dist{k,1,1})))*FRcut_phi(k) + emd_hat_gd_metric_mex(FRcut_dist{k,2,1},forward_maxent,gen_dist_matrix(length(BRcut_dist{k,1,1})))*(phi_w_concepts(k)-FRcut_phi(k));
-            end    
         end 
         [d_Big_phi, indexCut] = min([BRcut_Phi, FRcut_Phi]);
           

@@ -9,6 +9,16 @@ num_states_subsys = prod([network.nodes(subsystem).num_states]);
 
 op_single = network.options(12);     % just needed for console output
 op_console = network.options(8);   %(1: display the results, 0: not)
+op_removal = network.options(11);
+
+if op_removal == 0
+   % % make new function similar to big_phi_all
+                % but: cut J and redefine nodes and mechanisms for each
+                % subset --> BRs and FRs cannot be passed (but with parfor
+                % that isn't done anyways. 
+    % Already here the nodes have to be changed!!! For the correct max
+    % entropty distribution
+end
 %% numerator data
 % ???This is where we build subsets_subsys of purviews (power-set exclude empty
 % set)
