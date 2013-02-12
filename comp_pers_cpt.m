@@ -32,7 +32,7 @@ if strcmp(bf_option,'backward')
         
         perspective_dim_sizes = ones(1,num_sys_nodes);
         perspective_dim_sizes(denom_nodes_indices) = [denom_nodes.num_states];
-        perspective = ones(perspective_dim_sizes)./prod(perspective_dim_sizes);
+        perspective = ones([perspective_dim_sizes, 1])./prod(perspective_dim_sizes);    %The additional 1 is to take care of selfloops.
         return
         
     end
