@@ -1,4 +1,4 @@
-function iit_run(tpm, in_connect_mat, current_state, in_noise, in_options, in_nodes)
+function iit_run(tpm, in_connect_mat, current_state, in_noise, in_options, in_nodes, past_state)
 % IIT_RUN Computes concepts, small and big phi, and partition information
 % for all subsets of a system (exluding the empty set) over a binary network.
 %
@@ -15,6 +15,9 @@ function iit_run(tpm, in_connect_mat, current_state, in_noise, in_options, in_no
 %
 %   see also set_options
 
+if nargin < 7
+    past_state = [];
+end    
 %% parallel computing
 % in_options(9) = 0;
 % if a pool is open, close it
@@ -25,7 +28,7 @@ end
 % if parallel option is on, open a new pool
 op_parallel = in_options(1);
 op_PHIconcept_fig = 1;
-op_removal = in_options(11);
+op_extNodes = in_options(11);
 if op_parallel
     matlabpool;
 end
@@ -48,6 +51,7 @@ network.tpm = tpm;
 network.full_system = 1:num_nodes;
 network.num_subsets = 2^num_nodes;
 network.current_state = current_state;
+network.past_state = past_state;
 network.num_states = prod([network.nodes(network.full_system).num_states]);
 
 % get rid of everyting below
@@ -189,7 +193,7 @@ for z = 1:state_max
             
             % For removals, the concepts don't yet have the right node
             % names
-            if op_removal == 0
+            if op_extNodes == 1
                for i = 1:size(Big_phi_M,1)-1 %all except full system
                    if ~isempty(network.removal_networks{i})
                         this_subset = network.removal_networks{i}.this_subset;

@@ -3,6 +3,16 @@ function [CutDistr] = PHI_Cut_concepts(M,MIP,BFCut,M_IRR_M,prob_M, phi_M,concept
 % Recompute distributrions of PHI cut
 %%
 op_strongconn = network.options(10);
+op_extNodes = network.options(11);
+
+
+if op_extNodes == 0
+    extNodes = setdiff(network.full_system, M);
+else
+    extNodes = [];
+end  
+
+
 whole_i = subsystem2index(M);     % Full system index
 
 phi_whole = phi_M{whole_i}(:,1)';
@@ -31,7 +41,7 @@ if BFCut == 1 %M1 <- M2 is cut
             %Larissa: distributions that are identical anyways
 
             %compute the max ent forward dist (or the marginal forward) of M1
-            forward_max_ent_M1 = comp_pers_cpt(network.nodes,[],M1,[],'forward');
+            forward_max_ent_M1 = comp_pers_cpt(network.nodes,[],M1,network.current_state,'forward');
             cutfdist = expand_prob_general(prob_M{M2_i,1}{indm}{2},M,M2,forward_max_ent_M1(:));
             BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}}; %back is the same
             BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} cutfdist}; %future might have changed
@@ -81,7 +91,7 @@ else %M1 -> M2 is cut
             indm = concept2index(IRR_w,M1);
             %Larissa: distributions that are identical anyways are empty
             %compute the max ent forward dist (or the marginal forward) of M2
-            forward_max_ent_M2 = comp_pers_cpt(network.nodes,[],M2,[],'forward');
+            forward_max_ent_M2 = comp_pers_cpt(network.nodes,[],M2,network.current_state,'forward');
             cutfdist = expand_prob_general(prob_M{M1_i,1}{indm}{2},M,M1,forward_max_ent_M2(:)); 
             FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}}; 
             FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} cutfdist};

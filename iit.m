@@ -68,6 +68,8 @@ set(handles.logic_types,'Visible','Off')
 set(handles.logic_text,'Visible','Off')
 set(handles.noise,'Visible','Off')
 set(handles.noise_text,'Visible','Off')
+%set(handles.past_state,'Visible','Off')
+%set(handles.past_state_text,'Visible','Off')
 
 
 % UIWAIT makes iit wait for user response (see UIRESUME)
@@ -105,6 +107,7 @@ else
     tpm_choice = tpm_choices{get(handles.tpm_type_menu,'Value')};
     updateTPMview(handles, tpm_choice)
     updateCurrentStateView(handles)
+    updatePastStateView(handles)
     updateLogicTypesView(handles)
     updateConnectivityView(handles)
 end
@@ -271,7 +274,31 @@ end
 set(handles.cur_state,'Data',cur_state_new);
 set(handles.cur_state,'ColumnEditable',true(1,nNodes));
 
+% redraw the past state based on new input Larissa: only for Freeze option
+function updatePastStateView(handles)
 
+nNodes = str2double(get(handles.num_nodes,'String'));
+
+% update current state table
+
+past_state_old = get(handles.past_state,'Data');
+past_state_size_old = length(past_state_old);
+
+% increase size
+if nNodes > past_state_size_old
+    
+    past_state_new = zeros(1,nNodes);
+    past_state_new(1:past_state_size_old) = past_state_old;
+
+% decrease size
+else
+    
+    past_state_new = past_state_old(1:nNodes);
+    
+end
+
+set(handles.past_state,'Data',past_state_new);
+set(handles.past_state,'ColumnEditable',true(1,nNodes));
 
 % --- Executes on selection change in view_select.
 function view_select_Callback(hObject, eventdata, handles)
@@ -417,12 +444,12 @@ op_ave = get(handles.state_option_menu,'Value') - 1;
 op_parallel = get(handles.parallel_option_menu,'Value') - 1;
 op_parfor = get(handles.parfor_option_menu,'Value');
 op_strongconn = get(handles.StrongConn_option_menu,'Value') - 1;
-op_removal = get(handles.RemoveNoise_option_menu,'Value') - 1;
+op_extNodes = get(handles.ExtNodes_option_menu,'Value') - 1;
 
 %options = [3 1 2 1 1 0 0 1 1 0 op_big_phi 0 ...
 %           op_normalize_big_phi op_normalize_small_phi op_complex op_small_phi op_ave op_parallel];
 options = [op_parallel op_ave op_complex op_small_phi op_big_phi op_normalize_small_phi ...
-           op_normalize_big_phi 0 op_parfor op_strongconn op_removal 1 1 0 0 1 1 0];
+           op_normalize_big_phi 0 op_parfor op_strongconn op_extNodes 1 1 0 0 1 1 0];
        
 
 tpm_choices = cellstr(get(handles.tpm_type_menu,'String'));
@@ -468,6 +495,21 @@ tpm = permuted_tpm;
     
 
 current_state = get(handles.cur_state,'Data')';
+if op_extNodes == 0
+    % Larissa: Check if past_state could be past state of present state!!
+    past_state = get(handles.past_state,'Data');
+    past_index = state2index(past_state,2.*ones(size(past_state)));
+    state_reachable = isequal(logical(tpm(past_index,:)), logical(current_state)');
+    
+    if state_reachable == 0
+        set(handles.warning,'String','Current and past state are not congruent!');
+        return;
+    else
+        set(handles.warning,'String','');
+    end 
+else
+    past_state = [];
+end    
 noise = str2double(get(handles.noise,'String'));
 
 connectivity_matrix = get(handles.connectivity_mat,'Data');
@@ -521,7 +563,7 @@ delete(explorer_handle)
 
 drawnow
 
-iit_run(tpm,connectivity_matrix,current_state,noise,options,nodes);
+iit_run(tpm,connectivity_matrix,current_state,noise,options,nodes,past_state);
 
 
 
@@ -636,6 +678,35 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+% --- Executes on selection change in externalnodes_menu.
+function externalnodes_menu_Callback(hObject, eventdata, handles)
+% hObject    handle to normalization_menu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns normalization_menu contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from
+%        normalization_menu
+op_extNodes = get(handles.ExtNodes_option_menu,'Value') - 1;
+if op_extNodes > 0
+    set(handles.past_state,'Visible','Off')
+    set(handles.past_state_text,'Visible','Off')
+else
+    set(handles.past_state,'Visible','On')
+    set(handles.past_state_text,'Visible','On')
+end    
+
+% --- Executes during object creation, after setting all properties.
+function externalnodes_menu_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to normalization_menu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 
 % --- Executes on selection change in normalization_menu.
 function normalization_menu_Callback(hObject, eventdata, handles)
@@ -717,6 +788,28 @@ else
     
 end
 
+% --- Executes when entered data in editable cell(s) in past_state.
+function past_state_CellEditCallback(hObject, eventdata, handles)
+% hObject    handle to cur_state (see GCBO)
+% eventdata  structure with the following fields (see UITABLE)
+%	Indices: row and column indices of the cell(s) edited
+%	PreviousData: previous data for the cell(s) edited
+%	EditData: string(s) entered by the user
+%	NewData: EditData or its converted form set on the Data property. Empty if Data was not changed
+%	Error: error string when failed to convert EditData to appropriate value for Data
+% handles    structure with handles and user data (see GUIDATA)
+
+state_vec = get(hObject,'Data');
+if (eventdata.NewData ~= 0 && eventdata.NewData ~= 1)
+    
+    set(handles.warning,'String','Node states can only be 0 or 1')
+    state_vec(eventdata.Indices(2)) = eventdata.PreviousData;
+    set(hObject,'Data',state_vec)
+else
+    
+    set(handles.warning,'String','');
+    
+end
 
 % --- Executes on button press in upload_tpm.
 function upload_tpm_Callback(hObject, eventdata, handles)
@@ -753,6 +846,7 @@ if (filename ~= 0)
         end
 
         updateCurrentStateView(handles)
+        updatePastStateView(handles)
         
         set(handles.warning,'String','');
     else
@@ -877,16 +971,6 @@ function NetworkDefinition_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 
-% --- Executes on selection change in listbox4.
-function listbox4_Callback(hObject, eventdata, handles)
-% hObject    handle to listbox4 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns listbox4 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from listbox4
-
-
 % --- Executes when entered data in editable cell(s) in connectivity_mat.
 function connectivity_mat_CellEditCallback(hObject, eventdata, handles)
 % hObject    handle to connectivity_mat (see GCBO)
@@ -948,6 +1032,7 @@ if (filename ~= 0)
             set(handles.connectivity_mat,'Data',connectivity_mat)
             
             updateCurrentStateView(handles)
+            updatePastStateView(handles)
             updateTPMview(handles,tpm_choice)
             updateConnectivityView(handles);
             set(handles.warning,'String','');
@@ -1099,6 +1184,7 @@ logic_types = get(handles.logic_types,'Data');
 noise = get(handles.noise,'String');
 connectivity_mat = get(handles.connectivity_mat,'Data');
 cur_state = get(handles.cur_state,'Data');
+past_state = get(handles.past_state,'Data');
 net_definition = get(handles.net_definition_method,'Value');
 
 options_handles = findobj('Style','popupmenu','Parent',handles.Options);
@@ -1113,7 +1199,7 @@ for i = 1:length(options_handles)
 end
     
     
-variable_names = {'tpm','tpm_view','logic_types','noise','connectivity_mat','cur_state','options_tags','options_values','net_definition'};
+variable_names = {'tpm','tpm_view','logic_types','noise','connectivity_mat','cur_state','past_state','options_tags','options_values','net_definition'};
 uisave(variable_names);
 
 
@@ -1168,6 +1254,10 @@ if (filename ~= 0)
         set(handles.cur_state,'Data',cur_state);
     end
     
+    if exist('past_state')
+        set(handles.past_state,'Data',past_state);
+    end
+    
     if exist('connectivity_mat')
 
             set(handles.connectivity_mat,'Data',connectivity_mat)
@@ -1197,24 +1287,8 @@ if (filename ~= 0)
     net_definition_method_Callback(hObject, eventdata, handles);
         
     updateCurrentStateView(handles)
+    updatePastStateView(handles)
     updateConnectivityView(handles);
     updateLogicTypesView(handles);
         
 end
-
-
-% --- Executes on key press with focus on big_phi_alg_menu and none of its controls.
-function big_phi_alg_menu_KeyPressFcn(hObject, eventdata, handles)
-% hObject    handle to big_phi_alg_menu (see GCBO)
-% eventdata  structure with the following fields (see UICONTROL)
-%	Key: name of the key that was pressed, in lower case
-%	Character: character interpretation of the key(s) that was pressed
-%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --------------------------------------------------------------------
-function Untitled_1_Callback(hObject, eventdata, handles)
-% hObject    handle to Untitled_1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
