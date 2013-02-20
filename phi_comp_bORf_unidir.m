@@ -51,22 +51,22 @@ otherM1 = sum(2.^(denomM1-1))+1;
 otherM2 = sum(2.^(denomM2-1))+1;    
 
 if strcmp(bf_option,'backward')
-    if isempty(BRs{currentM1,otherM1}) && otherM1 > 1
+    if isempty(BRs{currentM1,otherM1})
         BRs{currentM1,otherM1} = comp_pers_cpt(network.nodes,numeratorM1,denomM1,whole_sys_state,bf_option,extNodes,network.past_state);
     end
     prob_M1 = BRs{currentM1,otherM1};
     
-    if isempty(BRs{currentM2,otherM2}) && otherM2 > 1
+    if isempty(BRs{currentM2,otherM2})
        BRs{currentM2,otherM2} = comp_pers_cpt(network.nodes,numeratorM2,denomM2,whole_sys_state,bf_option,extNodes,network.past_state);
     end
     prob_M2 = BRs{currentM2,otherM2};
 elseif strcmp(bf_option,'forward')
-    if isempty(FRs{currentM1,otherM1}) && otherM1 > 1
+    if isempty(FRs{currentM1,otherM1})
         FRs{currentM1,otherM1} = comp_pers_cpt(network.nodes,numeratorM1,denomM1,whole_sys_state,bf_option,extNodes,network.past_state);
     end
     prob_M1 = FRs{currentM1,otherM1};
    
-    if isempty(FRs{currentM2,otherM2}) && otherM2 > 1
+    if isempty(FRs{currentM2,otherM2})
        FRs{currentM2,otherM2} = comp_pers_cpt(network.nodes,numeratorM2,denomM2,whole_sys_state,bf_option,extNodes,network.past_state);
     end
     prob_M2 = FRs{currentM2,otherM2};
@@ -139,44 +139,44 @@ for i = 1:num_denom_partitions % past or future
             otherM2_2 = sum(2.^(denomM2_part2-1))+1;
         
             if strcmp(bf_option,'backward')
-                if isempty(BRs{currentM1_1,otherM1_1}) && otherM1_1 > 1
+                if isempty(BRs{currentM1_1,otherM1_1})
                     BRs{currentM1_1,otherM1_1} = comp_pers_cpt(network.nodes,numeratorM1_part1,denomM1_part1,whole_sys_state,bf_option,extNodes,network.past_state);
                 end
                 probM1_p1 = BRs{currentM1_1,otherM1_1};
                 
-                if isempty(BRs{currentM1_2,otherM1_2}) && otherM1_2 > 1
+                if isempty(BRs{currentM1_2,otherM1_2})
                     BRs{currentM1_2,otherM1_2} = comp_pers_cpt(network.nodes,numeratorM1_part2,denomM1_part2,whole_sys_state,bf_option,extNodes,network.past_state);
                 end
                 probM1_p2 = BRs{currentM1_2,otherM1_2};
                 
-                if isempty(BRs{currentM2_1,otherM2_1}) && otherM2_1 > 1
+                if isempty(BRs{currentM2_1,otherM2_1})
                     BRs{currentM2_1,otherM2_1} = comp_pers_cpt(network.nodes,numeratorM2_part1,denomM2_part1,whole_sys_state,bf_option,extNodes,network.past_state);
                 end
                 probM2_p1 = BRs{currentM2_1,otherM2_1};
                 
-                if isempty(BRs{currentM2_2,otherM2_2}) && otherM2_2 > 1
+                if isempty(BRs{currentM2_2,otherM2_2})
                     BRs{currentM2_2,otherM2_2} = comp_pers_cpt(network.nodes,numeratorM2_part2,denomM2_part2,whole_sys_state,bf_option,extNodes,network.past_state);
                 end
                 probM2_p2 = BRs{currentM2_2,otherM2_2};
 
             elseif strcmp(bf_option,'forward')
 
-                if isempty(FRs{currentM1_1,otherM1_1}) && otherM1_1 > 1
+                if isempty(FRs{currentM1_1,otherM1_1})
                     FRs{currentM1_1,otherM1_1} = comp_pers_cpt(network.nodes,numeratorM1_part1,denomM1_part1,whole_sys_state,bf_option,extNodes,network.past_state);
                 end
                 probM1_p1 = FRs{currentM1_1,otherM1_1};
                 
-                if isempty(FRs{currentM1_2,otherM1_2}) && otherM1_2 > 1
+                if isempty(FRs{currentM1_2,otherM1_2})
                     FRs{currentM1_2,otherM1_2} = comp_pers_cpt(network.nodes,numeratorM1_part2,denomM1_part2,whole_sys_state,bf_option,extNodes,network.past_state);
                 end
                 probM1_p2 = FRs{currentM1_2,otherM1_2};
                 
-                if isempty(FRs{currentM2_1,otherM2_1}) && otherM2_1 > 1
+                if isempty(FRs{currentM2_1,otherM2_1})
                     FRs{currentM2_1,otherM2_1} = comp_pers_cpt(network.nodes,numeratorM2_part1,denomM2_part1,whole_sys_state,bf_option,extNodes,network.past_state);
                 end
                 probM2_p1 = FRs{currentM2_1,otherM2_1};
                 
-                if isempty(FRs{currentM2_2,otherM2_2}) && otherM2_2 > 1
+                if isempty(FRs{currentM2_2,otherM2_2})
                     FRs{currentM2_2,otherM2_2} = comp_pers_cpt(network.nodes,numeratorM2_part2,denomM2_part2,whole_sys_state,bf_option,extNodes,network.past_state);
                 end
                 probM2_p2 = FRs{currentM2_2,otherM2_2};

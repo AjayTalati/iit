@@ -25,7 +25,7 @@ else
 end    
 
 %% unpartitioned transition repertoire
-current = sum(2.^(numerator-1))+1; other = sum(2.^(denom-1))+1; %Larissa: This is probably a step where only binary works!
+current = sum(2.^(numerator-1))+1; other = sum(2.^(denom-1))+1; %Larissa: This is probably a step where only binary works!  
 
 if (bf == 1)
     if isempty(BRs{current,other})
@@ -42,7 +42,7 @@ end
 prob = cell(2,1);
 prob{bf} = prob_w(:);
 if bf == 1 %backward is calculated, forward is maxent
-    forward_maxent_dist = comp_pers_cpt(network.nodes,[],denom,[],'forward',extNodes);
+    forward_maxent_dist = comp_pers_cpt(network.nodes,[],denom,whole_sys_state,'forward',extNodes);
     prob{2} = forward_maxent_dist;
 elseif bf == 2
     uniform_dist = ones(size(prob{bf}))/length(prob{bf});
@@ -100,7 +100,7 @@ for i = 1:num_denom_partitions % past or future
             
 %             prob_p = prob_prod_comp(prob_p1(:),prob_p2(:),denom,denom_part1,0);
 
-            if isempty(prob_p1)
+            if isempty(prob_p1) %This happens if denominator is empty, i.e. there is no distribution
                 prob_p = prob_p2(:);
             elseif isempty(prob_p2)
                 prob_p = prob_p1(:);
