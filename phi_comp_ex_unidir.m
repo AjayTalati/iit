@@ -17,7 +17,7 @@ else
     extNodes = [];
 end 
 
-phi_MIP = zeros(num_states_subsys-1,1);
+phi_MIP = zeros(num_states_subsys-1,2);
 prob_cand = cell(num_states_subsys-1,1);
 
 for i=1: num_states_subsys-1
@@ -26,14 +26,18 @@ for i=1: num_states_subsys-1
     denom = subsets_subsys{i};
     if strcmp(bf_option,'backward')
         if nnz(sum(network.connect_mat(numerator,denom),1) == 0) == 0 % all denom is input of numerator (numerator) --> phiBR
-            [phi_MIP(i) prob_cand{i} network] = phi_comp_bORf_unidir(subsystem,M1,M2,numerator,denom,whole_sys_state,network,bf_option,bfcut_option);
+            [phi_temp, prob_temp ,~,~, network] = phi_comp_bORf(subsystem,numerator,denom,whole_sys_state,network,1,M1,M2,bfcut_option);
+            phi_MIP(i) = phi_temp(1);
+            prob_cand{i} = prob_temp{1};
         else 
             uniform_dist = ones(num_states_subsys,1)/num_states_subsys;
             prob_cand{i} = uniform_dist;
         end
     elseif strcmp(bf_option,'forward')
         if nnz(sum(network.connect_mat(denom,numerator),2) == 0) == 0 % denom is output
-            [phi_MIP(i) prob_cand{i} network] = phi_comp_bORf_unidir(subsystem,M1,M2,numerator,denom,whole_sys_state,network,bf_option,bfcut_option);
+            [phi_temp, prob_temp ,~,~, network] = phi_comp_bORf(subsystem,numerator,denom,whole_sys_state,network,2,M1,M2,bfcut_option);
+            phi_MIP(i) = phi_temp(2);
+            prob_cand{i} = prob_temp{2};
         else 
             forward_maxent_dist = comp_pers_cpt(network.nodes,[],subsystem,whole_sys_state,'forward',extNodes);
             prob_cand{i} = forward_maxent_dist(:);

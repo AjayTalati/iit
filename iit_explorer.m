@@ -403,7 +403,7 @@ guidata(gcf,handles)
 subset_index = handles.data.subset_index;
 state_index = handles.data.state_index;
 
-if isempty(handles.data.Complex{state_index})
+if isempty(nnz(cell2mat(handles.data.BFCut_M{1})))
     set(handles.overview_axes_panel,'Visible','off')
     set(handles.overview_axes_text,'String','This state in not realizable.','Visible','on')
     return

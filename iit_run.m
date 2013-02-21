@@ -221,8 +221,8 @@ for z = 1:state_max
 
         %BFcut not in rewrap_data, but then we need to restructure this
         %anyways
-        output_data.results.state(z) = rewrap_data(Big_phi_M, phi_M, prob_M, M_cell, concept_MIP_M, purviews_M,...
-                    Big_phi_MIP, MIP, Complex, M_i_max,  Big_phi_MIP_M, complex_MIP_M, Big_phi_MIP_all_M, complex_MIP_M_all);
+        %output_data.results.state(z) = rewrap_data(Big_phi_M, phi_M, prob_M, M_cell, concept_MIP_M, purviews_M,...
+        %            Big_phi_MIP, MIP, Complex, M_i_max,  Big_phi_MIP_M, complex_MIP_M, Big_phi_MIP_all_M, complex_MIP_M_all);
 
         if op_PHIconcept_fig ==1 
             [CutDistr] = PHI_Cut_concepts(Complex,MIP{1},BFCut,purviews_M, prob_M, phi_M,concept_MIP_M, network); 

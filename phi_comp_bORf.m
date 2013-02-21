@@ -1,6 +1,10 @@
-function [phi_MIP prob prob_prod_MIP MIP network] = phi_comp_bORf(subsystem,numerator,denom,whole_sys_state,network,bf)
+function [phi_MIP prob prob_prod_MIP MIP network] = phi_comp_bORf(subsystem,numerator,denom,whole_sys_state,network,bf,M1,M2,bfcut_option)
 % Larissa: for smart purviews, op_context is assumed 0, op_min is assumed
 % bf is back/forward flag (back = 1, forward = 2)
+
+if nargin < 7
+    M1 = []; M2 = []; bfcut_option = [];
+end  
 
 op_normalize = network.options(6);
 op_small_phi = network.options(4);
@@ -10,9 +14,12 @@ op_extNodes = network.options(11);
 num_nodes_denom = length(denom);
 num_nodes_numerator = length(numerator);
 
-if op_parfor == 2 && op_extNodes == 0
+if ~isempty(bfcut_option)   % To test for unidirectional cut I cannot rely on the previous calculations!!
+    BRs = cell(network.num_subsets);
+    FRs = cell(network.num_subsets);
+elseif op_parfor == 2 && op_extNodes == 0
     BRs = network.BRs{subsystem2index(subsystem)};
-    FRs = network.FRs{subsystem2index(subsystem)};
+    FRs = network.FRs{subsystem2index(subsystem)};   
 else    
     BRs = network.BRs;
     FRs = network.FRs;
@@ -29,12 +36,12 @@ current = sum(2.^(numerator-1))+1; other = sum(2.^(denom-1))+1; %Larissa: This i
 
 if (bf == 1)
     if isempty(BRs{current,other})
-        BRs{current,other} = comp_pers_cpt(network.nodes,numerator,denom,whole_sys_state,'backward',extNodes,network.past_state);
+        BRs{current,other} = comp_pers_cpt(network.nodes,numerator,denom,whole_sys_state,'backward',extNodes,network.past_state,M1,M2,bfcut_option);
     end
     prob_w = BRs{current,other};
 elseif (bf == 2)
     if isempty(FRs{current,other})
-        FRs{current,other} = comp_pers_cpt(network.nodes,numerator,denom,whole_sys_state,'forward',extNodes);
+        FRs{current,other} = comp_pers_cpt(network.nodes,numerator,denom,whole_sys_state,'forward',extNodes,network.past_state,M1,M2,bfcut_option);
     end
     prob_w = FRs{current,other};
 end
@@ -43,10 +50,10 @@ prob = cell(2,1);
 prob{bf} = prob_w(:);
 if bf == 1 %backward is calculated, forward is maxent
     forward_maxent_dist = comp_pers_cpt(network.nodes,[],denom,whole_sys_state,'forward',extNodes);
-    prob{2} = forward_maxent_dist;
+    prob{2} = forward_maxent_dist(:);
 elseif bf == 2
     uniform_dist = ones(size(prob{bf}))/length(prob{bf});
-    prob{1} = uniform_dist;
+    prob{1} = uniform_dist(:);
 end
 
 %% more than one
@@ -77,23 +84,23 @@ for i = 1:num_denom_partitions % past or future
             
             if (bf == 1)
                 if isempty(BRs{current_1,other_1})
-                    BRs{current_1,other_1} = comp_pers_cpt(network.nodes,numerator_part1,denom_part1,whole_sys_state,'backward',extNodes,network.past_state);
+                    BRs{current_1,other_1} = comp_pers_cpt(network.nodes,numerator_part1,denom_part1,whole_sys_state,'backward',extNodes,network.past_state,M1,M2,bfcut_option);
                 end
                 prob_p1 = BRs{current_1,other_1};
                 
                 if isempty(BRs{current_2,other_2})
-                    BRs{current_2,other_2} = comp_pers_cpt(network.nodes,numerator_part2,denom_part2,whole_sys_state,'backward',extNodes,network.past_state);
+                    BRs{current_2,other_2} = comp_pers_cpt(network.nodes,numerator_part2,denom_part2,whole_sys_state,'backward',extNodes,network.past_state,M1,M2,bfcut_option);
                 end
                 prob_p2 = BRs{current_2,other_2};
                 
             elseif (bf == 2)
                 if isempty(FRs{current_1,other_1})
-                    FRs{current_1,other_1} = comp_pers_cpt(network.nodes,numerator_part1,denom_part1,whole_sys_state,'forward',extNodes);
+                    FRs{current_1,other_1} = comp_pers_cpt(network.nodes,numerator_part1,denom_part1,whole_sys_state,'forward',extNodes,network.past_state,M1,M2,bfcut_option);
                 end
                 prob_p1 = FRs{current_1,other_1};
                 
                 if isempty(FRs{current_2,other_2})
-                   FRs{current_2,other_2} = comp_pers_cpt(network.nodes,numerator_part2,denom_part2,whole_sys_state,'forward',extNodes);
+                   FRs{current_2,other_2} = comp_pers_cpt(network.nodes,numerator_part2,denom_part2,whole_sys_state,'forward',extNodes,network.past_state,M1,M2,bfcut_option);
                 end
                 prob_p2 = FRs{current_2,other_2};
             end
@@ -152,12 +159,14 @@ MIP{2,1,bf} = denom_partitions2{i};
 MIP{1,2,bf} = numerator_partitions1{j};
 MIP{2,2,bf} = numerator_partitions2{j};
 
-if op_parfor == 2 && op_extNodes == 0
-    network.BRs{subsystem2index(subsystem)} = BRs;
-    network.FRs{subsystem2index(subsystem)} = FRs;
-else    
-    network.BRs = BRs;
-    network.FRs = FRs;
+if ~isempty(bfcut_option)  
+    if op_parfor == 2 && op_extNodes == 0
+        network.BRs{subsystem2index(subsystem)} = BRs;
+        network.FRs{subsystem2index(subsystem)} = FRs;
+    else  
+        network.BRs = BRs;
+        network.FRs = FRs;
+    end    
 end
 end
 

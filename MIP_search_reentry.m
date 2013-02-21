@@ -63,7 +63,7 @@ for j = 1:N_Bp
 
     M1_i = subsystem2index(M1);
     M2_i = subsystem2index(M2);  
-
+   
     %Big_phi_partition = Big_phi_M(M1_i) + Big_phi_M(M2_i);
     PhiCutSum = [0; 0];  %Larissa: cutting first M1 <- M2 (causes on M1, effects from M2) and then M1 -> M2 (causes on M2, effects from M1)
     if op_big_phi ~= 0

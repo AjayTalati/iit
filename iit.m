@@ -320,7 +320,8 @@ if op_complex == 2
 end
 
 op_small_phi = optionVector_phi(get(handles.small_phi_func_menu,'Value'));
-op_ave = get(handles.state_option_menu,'Value') - 1;
+op_ave = 0;
+%op_ave = get(handles.state_option_menu,'Value') - 1;
 op_parallel = get(handles.parallel_option_menu,'Value') - 1;
 op_parfor = get(handles.parfor_option_menu,'Value');
 op_strongconn = get(handles.StrongConn_option_menu,'Value') - 1;
