@@ -5,12 +5,13 @@ op_normalize = network.options(6);
 op_small_phi = network.options(4);
 op_parfor = network.options(9);
 op_extNodes = network.options(11);
+op_complex = network.options(3);
 
 num_nodes_denom_past = length(denom_past);
 num_nodes_numerator = length(numerator);
 num_nodes_denom_future = length(denom_future);
 
-if op_parfor == 2 && op_extNodes == 0
+if op_parfor == 2 && op_extNodes == 0 && op_complex == 1
     BRs = network.BRs{subsystem2index(subsystem)};
     FRs = network.FRs{subsystem2index(subsystem)};
 else    
@@ -161,7 +162,9 @@ end
 end
 
 
-
+% function Norm = Normalization(denom_part1,denom_part2,numerator_part1,numerator_part2,xf_1,xf_2)
+% 
+% Norm = length(numerator_part1)*length(denom_part2) + length(numerator_part2)*length(denom_part1);
 function Norm = Normalization(denom_part1,denom_part2,numerator_part1,numerator_part2,xf_1,xf_2)
 
 if nargin == 4

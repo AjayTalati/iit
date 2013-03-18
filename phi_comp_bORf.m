@@ -10,6 +10,7 @@ op_normalize = network.options(6);
 op_small_phi = network.options(4);
 op_parfor = network.options(9);
 op_extNodes = network.options(11);
+op_complex = network.options(3);
 
 num_nodes_denom = length(denom);
 num_nodes_numerator = length(numerator);
@@ -17,7 +18,7 @@ num_nodes_numerator = length(numerator);
 if ~isempty(bfcut_option)   % To test for unidirectional cut I cannot rely on the previous calculations!!
     BRs = cell(network.num_subsets);
     FRs = cell(network.num_subsets);
-elseif op_parfor == 2 && op_extNodes == 0
+elseif op_parfor == 2 && op_extNodes == 0 && op_complex == 1
     BRs = network.BRs{subsystem2index(subsystem)};
     FRs = network.FRs{subsystem2index(subsystem)};   
 else    
@@ -170,6 +171,10 @@ if ~isempty(bfcut_option)
 end
 end
 
+% function Norm = Normalization(denom_part1,denom_part2,numerator_part1,numerator_part2,xf_1,xf_2)
+% 
+% Norm = length(numerator_part1)*length(denom_part2) + length(numerator_part2)*length(denom_part1);
+% 
 function Norm = Normalization(xp_1,xp_2,numerator_part1,numerator_part2,xf_1,xf_2)
 
 if nargin == 4
