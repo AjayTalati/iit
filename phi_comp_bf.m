@@ -161,21 +161,6 @@ else
 end
 end
 
-
-% function Norm = Normalization(denom_part1,denom_part2,numerator_part1,numerator_part2,xf_1,xf_2)
-% 
-% Norm = length(numerator_part1)*length(denom_part2) + length(numerator_part2)*length(denom_part1);
-function Norm = Normalization(denom_part1,denom_part2,numerator_part1,numerator_part2,xf_1,xf_2)
-
-if nargin == 4
-    Norm = min(length(numerator_part1),length(denom_part2)) + min(length(numerator_part2),length(denom_part1));
-else %Larissa: this is outdated
-    Norm = min(length(numerator_part1),length(denom_part2)) + min(length(numerator_part2),length(denom_part1)) ...
-        + min(length(numerator_part1),length(xf_2)) + min(length(numerator_part2),length(xf_1));
-end
-
-end
-
 function [X_min i_min j_min k_min] = min3(X,X2,op_normalize)
 X_min = Inf; % minimum of normalized phi (or unnormalized if op_normalize == 0)
 X_min2 = Inf; % minimum of phi

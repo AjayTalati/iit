@@ -171,21 +171,6 @@ if ~isempty(bfcut_option)
 end
 end
 
-% function Norm = Normalization(denom_part1,denom_part2,numerator_part1,numerator_part2,xf_1,xf_2)
-% 
-% Norm = length(numerator_part1)*length(denom_part2) + length(numerator_part2)*length(denom_part1);
-% 
-function Norm = Normalization(xp_1,xp_2,numerator_part1,numerator_part2,xf_1,xf_2)
-
-if nargin == 4
-    Norm = min(length(numerator_part1),length(xp_2)) + min(length(numerator_part2),length(xp_1));
-else
-    Norm = min(length(numerator_part1),length(xp_2)) + min(length(numerator_part2),length(xp_1)) ...
-        + min(length(numerator_part1),length(xf_2)) + min(length(numerator_part2),length(xf_1));
-end
-
-end
-
 function [X_min i_min j_min k_min] = min3(X,X2)
 X_min = Inf; % minimum of normalized phi
 X_min2 = Inf; % minimum of phi
