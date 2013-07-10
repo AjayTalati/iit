@@ -261,7 +261,7 @@ for j = 1:N_Bp
         tempVphi = [phi_w_concepts'; 0];
         tempVphicut = [BRcut_phi; BRphiDiff];
         
-        [DistMat, indD] = genEMDDistanceMatrix(BRcut_dist, [back_maxent,forward_maxent]); %past whole and cut distributions      
+        [DistMat, indD] = genEMDDistanceMatrix(BRcut_dist, [back_maxent,forward_maxent],network.gen_dist_matrix); %past whole and cut distributions      
         Vphi = tempVphi(indD);
         Vphicut = tempVphicut(indD);
         %This has to be so complicated, because the emd function gives 0
@@ -269,7 +269,7 @@ for j = 1:N_Bp
         %for the two of them.
         BRcut_Phi = emd_hat_gd_metric_mex([Vphi; zeros(size(Vphicut))],[zeros(size(Vphi));Vphicut],[zeros(size(DistMat)), DistMat; DistMat' zeros(size(DistMat))]);
         
-        [DistMat, indD] = genEMDDistanceMatrix(FRcut_dist, [back_maxent,forward_maxent]); %past whole and cut distributions
+        [DistMat, indD] = genEMDDistanceMatrix(FRcut_dist, [back_maxent,forward_maxent],network.gen_dist_matrix); %past whole and cut distributions
         FRphiDiff = sum(phi_w_concepts)-sum(FRcut_phi);
         tempVphicut = [FRcut_phi; FRphiDiff];
         Vphi = tempVphi(indD);

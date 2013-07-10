@@ -1,7 +1,9 @@
-function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)
-
+function perspective = comp_pers_cpt_SxS(TPMshaped,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)
 %  compute BRs and FRs for a single perspective but given some fixed
-%  current state
+%  current state using the full state x state TPM and not just the
+%  independent nodes
+
+%Larissa: assume we have full tpm  
 
 if nargin < 10
     M1 = []; M2 = []; bfcut_option = [];
@@ -24,9 +26,15 @@ if isempty(denom_nodes_indices)
 %     return
 end
 
-num_sys_nodes = nodes(1).num_sys_nodes;
+num_sys_nodes = length(numerator_state);
 
 if strcmp(bf_option,'backward')
+    
+    
+    
+    
+    
+    
     
     denom_nodes = nodes(denom_nodes_indices);
     num_nodes_shift = num_nodes_indices + num_sys_nodes;
@@ -95,63 +103,33 @@ if strcmp(bf_option,'backward')
 % P(denom_nodes_f | num_nodes_c = numerator_state) = P(denom_nodes_c | num_nodes_p = numerator_state)
 elseif strcmp(bf_option,'forward')
     
-    denom_nodes_shift = denom_nodes_indices + num_sys_nodes;
-    denom_nodes = nodes(denom_nodes_shift);
-    % This is just to define the final size of the distribution
-    denom_conditional_joint_size = ones(1,2*num_sys_nodes);
-    denom_conditional_joint_size(denom_nodes_indices + num_sys_nodes) = [denom_nodes.num_states];
-    denom_conditional_joint = ones(denom_conditional_joint_size);
-    denom_inputs = [];
-    for i = 1:length(denom_nodes)
-        %denom_inputs = union(denom_inputs,denom_nodes(i).input_nodes);
-        %denom_inputs = unique([denom_inputs denom_nodes(i).input_nodes]);
-        denom_inputs = sort([denom_inputs denom_nodes(i).input_nodes]);
-        denom_inputs(denom_inputs((1:end-1)') == denom_inputs((2:end)')) = [];  % faster inline implementation of unique
-    end
-      
+    %LARISSA: UNIDIRECTIONAL CUT STILL MISSING
+    
     conditioning_indices = cell(1,2*num_sys_nodes);
-    conditioning_indices(:) = {':'};
-
-%     % marginalize over nodes not in numerator, these nodes are outside the
-%     % system for this iteration or they are outside a partition - either
-%     % way we apply maxent prior/marginalization
+    conditioning_indices(:) = {':'};    
+    
+    FRtpm = TPMshaped.FR;
+    
     for j = 1:num_sys_nodes
-            % condition also on external elements at t0 for op_extNodes == 0 (Freeze), only then is extNodes ~empty.
-            if (any(j == num_nodes_indices) || any(j == extNodes)) && (any(j == denom_inputs))
-                conditioning_indices{j} = numerator_state(j) + 1;
-            end
-    end    
-    
-    for i = 1:length(denom_nodes) %Loop over denominator nodes
-        
-        next_denom_node_distribution = denom_nodes(i).cpt;
-        
-        % marginalize over nodes not in denom, these nodes are outside the
-        % system for this iteration or they are outside a partition - either
-        % way we apply maxent prior/marginalization
-        for j = num_sys_nodes:-1:1  %numerator nodes    %Larissa: Why backwards??
-            unidircut = (any(denom_nodes_indices(i) == M1) && any(j == M2) && strcmp(bfcut_option,'BRcut')) || ...
-                            (any(denom_nodes_indices(i) == M2) && any(j == M1) && strcmp(bfcut_option,'FRcut'));
-            % not a numerator or an external node, or it is cut AND it is an input then marginalize             
-            if (~(any(j == num_nodes_indices)||any(j == extNodes)) || unidircut) && any(j == denom_nodes(i).input_nodes)
-                next_denom_node_distribution = ...
-                    sum(next_denom_node_distribution,j)./size(next_denom_node_distribution,j);
-                if any(j == num_nodes_indices) && unidircut == 1
-                    % average over dimension, but don't collapse dimension as
-                    % there is a conditioning index for it (because it's a numerator)
-                    next_denom_node_distribution = cat(j, next_denom_node_distribution, next_denom_node_distribution);
-                end    
-            end
+        % marginalize across elements not in the numerator
+        if ~(any(j == num_nodes_indices)||any(j == extNodes))
+            FRtpm = mean(FRtpm,j);
+        else
+        % set Elements to their value if they are conditioned
+            conditioning_indices{j} = numerator_state(j) + 1;
         end
-        
-        % the magic
-        denom_conditional_joint = bsxfun(@times,denom_conditional_joint,next_denom_node_distribution);
     end
+    % This should now always be a Statesx1 distribution 
+    FRtpm = squeeze(FRtpm(conditioning_indices{:}));
     
-    
-    % conditioning on fixed nodes
-    denom_conditional_joint = denom_conditional_joint(conditioning_indices{:});
-    permute_order = [num_sys_nodes+1:2*num_sys_nodes 1:num_sys_nodes];
-    perspective = permute(denom_conditional_joint,permute_order);
-
+    % now average denominator elements outside the purview
+    FRtpm = reshape(FRtpm, 2*ones(1,num_sys_nodes));
+    for i = 1:num_sys_nodes
+        %Larissa: Not sure if indices are nodes or not, depends on which
+        %system, i.e. is the following true for subsystems?! Check!!
+        if ~(any(i == denom_nodes_indices))
+            FRtpm = mean(FRtpm, i);
+        end
+    end    
+    perspective = bsxfun(@rdivide,FRtpm,sum(reshape(FRtpm, [],1)));
 end

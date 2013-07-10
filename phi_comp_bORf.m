@@ -123,9 +123,8 @@ for i = 1:num_denom_partitions % past or future
             elseif (op_small_phi == 1)
                 phi = L1norm(prob{bf},prob_p);
             elseif (op_small_phi == 2)
-                phi = emd_hat_gd_metric_mex(prob{bf},prob_p,gen_dist_matrix(length(prob_p)));
-%             elseif (op_small_phi == 3)
-%                 phi = k_distance(prob{bf},prob_p);
+ %               phi = emd_hat_gd_metric_mex(prob{bf},prob_p,gen_dist_matrix(length(prob_p)));
+                phi = emd_hat_gd_metric_mex(prob{bf},prob_p,network.gen_dist_matrix(1:length(prob_p),1:length(prob_p)));                  
             end
             
             

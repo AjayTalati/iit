@@ -81,6 +81,10 @@ for i = 0:network.num_states - 1
     network.states(:,i+1) = dec2multibase(i,[network.nodes(network.full_system).num_states]);
 end
 
+if network.options(4) == 2
+    network.gen_dist_matrix = gen_dist_matrix(network.num_states);
+end    
+
 %% setup main function call
 % determine if we are averaging over all states or just one
 op_average = network.options(2);
@@ -167,7 +171,7 @@ for z = 1:state_max
             M_cell{end} = network.full_system;
             
             [Big_phi_M(end) phi_M{end} prob_cell concept_MIP_M{end} purviews_M{end}] = big_phi_comp_fb(network.full_system,this_state,network);
-            
+            toc
             % concept distributions
             prob_M(end,:) = prob_cell(:); % first layer is subset, second is purview, third is backward/forward  
             

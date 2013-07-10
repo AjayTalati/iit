@@ -1,4 +1,4 @@
-function [Dist, indD] = genEMDDistanceMatrix(Dists, maxEnt) %past whole and cut distributions
+function [Dist, indD] = genEMDDistanceMatrix(Dists, maxEnt, dist_mat) %past whole and cut distributions
 %wholeDists and cutDists are matrices of distributions (each column one
 %distribution)
 
@@ -14,7 +14,7 @@ for pf = 1:2
     end    
     for i = 1:rows
         for j = 1:cols
-            DistMat(i,j,pf) = emd_hat_gd_metric_mex(wholeDists{i},cutDists{j},gen_dist_matrix(length(wholeDists{i})));
+            DistMat(i,j,pf) = emd_hat_gd_metric_mex(wholeDists{i},cutDists{j},dist_mat(1:length(wholeDists{i}),1:length(wholeDists{i})));
         end    
     end
 end

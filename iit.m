@@ -307,10 +307,10 @@ op_big_phi = optionVector_phi(get(handles.big_phi_alg_menu,'Value'));
 op_normalize = get(handles.normalization_menu,'Value');
 op_normalize_small_phi = 0;
 op_normalize_big_phi = 0;
-if op_normalize == 1 || op_normalize == 2
+if op_normalize == 2 || op_normalize == 3
     op_normalize_small_phi = 1;
 end
-if op_normalize == 1 || op_normalize == 3
+if op_normalize == 2 || op_normalize == 4
     op_normalize_big_phi = 1;
 end
 
@@ -332,14 +332,15 @@ op_extNodes = get(handles.ExtNodes_option_menu,'Value') - 1;
 options = [op_parallel op_ave op_complex op_small_phi op_big_phi op_normalize_small_phi ...
            op_normalize_big_phi 0 op_parfor op_strongconn op_extNodes 1 1 0 0 1 1 0];
        
-
-tpm_choices = cellstr(get(handles.tpm_type_menu,'String'));
-tpm_choice = tpm_choices{get(handles.tpm_type_menu,'Value')};       
+%Larissa: not necessary
+% tpm_choices = cellstr(get(handles.tpm_type_menu,'String'));
+% tpm_choice = tpm_choices{get(handles.tpm_type_menu,'Value')};       
 
 tpm = get(handles.TPM,'Data');
 num_states = size(tpm,1);
 num_nodes = str2double(get(handles.num_nodes,'String'));
 
+% LARISSA: CHANGE THIS IF TPM STATExSTATE SHOULD BE USED EXPLICITELY
 if size(tpm,2) == num_states   
     new_tpm = zeros(num_states,num_nodes);
     for i = 1:num_states
@@ -360,9 +361,14 @@ if op_extNodes == 0
     % Larissa: Check if past_state could be past state of present state!!
     past_state = get(handles.past_state,'Data');
     past_index = state2index(past_state,2.*ones(size(past_state)));
-    pot_current = tpm(past_index,:);
-    determined_elements = sort(setxor(find(pot_current), find(pot_current-1))); %So that it works for noise, too
-    state_reachable = isequal(logical(pot_current(determined_elements)), logical(current_state(determined_elements))');
+    if size(tpm,2) == num_states
+        current_index = state2index(current_state,2.*ones(size(past_state)));
+        state_reachable = tpm(past_index, current_index) > 0;
+    else
+        pot_current = tpm(past_index,:);
+        determined_elements = sort(setxor(find(pot_current), find(pot_current-1))); %So that it works for noise, too
+        state_reachable = isequal(logical(pot_current(determined_elements)), logical(current_state(determined_elements))');
+    end
     
     if state_reachable == 0
         set(handles.warning,'String','Current and past state are not congruent!');
@@ -379,7 +385,14 @@ connectivity_matrix = get(handles.connectivity_mat,'Data');
 
 % setup node strucs and cpts for each node
 %inputs = struct('num',{1 2},'name',{'A_p' 'B_p'},'num_states',{2 2},'state_names',{{'0' '1'}},'logic_type',{2 3})
-if strcmp(tpm_choice, tpm_choices(3)) == 1
+
+%Larissa: This should not be tpm_choice, but check if logic gates are
+%activated or not! Though it shouldn't matter much
+Net_definitions = cellstr(get(handles.net_definition_method,'String'));
+Net_def_selection = Net_definitions{get(handles.net_definition_method,'Value')};
+
+if strcmp(Net_def_selection, Net_definitions(2)) == 1
+%if strcmp(tpm_choice, tpm_choices(3)) == 1
     logic_types = num2cell(get(handles.logic_types,'Data'));
 else
     logic_types = cell(num_nodes,1);
@@ -634,22 +647,24 @@ if strcmp(tpm_choice,'State X State') && size(tpm,2) == num_nodes
 % if we want state x node and we were in state x state    
 elseif strcmp(tpm_choice,'State X Node') && size(tpm,2) == num_states
     
-    new_tpm = zeros(num_states,num_nodes);
-    
-    for i = 1:num_states
-        for j = 1:num_nodes
-            for k = 1:num_states
-                
-                state = char(trans2(k-1,num_nodes)'+'0');
-                
-                if strcmp(state(j),'1')
-                    new_tpm(i,j) = new_tpm(i,j) + tpm(i,k);
+    user_response = confirm_tpm_switch('Title','Confirm TPM Change');
+    switch lower(user_response)
+        case 'no'
+            return
+        case 'yes'         
+        new_tpm = zeros(num_states,num_nodes);
+        for i = 1:num_states
+            for j = 1:num_nodes
+                for k = 1:num_states
+                    state = char(trans2(k-1,num_nodes)'+'0');
+                    if strcmp(state(j),'1')
+                        new_tpm(i,j) = new_tpm(i,j) + tpm(i,k);
+                    end
                 end
             end
         end
+        set(handles.TPM,'Data',new_tpm)
     end
-    
-    set(handles.TPM,'Data',new_tpm)
 end
 
 updateTPMview(handles, tpm_choice)

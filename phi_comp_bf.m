@@ -1,4 +1,4 @@
-function [phi_MIP prob prob_prod_MIP MIP network] = phi_comp_bf(subsystem,numerator,denom_past,denom_future,whole_sys_state,network)
+function [phi_MIP, prob, prob_prod_MIP, MIP, network] = phi_comp_bf(subsystem,numerator,denom_past,denom_future,whole_sys_state,network)
 % compute small phi of a given purview...?
 
 op_normalize = network.options(6);
@@ -117,7 +117,8 @@ for i = 1:num_denom_partitions % past or future
                 elseif op_small_phi == 1
                     phi = L1norm(prob{bf},prob_p); 
                 elseif op_small_phi == 2
-                    phi = emd_hat_gd_metric_mex(prob{bf},prob_p,gen_dist_matrix(length(prob_p)));                  
+                    %phi = emd_hat_gd_metric_mex(prob{bf},prob_p,gen_dist_matrix(length(prob_p)));                  
+                    phi = emd_hat_gd_metric_mex(prob{bf},prob_p,network.gen_dist_matrix(1:length(prob_p),1:length(prob_p)));                  
                 end
                 
             else
@@ -200,7 +201,7 @@ end
 end
 
 
-function [phi_min_choice i_min j_min] = min2(phi,phi_norm,op_normalize)
+function [phi_min_choice, i_min, j_min] = min2(phi,phi_norm,op_normalize)
 phi_norm_min = Inf; % minimum of normalized phi
 phi_min = Inf; % minimum of phi
 i_min = 1;
