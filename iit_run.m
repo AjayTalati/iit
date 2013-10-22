@@ -81,7 +81,7 @@ for i = 0:network.num_states - 1
     network.states(:,i+1) = dec2multibase(i,[network.nodes(network.full_system).num_states]);
 end
 
-if network.options(4) == 2
+if network.options(4) >= 2 || network.options(5) == 2
     network.gen_dist_matrix = gen_dist_matrix(network.num_states);
 end    
 

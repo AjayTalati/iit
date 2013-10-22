@@ -63,6 +63,8 @@ for ci=1: num_states_subsys-1  % loop over purview subsets_subsys
     if EmptyCon(ci) == 0
         [phi_all_values(ci,:) prob{ci} prob_prod{ci} MIP{ci} network] ...
             =  phi_comp_ex(subsystem,numerator,whole_sys_state,subsets_subsys,network);
+        %dlmwrite('OizumiSegment2.txt', numerator, '-append', 'delimiter', ' ', 'precision', 1);
+        %dlmwrite('OizumiSegment2.txt', phi_all_values(ci,:), '-append', 'delimiter', ' ', 'precision', 5);
     else
         phi_all_values(ci,:) = [0 0 0];
         uniform_dist = ones(num_states_subsys,1)/num_states_subsys;

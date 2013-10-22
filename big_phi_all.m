@@ -85,13 +85,14 @@ else
             else
                 [Big_phi phi prob_cell MIP M_IRR network] = big_phi_comp_fb(this_subset,whole_sys_state,network); 
             end  
-
             MIP_M{sub_index} = MIP;
             Big_phi_M(sub_index) = Big_phi; % Big_phi for each subset
             phi_M{sub_index} = phi; % Set of small_phis for each purview of each subset
             M_IRR_M{sub_index} = M_IRR; % numerators of purviews with non-zero/positive phi
             % concept distributions
             prob_M(sub_index,:) = prob_cell(:); % first layer is subset, second is purview, third is backward/forward  
+            %save('OizumiSegmentBigPhi','Big_phi_M', 'phi_M', 'prob_M', 'MIP_M', 'M_IRR_M', 'MIP_M_subsys');
+            %fprintf('this_subset=%s: Big_phi=%f\n',mod_mat2str(subsets{sub_index}),Big_phi_M(sub_index));
         end   
     end
 end

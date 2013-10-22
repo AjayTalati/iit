@@ -124,9 +124,10 @@ for i = 1:num_denom_partitions % past or future
                 phi = L1norm(prob{bf},prob_p);
             elseif (op_small_phi == 2)
  %               phi = emd_hat_gd_metric_mex(prob{bf},prob_p,gen_dist_matrix(length(prob_p)));
-                phi = emd_hat_gd_metric_mex(prob{bf},prob_p,network.gen_dist_matrix(1:length(prob_p),1:length(prob_p)));                  
+                phi = emd_hat_gd_metric_mex(prob{bf},prob_p,network.gen_dist_matrix(1:length(prob_p),1:length(prob_p)));       
+            elseif (op_small_phi == 3)  %Larissa: add option 4: search with L1, if nonzero recalculate with EMD
+                phi = L1norm(prob{bf},prob_p);
             end
-            
             
         else
             prob_prod_vec{i,j,bf} = [];
@@ -150,6 +151,17 @@ end
 MIP = cell(2,2,2);
 phi_MIP = zeros(1,2);
 prob_prod_MIP = cell(2,1);
+
+if (op_small_phi == 3)  %Recalculate those that are > 0 with Emd
+    for i = 1:num_denom_partitions
+        for j = 1:num_numerator_partitions
+            % only works without normalization as is
+            if phi_cand(i,j,bf,1) ~= inf
+                phi_cand(i,j,bf,1) = emd_hat_gd_metric_mex(prob{bf},prob_prod_vec{i,j,bf},network.gen_dist_matrix(1:length(prob_p),1:length(prob_p))); 
+            end
+        end
+    end
+end 
 
 [phi_MIP(bf) i j] = min2(phi_cand(:,:,bf,1),phi_cand(:,:,bf,2),op_normalize);
 prob_prod_MIP{bf} = prob_prod_vec{i,j,bf};

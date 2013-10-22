@@ -327,8 +327,6 @@ op_parfor = get(handles.parfor_option_menu,'Value');
 op_strongconn = get(handles.StrongConn_option_menu,'Value') - 1;
 op_extNodes = get(handles.ExtNodes_option_menu,'Value') - 1;
 
-%options = [3 1 2 1 1 0 0 1 1 0 op_big_phi 0 ...
-%           op_normalize_big_phi op_normalize_small_phi op_complex op_small_phi op_ave op_parallel];
 options = [op_parallel op_ave op_complex op_small_phi op_big_phi op_normalize_small_phi ...
            op_normalize_big_phi 0 op_parfor op_strongconn op_extNodes 1 1 0 0 1 1 0];
        
