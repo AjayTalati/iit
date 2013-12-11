@@ -9,7 +9,6 @@ op_complex = network.options(3);
 
 num_nodes_denom_past = length(denom_past);
 num_nodes_numerator = length(numerator);
-num_nodes_denom_future = length(denom_future);
 
 if op_parfor == 2 && op_extNodes == 0 && op_complex == 1
     BRs = network.BRs{subsystem2index(subsystem)};

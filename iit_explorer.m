@@ -509,9 +509,12 @@ all_phi = [w_phi_concepts; parts_phi_concepts];
 
 if get(handles.past_future_list,'Value') == 1
     all_concepts = [w_concept_dists_p'; p_concept_dists_p'];
+    unconstrained = comp_pers_cpt(handles.data.network.nodes,[],subset,handles.data.network.current_state,'backward',[],handles.data.network.past_state);   
 else
     all_concepts = [w_concept_dists_f'; p_concept_dists_f'];
+    unconstrained = comp_pers_cpt(handles.data.network.nodes,[],subset,handles.data.network.current_state,'forward',[],handles.data.network.past_state);
 end
+unconstrained = unconstrained(:);
 
 %Larissa: For the moment all (Before it was only the ones that still exist)
 part_purviews = handles.data.purviews_M{state_index}{subset_index};
@@ -543,7 +546,7 @@ if strcmp(plot_choice,'3D & 2D Scatter')
     
     set(handles.partition_panel_slider,'Visible','off')
     conceptscatter3D2D(all_concepts,size(w_concept_dists_p,2), handles.data.purviews_M{state_index}{subset_index},...
-            part_purviews, highlight_indices, panel, '2D3D', dim_choice, all_phi);
+            part_purviews, highlight_indices, panel, '2D3D', dim_choice, all_phi, unconstrained);
         
 	handles.export_plot = 0;
     guidata(handles.iit_explorer,handles);
@@ -562,7 +565,7 @@ elseif strcmp(plot_choice,'3D Scatter')
     
     set(handles.partition_panel_slider,'Visible','off')
     conceptscatter3D2D(all_concepts,size(w_concept_dists_p,2), handles.data.purviews_M{state_index}{subset_index},...
-            part_purviews, highlight_indices, panel, '3D',dim_choice, all_phi);
+            part_purviews, highlight_indices, panel, '3D',dim_choice, all_phi, unconstrained);
         
 	handles.export_plot = 0;
     guidata(handles.iit_explorer,handles);

@@ -120,7 +120,7 @@ end
 
 function [X_max i_max] = max_ex(X,subsets_subsys)
 % exclusion principle: if the value is the same, take the bigger one
-epsilon = 10^-10;
+epsilon = 10^-6;    %EMD has very low precision
 X_max = -Inf;
 i_max = 1;
 s_max = 0;

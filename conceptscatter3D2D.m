@@ -1,5 +1,5 @@
 function [ax, height, extra_plots] = conceptscatter3D2D(x,nWholeConcepts, whole_purviews, part_purviews,...
-                                            highlight_indices, parent_panel, view_option, dim_option, all_phi)
+                                            highlight_indices, parent_panel, view_option, dim_option, all_phi, unconstrained)
 % BASED ON GPLOTMATRIX
 
 
@@ -167,6 +167,11 @@ if any(strcmp(view_option,{'3D','2D3D'}))
 
     ax{ax_index} = axes3D;
 
+    %Unconstrained 
+    scatter3(ax{ax_index},unconstrained(state_ordering(1)),unconstrained(state_ordering(2)),...
+        unconstrained(state_ordering(3)),'Marker','x','MarkerEdgeColor','k','SizeData',100,'Clipping','on')
+    hold on
+    
     for l = 1:nWholeConcepts
         if all_phi(2,l)==0
             color = [.5 .5 .5];

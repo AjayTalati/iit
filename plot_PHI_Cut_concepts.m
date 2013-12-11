@@ -1,4 +1,4 @@
-function [PastDistr FutDistr phi_w_concepts CutPastDistr CutFutDistr CutPhi] = plot_PHI_Cut_concepts(M,MIP,BFCut,M_IRR_M,prob_M, phi_M,concept_MIP_M, network)
+function [PastDistr, FutDistr, phi_w_concepts, CutPastDistr, CutFutDistr, CutPhi] = plot_PHI_Cut_concepts(M,MIP,BFCut,M_IRR_M,prob_M, phi_M,concept_MIP_M, network)
 
 op_extNodes = network.options(11);
 
