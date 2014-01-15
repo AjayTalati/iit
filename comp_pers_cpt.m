@@ -1,7 +1,10 @@
 function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)
-
-%  compute BRs and FRs for a single perspective but given some fixed
-%  current state
+%COMP_PERS_CPT 
+% Compute BRs and FRs for a single perspective but given some fixed current
+% state
+%
+% In the simplest case all arguments beyond `bf_option` are empty. If you have
+% the whole system, and you just calculate the concepts.
 
 if nargin < 10
     M1 = []; M2 = []; bfcut_option = [];
@@ -32,22 +35,23 @@ if strcmp(bf_option,'backward')
     num_nodes_shift = num_nodes_indices + num_sys_nodes;
     numerator_nodes = nodes(num_nodes_shift);
     
-    % no nodes in numerator means maxent over denom
+    % No nodes in numerator means maxent over denom
     if isempty(num_nodes_indices)
         
         perspective_dim_sizes = ones(1,num_sys_nodes);
         perspective_dim_sizes(denom_nodes_indices) = [denom_nodes.num_states];
-        perspective = ones([perspective_dim_sizes, 1])./prod(perspective_dim_sizes);    %The additional 1 is to take care of selfloops.
+        % The additional 1 is to take care of selfloops.
+        perspective = ones([perspective_dim_sizes, 1])./prod(perspective_dim_sizes);
         return
         
     end
     
-    % this just defines the final dimension of the distribution
+    % This just defines the final dimension of the distribution
     numerator_conditional_joint_size = ones(1,2*num_sys_nodes);
     numerator_conditional_joint_size(denom_nodes_indices) = [denom_nodes.num_states];
     numerator_conditional_joint = ones(numerator_conditional_joint_size);
     
-    % setup cell array for conditioning
+    % Setup cell array for conditioning
     conditioning_indices = cell(1,2*num_sys_nodes);
     conditioning_indices(:) = {':'};
 

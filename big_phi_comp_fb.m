@@ -1,9 +1,9 @@
 function [Big_phi phi_all_values prob_cell MIP M_IRR network] = big_phi_comp_fb(subsystem,whole_sys_state,network)
-%%  compute big phi for a subset, subsystem
+%BIG_PHI_COMP_FB
+% Compute big phi for a candidate subset/subsystem
 % subsystem: a subset of the whole system (can be the whole system itself)
 % whole_sys_state: current state
 
-% global BRs, global FRs
 num_nodes_subsys = length(subsystem);
 num_states_subsys = prod([network.nodes(subsystem).num_states]);
 
@@ -11,12 +11,17 @@ op_single = network.options(12);     % just needed for console output
 op_console = network.options(8);   %(1: display the results, 0: not)
 op_extNodes = network.options(11);
 
+% Determine which nodes are outside current candidate system
 if op_extNodes == 0
+    % Important for freezing nodes (need to know which ones to freeze)
     extNodes = setdiff(network.full_system, subsystem);
 else
     extNodes = [];
 end 
 
+% In paper:
+% Numerator = (candidate) concept
+% Denominator = (candidate) purviews, past and future
 %% numerator data
 % ???This is where we build subsets_subsys of purviews (power-set exclude empty
 % set)
@@ -52,26 +57,39 @@ M_IRR = cell(0,0);
 
 %% computing small phis
 EmptyCon = zeros(num_states_subsys-1,1);
+% For each possible concept, compute `phi_comp_ex` (which loops over
+% possible purviews)
 for ci=1: num_states_subsys-1  % loop over purview subsets_subsys
     numerator = subsets_subsys{ci}; % given data of numerator
     %Smart purviews: if any element inside the numerator does not have inputs or outputs,
     %no need to calculate purview
     %Larissa: actually one only needs to check WITHIN the Subsystem!!!
+    % Check for connections within subsystem:
     Nconnect = [sum(network.connect_mat(numerator,subsystem),2) sum(network.connect_mat(subsystem,numerator))'];
     EmptyCon(ci) = numel(Nconnect)-nnz(Nconnect);
     %EmptyCon(ci) =0; % Old version without smart purviews, to check
     if EmptyCon(ci) == 0
+        % For each possible purview, compute phi values, distribution for 
+        % whole and distribution for cut
         [phi_all_values(ci,:) prob{ci} prob_prod{ci} MIP{ci} network] ...
             =  phi_comp_ex(subsystem,numerator,whole_sys_state,subsets_subsys,network);
         %dlmwrite('OizumiSegment2.txt', numerator, '-append', 'delimiter', ' ', 'precision', 1);
         %dlmwrite('OizumiSegment2.txt', phi_all_values(ci,:), '-append', 'delimiter', ' ', 'precision', 5);
     else
+        % Concept can't exist, so set defaults:
+        
+        % Phi is 0
         phi_all_values(ci,:) = [0 0 0];
+        % It has uniform distribution
         uniform_dist = ones(num_states_subsys,1)/num_states_subsys;
+        % Forward unconstrained repertoire (maximum entropy distribution)
         forward_maxent_dist = comp_pers_cpt(network.nodes,[],subsystem,whole_sys_state,'forward', extNodes);
+        % Whole and cut distributions (they're the same)
         prob{ci} = {uniform_dist, forward_maxent_dist(:)}; 
         prob_prod{ci} = {uniform_dist, forward_maxent_dist(:)}; 
-        MIP{ci} = cell(2,2,2); % should we change these to uniform, full sys... etc
+        % MIP is empty
+        % TODO: should we change these to uniform, full sys... etc
+        MIP{ci} = cell(2,2,2);
     end    
 end
 
@@ -84,16 +102,18 @@ index_vec_IRR = find(phi ~= 0);
 N_IRR = length(index_vec_IRR); %Number of irreducible concepts
 
 if(N_IRR~=0)
-    concepts = zeros(num_states_subsys,N_IRR);  %Larissa: This is only used for strange big phis
-    concept_phis = zeros(1,N_IRR);
-    j = 1;
-    for i = 1:num_states_subsys-1
-        if (phi(i) ~= 0)
-            concepts(:,j) = prob{i}{1};
-            concept_phis(j) = phi(i);
-            j = j + 1;
-        end
-    end
+% % Use this for computing big phi as something more complicated than just
+% % sum of small phi
+%     concepts = zeros(num_states_subsys,N_IRR);  %Larissa: This is only used for strange big phis
+%     concept_phis = zeros(1,N_IRR);
+%     j = 1;
+%     for i = 1:num_states_subsys-1
+%         if (phi(i) ~= 0)
+%             concepts(:,j) = prob{i}{1};
+%             concept_phis(j) = phi(i);
+%             j = j + 1;
+%         end
+%     end
 
     M_IRR = cell(N_IRR,1);
     for i=1: N_IRR

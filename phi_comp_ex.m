@@ -1,5 +1,8 @@
 function [phi prob prob_prod_MIP MIP network] = phi_comp_ex(subsystem,numerator,whole_sys_state,subsets_subsys,network)
-%% compute small phi for a purview
+%PHI_COMP_EX
+% Compute small phi for all possible purviews, given a candidate concept
+% (the `numerator`)
+
 op_extNodes = network.options(11);
 
 if op_extNodes == 0
@@ -16,33 +19,64 @@ prob_cand = cell(num_states_subsys-1,1);
 prob_prod_MIP_cand = cell(num_states_subsys-1,1);
 MIP_cand = cell(num_states_subsys-1,1);
 
+% For all possible purviews
 for i=1: num_states_subsys-1
-    %Smart purviews: Only test those connections that actually exist
     denom = subsets_subsys{i};
-    if nnz(sum(network.connect_mat(numerator,denom),1) == 0) > 0 % some denom is not input of numerator (numerator) --> no phiBR
-        if nnz(sum(network.connect_mat(denom,numerator),2) == 0) == 0 % but denom is output
+    %Smart purviews: Only test those connections that actually exist
+    % If there is an element with no connections to any of the candidate 
+    % concept's elements, then the purview necessarily reduces
+    
+    % Eliminate trivially irreducible purviews:
+    
+    % TODO: do a simpler sum here to eliminate some really degenerate 
+    %       cases (check in addition if any one numberator element is not
+    %       connected)?
+    % Check past purviews:
+    % If there are no connections between the any one element in the past 
+    % purview and the set of elements of the candidate concept, skip it.
+    % (sum over columns of connectivity matrix)
+    if nnz(sum(network.connect_mat(numerator,denom),1) == 0) > 0
+        % Check future purviews:
+        % Now checking
+        % connections from candidate concept to future purview, so
+        % numerator and denominator indices are switched).
+        % (sum over rows of connectivity matrix)
+        if nnz(sum(network.connect_mat(denom,numerator),2) == 0) == 0
+            % Since past is eliminated but future isn't, compute just the
+            % future
             [phi_MIP(i,:) prob_cand{i} prob_prod_MIP_cand{i} MIP_cand{i} network] ...
                 = phi_comp_bORf(subsystem,numerator,denom,whole_sys_state,network,2);
         else
-            uniform_dist = ones(num_states_subsys,1)/num_states_subsys; % for BR uniform maxent, for FR forward maxent
+            % Both are eliminated, do all the defaults for a
+            % collapsed purview
+            uniform_dist = ones(num_states_subsys,1)/num_states_subsys;
+            % For BR uniform maxent, for FR forward maxent
             forward_maxent_dist = comp_pers_cpt(network.nodes,[],subsystem,whole_sys_state,'forward', extNodes);
             prob_cand{i} = {uniform_dist; forward_maxent_dist(:)};
             prob_prod_MIP_cand{i} = cell(2,1);
             MIP_cand{i} = cell(2,2,2);
         end
     else
-        if nnz(sum(network.connect_mat(denom,numerator),2) == 0) > 0 % denom is not output, but denom is input
+        if nnz(sum(network.connect_mat(denom,numerator),2) == 0) > 0
+            % Future is eliminated, compute just the past
             [phi_MIP(i,:) prob_cand{i} prob_prod_MIP_cand{i} MIP_cand{i} network] ...
                 = phi_comp_bORf(subsystem,numerator,denom,whole_sys_state,network,1); 
-        else % denom is both
+        % If all prechecks pass, then we call `phi_comp_bf` to compute
+        % both past and future purviews
+        else
             [phi_MIP(i,:) prob_cand{i} prob_prod_MIP_cand{i} MIP_cand{i} network] ...
                 = phi_comp_bf(subsystem,numerator,denom,denom,whole_sys_state,network); 
         end 
     end    
 end
+% We now have phi values for all possible purviews, and their whole and cut
+% distributions.
+
+% So now we find the purview with the maximum phi_MIP.
 
 %% exlusion principle
-max_phi_MIP_bf = zeros(2,1); % backward and forward phi
+% backward and forward phi
+max_phi_MIP_bf = zeros(2,1);
 MIP = cell(2,2,2);
 prob = cell(2,1);
 prob_prod_MIP = cell(2,1);
@@ -96,7 +130,7 @@ end
 end
 
 function [X_max i_max j_max] = max2(X,subsets_subsys)
-% exclusion principle: if the value is the same, take the bigger one
+% Exclusion principle: if the value is the same, take the bigger one
 X_max = -Inf;
 i_max = 1;
 j_max = 1;
@@ -119,8 +153,10 @@ end
 
 
 function [X_max i_max] = max_ex(X,subsets_subsys)
-% exclusion principle: if the value is the same, take the bigger one
-epsilon = 10^-6;    %EMD has very low precision
+% Exclusion principle: if the value is the same, take the bigger purview
+
+% EMD has very low precision
+epsilon = 10^-6;
 X_max = -Inf;
 i_max = 1;
 s_max = 0;
