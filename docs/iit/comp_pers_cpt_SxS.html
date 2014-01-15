@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of comp_pers_cpt_SxS</title>
+  <meta name="keywords" content="comp_pers_cpt_SxS">
+  <meta name="description" content="compute BRs and FRs for a single perspective but given some fixed">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; comp_pers_cpt_SxS.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>comp_pers_cpt_SxS
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>compute BRs and FRs for a single perspective but given some fixed</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function perspective = comp_pers_cpt_SxS(TPMshaped,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  compute BRs and FRs for a single perspective but given some fixed
+  current state using the full state x state TPM and not just the
+  independent nodes</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function perspective = comp_pers_cpt_SxS(TPMshaped,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)</a>
+0002 <span class="comment">%  compute BRs and FRs for a single perspective but given some fixed</span>
+0003 <span class="comment">%  current state using the full state x state TPM and not just the</span>
+0004 <span class="comment">%  independent nodes</span>
+0005 
+0006 <span class="comment">%Larissa: assume we have full tpm</span>
+0007 
+0008 <span class="keyword">if</span> nargin &lt; 10
+0009     M1 = []; M2 = []; bfcut_option = [];
+0010 <span class="keyword">end</span>
+0011 <span class="keyword">if</span> nargin &lt; 7
+0012     past_state = [];
+0013 <span class="keyword">end</span>    
+0014 <span class="keyword">if</span> nargin &lt; 6
+0015     extNodes = [];
+0016 <span class="keyword">end</span>    
+0017 
+0018 <span class="keyword">if</span> isempty(denom_nodes_indices)
+0019     perspective = [];
+0020     <span class="keyword">return</span>
+0021 <span class="comment">% elseif isempty(num_nodes_indices)</span>
+0022 <span class="comment">% %     num_sys_nodes = denom_nodes_indices(1).num_sys_nodes;</span>
+0023 <span class="comment">% %     denom_conditional_joint_size = ones(1,2*num_sys_nodes);</span>
+0024 <span class="comment">% %     denom_conditional_joint_size(1:num_sys_nodes == denom_nodes_indices</span>
+0025 <span class="comment">%     denom_conditional_joint = [];</span>
+0026 <span class="comment">%     return</span>
+0027 <span class="keyword">end</span>
+0028 
+0029 num_sys_nodes = length(numerator_state);
+0030 
+0031 <span class="keyword">if</span> strcmp(bf_option,<span class="string">'backward'</span>)
+0032     
+0033     
+0034     
+0035     
+0036     
+0037     
+0038     
+0039     denom_nodes = nodes(denom_nodes_indices);
+0040     num_nodes_shift = num_nodes_indices + num_sys_nodes;
+0041     numerator_nodes = nodes(num_nodes_shift);
+0042     
+0043     <span class="comment">% no nodes in numerator means maxent over denom</span>
+0044     <span class="keyword">if</span> isempty(num_nodes_indices)
+0045         
+0046         perspective_dim_sizes = ones(1,num_sys_nodes);
+0047         perspective_dim_sizes(denom_nodes_indices) = [denom_nodes.num_states];
+0048         perspective = ones([perspective_dim_sizes, 1])./prod(perspective_dim_sizes);    <span class="comment">%The additional 1 is to take care of selfloops.</span>
+0049         <span class="keyword">return</span>
+0050         
+0051     <span class="keyword">end</span>
+0052     
+0053     <span class="comment">% this just defines the final dimension of the distribution</span>
+0054     numerator_conditional_joint_size = ones(1,2*num_sys_nodes);
+0055     numerator_conditional_joint_size(denom_nodes_indices) = [denom_nodes.num_states];
+0056     numerator_conditional_joint = ones(numerator_conditional_joint_size);
+0057     
+0058     <span class="comment">% setup cell array for conditioning</span>
+0059     conditioning_indices = cell(1,2*num_sys_nodes);
+0060     conditioning_indices(:) = {<span class="string">':'</span>};
+0061 
+0062     prob_current_state = 1;
+0063     
+0064     <span class="comment">% Choose dimensions that are congruent with current state (dim 1 if OFF, dim 2 if ON)</span>
+0065     <span class="keyword">for</span> i = 1:length(num_nodes_indices) <span class="comment">%Loop over numerator nodes</span>
+0066         
+0067         this_node_conditioning_indices = conditioning_indices;
+0068         this_node_conditioning_indices{numerator_nodes(i).num} = numerator_state(numerator_nodes(i).num - num_sys_nodes) + 1;
+0069         next_num_node_distribution = numerator_nodes(i).cpt(this_node_conditioning_indices{:});
+0070         <span class="comment">%Larissa: This doesn't seem to do anything...</span>
+0071         prob_current_state = prob_current_state * sum(next_num_node_distribution(:));
+0072 
+0073         <span class="comment">% marginalize over nodes not in denom, these nodes are outside the</span>
+0074         <span class="comment">% system for this iteration or they are outside a partition - either</span>
+0075         <span class="comment">% way we apply maxent prior/marginalization</span>
+0076         <span class="keyword">for</span> j = 1:num_sys_nodes
+0077             <span class="comment">%if j is not a denominator but it is an input to i then</span>
+0078             <span class="comment">%collapse this dimension</span>
+0079             unidircut = (any(num_nodes_indices(i) == M1) &amp;&amp; any(j == M2) &amp;&amp; strcmp(bfcut_option,<span class="string">'BRcut'</span>)) || <span class="keyword">...</span>
+0080                             (any(num_nodes_indices(i) == M2) &amp;&amp; any(j == M1) &amp;&amp; strcmp(bfcut_option,<span class="string">'FRcut'</span>));
+0081             
+0082             <span class="keyword">if</span> (~any(j == denom_nodes_indices)||unidircut) &amp;&amp; any(j == numerator_nodes(i).input_nodes)
+0083                 <span class="keyword">if</span> any(j == extNodes)
+0084                     past_conditioning_indices = conditioning_indices;
+0085                     past_conditioning_indices{j} = past_state(j) + 1;
+0086                     next_num_node_distribution = next_num_node_distribution(past_conditioning_indices{:});
+0087                 <span class="keyword">else</span>
+0088                     next_num_node_distribution = <span class="keyword">...</span>
+0089                        sum(next_num_node_distribution,j)./size(next_num_node_distribution,j);
+0090                 <span class="keyword">end</span>
+0091             <span class="keyword">end</span>
+0092         <span class="keyword">end</span>
+0093         
+0094         <span class="comment">% the magic</span>
+0095         numerator_conditional_joint = bsxfun(@times,numerator_conditional_joint,next_num_node_distribution);
+0096     <span class="keyword">end</span>
+0097     
+0098     <span class="comment">% conditioning on fixed nodes</span>
+0099     perspective = numerator_conditional_joint ./ sum(numerator_conditional_joint(:));
+0100     
+0101     
+0102     
+0103 <span class="comment">% P(denom_nodes_f | num_nodes_c = numerator_state) = P(denom_nodes_c | num_nodes_p = numerator_state)</span>
+0104 <span class="keyword">elseif</span> strcmp(bf_option,<span class="string">'forward'</span>)
+0105     
+0106     <span class="comment">%LARISSA: UNIDIRECTIONAL CUT STILL MISSING</span>
+0107     
+0108     conditioning_indices = cell(1,2*num_sys_nodes);
+0109     conditioning_indices(:) = {<span class="string">':'</span>};    
+0110     
+0111     FRtpm = TPMshaped.FR;
+0112     
+0113     <span class="keyword">for</span> j = 1:num_sys_nodes
+0114         <span class="comment">% marginalize across elements not in the numerator</span>
+0115         <span class="keyword">if</span> ~(any(j == num_nodes_indices)||any(j == extNodes))
+0116             FRtpm = mean(FRtpm,j);
+0117         <span class="keyword">else</span>
+0118         <span class="comment">% set Elements to their value if they are conditioned</span>
+0119             conditioning_indices{j} = numerator_state(j) + 1;
+0120         <span class="keyword">end</span>
+0121     <span class="keyword">end</span>
+0122     <span class="comment">% This should now always be a Statesx1 distribution</span>
+0123     FRtpm = squeeze(FRtpm(conditioning_indices{:}));
+0124     
+0125     <span class="comment">% now average denominator elements outside the purview</span>
+0126     FRtpm = reshape(FRtpm, 2*ones(1,num_sys_nodes));
+0127     <span class="keyword">for</span> i = 1:num_sys_nodes
+0128         <span class="comment">%Larissa: Not sure if indices are nodes or not, depends on which</span>
+0129         <span class="comment">%system, i.e. is the following true for subsystems?! Check!!</span>
+0130         <span class="keyword">if</span> ~(any(i == denom_nodes_indices))
+0131             FRtpm = mean(FRtpm, i);
+0132         <span class="keyword">end</span>
+0133     <span class="keyword">end</span>    
+0134     perspective = bsxfun(@rdivide,FRtpm,sum(reshape(FRtpm, [],1)));
+0135 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

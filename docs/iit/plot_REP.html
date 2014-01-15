@@ -1,0 +1,298 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plot_REP</title>
+  <meta name="keywords" content="plot_REP">
+  <meta name="description" content="op_min = options(9);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; plot_REP.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>plot_REP
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>op_min = options(9);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [] = plot_REP(Big_phi, REP_cell,phi,MIP_cell, M, plot_panel) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> op_min = options(9);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="combine.html" class="code" title="function ab = combine(a,b)">combine</a>	</li><li><a href="make_title_fb.html" class="code" title="function [string_p string] = make_title_fb(MIP,op_context,op_min)">make_title_fb</a>	</li><li><a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>	</li><li><a href="rotateXLabels.html" class="code" title="function hh = rotateXLabels( ax, angle, varargin )">rotateXLabels</a>	rotateXLabels: rotate any xticklabels</li><li><a href="trans2.html" class="code" title="function [binary] = trans2(value,length)">trans2</a>	TRANS2(VALUE,LENGTH) returns an array of LENGTH 0's and 1's, representing</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="iit_explorer.html" class="code" title="function varargout = iit_explorer(varargin)">iit_explorer</a>	IIT_EXPLORER MATLAB code for iit_explorer.fig</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [] = plot_BRFR(BR,FR,pos_BR,pos_FR,s_title,labelON,plot_panel)</a></li><li><a href="#_sub2" class="code">function states = convert(N)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [] = plot_REP(Big_phi, REP_cell,phi,MIP_cell, M, plot_panel)</a>
+0002 
+0003 
+0004 <span class="comment">% op_min = options(9);</span>
+0005 op_min = 1;
+0006 
+0007 
+0008 
+0009 N = size(phi,1);
+0010 
+0011 <span class="comment">% if op_figures</span>
+0012 <span class="comment">%     figure(20+fig_st);</span>
+0013 <span class="comment">%     plot_phi(phi,MIP_cell, M)</span>
+0014 <span class="comment">%     title('\phi  For Each Purview','FontSize',20);</span>
+0015 <span class="comment">%     xlabel('Purview','FontSize',16)</span>
+0016 <span class="comment">%     ylabel('\phi','FontSize',20)</span>
+0017 <span class="comment">% end</span>
+0018 
+0019 
+0020     
+0021 
+0022         
+0023 
+0024 r = N;
+0025 c = 2;
+0026 
+0027 
+0028 set(plot_panel,<span class="string">'Position'</span>,[0.18076477404403243,0.0,0.7,1]);
+0029 <span class="comment">% pw = 300; % panel width including margin in pixels</span>
+0030 <span class="comment">% ph = 50; % panel height including margin in pixels</span>
+0031 <span class="comment">% mb = 20; % bottom margin</span>
+0032 <span class="comment">% mt = 20; % top margin</span>
+0033 <span class="comment">% mh = 25; % margin height</span>
+0034 <span class="comment">% mw = 10; % margin width</span>
+0035 <span class="comment">% % panel_size = [0, 0, pw, ph]'; % panel size including margin</span>
+0036 <span class="comment">% panel_size_w = [50, 0, pw-mw*2, ph-mh]'; % panel size without margin</span>
+0037 <span class="comment">% fig_size = [0, 0,  pw*c + 100, ph*r + mb+mt + 50]'; % size of figure window</span>
+0038 <span class="comment">% pos_fig = [100,100,0,0]' + fig_size; % position of figure</span>
+0039 
+0040 scaling = r/3.8;
+0041 
+0042 
+0043 <span class="keyword">if</span> scaling &gt; 1
+0044       
+0045     panel_pos = get(plot_panel,<span class="string">'Position'</span>);
+0046     
+0047     panel_height = panel_pos(4)*scaling;
+0048     panel_pos(4) = panel_height;
+0049     panel_pos(2) = 1 - panel_pos(4);
+0050     
+0051     set(plot_panel,<span class="string">'Position'</span>,panel_pos);
+0052     
+0053     <span class="comment">%%% PICK UP HERE FIGURING OUT HOW TO SCALE THIS BITCH</span>
+0054 
+0055     left_marg_col1 = .03;
+0056     left_marg_col2 = .57;
+0057     top_start = 1 - .45/panel_height;
+0058     vert_marg = .1/panel_height;
+0059     plot_h = .075/panel_height;
+0060     plot_w = .4;
+0061     
+0062     setappdata(plot_panel,<span class="string">'limit'</span>,top_start-(vert_marg + plot_h)*(r-1)+.03)
+0063     
+0064 <span class="keyword">else</span>
+0065     
+0066     panel_height = 1;
+0067     left_marg_col1 = .03;
+0068     left_marg_col2 = .57;
+0069     top_start = .55;
+0070     vert_marg = .1;
+0071     plot_h = .075;
+0072     plot_w = .4;
+0073     panel_pos = get(plot_panel,<span class="string">'Position'</span>);
+0074     setappdata(plot_panel,<span class="string">'limit'</span>,panel_pos(2))
+0075 <span class="keyword">end</span>
+0076 
+0077 pos_vec = zeros(4,r,c);
+0078 
+0079 <span class="keyword">for</span> i=1: r
+0080     <span class="keyword">for</span> j=1:c
+0081         <span class="keyword">if</span> (j == 1)
+0082             pos_vec(:,i,j) = [left_marg_col1 top_start-(vert_marg + plot_h)*(i-1) plot_w plot_h];
+0083         <span class="keyword">else</span>
+0084             pos_vec(:,i,j) = [left_marg_col2 top_start-(vert_marg + plot_h)*(i-1) plot_w plot_h];
+0085         <span class="keyword">end</span>
+0086     <span class="keyword">end</span>
+0087 <span class="keyword">end</span>
+0088 
+0089 
+0090 
+0091 <span class="comment">%     Big_phi = sum(phi);</span>
+0092 sy = [<span class="string">'Big Phi='</span>,num2str(Big_phi)];
+0093     
+0094   assignin(<span class="string">'base'</span>,<span class="string">'MIP_Cell'</span>,MIP_cell);  
+0095 <span class="keyword">for</span> i = 1:N
+0096         
+0097 
+0098         
+0099         prob = REP_cell{i,1};
+0100         prob_prod = REP_cell{i,2};
+0101         
+0102         BR_w = prob{1};
+0103         FR_w = prob{2};
+0104         BR_p = prob_prod{1};
+0105         FR_p = prob_prod{2};
+0106         phi_b = phi(i,2);
+0107         phi_f = phi(i,3);
+0108         
+0109         [string_p string] = <a href="make_title_fb.html" class="code" title="function [string_p string] = make_title_fb(MIP,op_context,op_min)">make_title_fb</a>(MIP_cell{i},0,1);
+0110         
+0111         s_title = cell(2,1);
+0112         s_title_p = cell(2,1);
+0113 <span class="comment">%         s_title{1}= [string{1},': \phi_b=',num2str(phi_b)];</span>
+0114 <span class="comment">%         s_title{2}= [string{2},': \phi_f=',num2str(phi_f)];</span>
+0115 <span class="comment">%         s_title_p{1} = [string_p{1},': \phi_b=',num2str(phi_b)];</span>
+0116 <span class="comment">%         s_title_p{2} = [string_p{2},': \phi_f=',num2str(phi_f)];</span>
+0117         
+0118         s_title{1}= {[<span class="string">'FULL:    '</span>, string{1}, <span class="string">',  \phi_b ='</span>,num2str(phi_b)],[<span class="string">'PARTITIONED:    '</span>, string_p{1}]};
+0119         s_title{2}= {[<span class="string">'FULL:    '</span>, string{2}, <span class="string">',  \phi_f ='</span>,num2str(phi_f)],[<span class="string">'PARTITIONED:    '</span>, string_p{2}]};
+0120 <span class="comment">%          s_title{1} = {'test1','test2'};</span>
+0121 <span class="comment">%          s_title{2} = {'test3','test4'};</span>
+0122 <span class="comment">%         s = [string{3}, ', ', string_p{3},', phi = ',num2str(phi(i))];</span>
+0123 <span class="comment">%         fprintf('%s\n',s);</span>
+0124         
+0125 
+0126 <span class="comment">%             i_rev = N-i+1;</span>
+0127 <span class="comment">%             fig_pi = floor((i_rev-1)/fig_max);</span>
+0128 <span class="comment">%             fig_i = i_rev - fig_pi*fig_max;</span>
+0129             pos_BR = pos_vec(:,i,1)';
+0130             pos_FR = pos_vec(:,i,2)';
+0131 
+0132 <span class="comment">%             figure(fig_st+fig_pi)</span>
+0133 <span class="comment">%             set(gcf,'Position',pos_fig)</span>
+0134             <span class="keyword">if</span> mod(i,min(r,N)) == 0
+0135                 labelON = 1;
+0136             <span class="keyword">else</span>
+0137                 labelON = 0;
+0138             <span class="keyword">end</span>
+0139             BR = ones(length(BR_w),2);
+0140             BR(:,1) = BR_w; BR(:,2) = BR_p;
+0141             FR = ones(length(FR_w),2);
+0142             FR(:,1) = FR_w; FR(:,2) = FR_p;
+0143             <a href="#_sub1" class="code" title="subfunction [] = plot_BRFR(BR,FR,pos_BR,pos_FR,s_title,labelON,plot_panel)">plot_BRFR</a>(BR,FR,pos_BR,pos_FR,s_title,labelON,plot_panel)
+0144     <span class="comment">%         plot_BRFR(BR_w,FR_w,pos_BR',pos_FR',s_title,labelON)</span>
+0145 
+0146             <span class="keyword">if</span> i == N
+0147 
+0148                 uicontrol(<span class="string">'Style'</span>, <span class="string">'text'</span>,<span class="keyword">...</span>
+0149                 <span class="string">'String'</span>, {[<span class="string">'Core Concept Distributions For '</span> <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(M)],sy},<span class="keyword">...</span><span class="comment"> %replace something with the text you want</span>
+0150                 <span class="string">'Units'</span>,<span class="string">'normalized'</span>,<span class="keyword">...</span>
+0151                 <span class="string">'FontSize'</span>,16,<span class="keyword">...</span>
+0152                 <span class="string">'BackgroundColor'</span>,<span class="string">'w'</span>,<span class="keyword">...</span>
+0153                 <span class="string">'Position'</span>, [0.33 1-.2/panel_height 0.33 0.12/panel_height],<span class="keyword">...</span>
+0154                 <span class="string">'Parent'</span>,plot_panel,<span class="keyword">...</span>
+0155                 <span class="string">'Clipping'</span>,<span class="string">'on'</span>);
+0156 
+0157     <span class="comment">%             uicontrol('Style', 'text',...</span>
+0158     <span class="comment">%             'String', 'PAST &lt;-- CURRENT',... %replace something with the text you want</span>
+0159     <span class="comment">%             'Units','normalized',...</span>
+0160     <span class="comment">%             'FontSize',13,...</span>
+0161     <span class="comment">%             'BackgroundColor','w',...</span>
+0162     <span class="comment">%             'Position', [0.15 0.79 0.28 0.05]);</span>
+0163 
+0164     <span class="comment">%             uicontrol('Style', 'text',...</span>
+0165     <span class="comment">%             'String', 'CURRENT --&gt; FUTURE',... %replace something with the text you want</span>
+0166     <span class="comment">%             'Units','normalized',...</span>
+0167     <span class="comment">%             'FontSize',13,...</span>
+0168     <span class="comment">%             'BackgroundColor','w',...</span>
+0169     <span class="comment">%             'Position', [0.59 0.79 0.28 0.05]);</span>
+0170 
+0171                 my_legend = legend(<span class="string">'Full Concept'</span>,<span class="string">'Partitioned Concept'</span>);
+0172                 set(my_legend, <span class="string">'Position'</span>,[.75 1-.2/panel_height .1 .18/panel_height],<span class="keyword">...</span>
+0173                 <span class="string">'Parent'</span>,plot_panel,<span class="keyword">...</span>
+0174                 <span class="string">'Clipping'</span>,<span class="string">'on'</span>);
+0175 
+0176             <span class="keyword">end</span>
+0177 
+0178             x0 = <a href="combine.html" class="code" title="function ab = combine(a,b)">combine</a>(MIP_cell{i}{1,2},MIP_cell{i}{2,2});
+0179             subtit_pos = [.46 pos_BR(2) .06 .10/panel_height];
+0180 
+0181             uicontrol(<span class="string">'Style'</span>, <span class="string">'text'</span>,<span class="keyword">...</span>
+0182             <span class="string">'String'</span>, {<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(x0),[<span class="string">'phi = '</span>, num2str(min(phi_f,phi_b))]},<span class="keyword">...</span><span class="comment"> %replace something with the text you want</span>
+0183             <span class="string">'Units'</span>,<span class="string">'normalized'</span>,<span class="keyword">...</span>
+0184             <span class="string">'FontSize'</span>,13,<span class="keyword">...</span>
+0185             <span class="string">'BackgroundColor'</span>,<span class="string">'w'</span>,<span class="keyword">...</span>
+0186             <span class="string">'Position'</span>, subtit_pos,<span class="keyword">...</span>
+0187             <span class="string">'Parent'</span>,plot_panel,<span class="keyword">...</span>
+0188             <span class="string">'Clipping'</span>,<span class="string">'on'</span>);
+0189 
+0190 <span class="keyword">end</span>
+0191 
+0192 <span class="keyword">end</span>
+0193 
+0194                 
+0195 
+0196 
+0197 <a name="_sub1" href="#_subfunctions" class="code">function [] = plot_BRFR(BR,FR,pos_BR,pos_FR,s_title,labelON,plot_panel)</a>
+0198 
+0199 
+0200 subplot(<span class="string">'Position'</span>,pos_BR,<span class="string">'Parent'</span>,plot_panel)
+0201 h = bar(0:length(BR)-1,BR,<span class="string">'hist'</span>);
+0202 set(gca,<span class="string">'XTick'</span>,0:length(BR)-1)
+0203 set(gca,<span class="string">'YTickLabel'</span>,[0 .5 1])
+0204 
+0205 states = <a href="#_sub2" class="code" title="subfunction states = convert(N)">convert</a>(length(BR));
+0206 axis([-0.5 length(BR)-0.5 0 1.0])
+0207 title(s_title{1})
+0208 <span class="keyword">if</span> labelON== 1
+0209     set(gca,<span class="string">'XTickLabel'</span>,num2str(states,<span class="string">'%d'</span>)) <span class="comment">% uncomment this to have a binary valued x-axis</span>
+0210     <a href="rotateXLabels.html" class="code" title="function hh = rotateXLabels( ax, angle, varargin )">rotateXLabels</a>( gca(), 90) <span class="comment">% uncomment if binary values are used on the x-axis</span>
+0211 <span class="comment">%     xlab = xlabel('State (Node Order: [1...N])','FontSize',14,'Units','pixels');</span>
+0212 <span class="comment">%     disp(get(xlab,'Position'))</span>
+0213 <span class="comment">%     set(xlab,'Position',get(xlab,'Position') - [0 100 0])</span>
+0214 <span class="comment">% disp(get(xlab,'Position'))</span>
+0215 <span class="keyword">else</span>
+0216     set(gca,<span class="string">'XTickLabel'</span>,[]) 
+0217 <span class="keyword">end</span>
+0218 
+0219 
+0220 subplot(<span class="string">'Position'</span>,pos_FR,<span class="string">'Parent'</span>,plot_panel);
+0221 h = bar(0:length(FR)-1,FR,<span class="string">'hist'</span>);
+0222 set(gca,<span class="string">'XTick'</span>,0:length(FR)-1)
+0223 set(gca,<span class="string">'YTickLabel'</span>,[0 .5 1])
+0224 states = <a href="#_sub2" class="code" title="subfunction states = convert(N)">convert</a>(length(FR));
+0225 axis([-0.5 length(FR)-0.5 0 1.0])
+0226 title(s_title{2})
+0227 <span class="keyword">if</span> labelON== 1
+0228     set(gca,<span class="string">'XTickLabel'</span>,num2str(states,<span class="string">'%d'</span>)) <span class="comment">% uncomment this to have a binary valued x-axis</span>
+0229     <a href="rotateXLabels.html" class="code" title="function hh = rotateXLabels( ax, angle, varargin )">rotateXLabels</a>( gca(), 90) <span class="comment">% uncomment if binary values are used on the x-axis</span>
+0230 <span class="comment">%     xlabel('State (Node Order: [1...N])','FontSize',14)</span>
+0231 <span class="comment">%     xlab = xlabel('State (Node Order: [1...N])','FontSize',14,'Units','pixels');</span>
+0232 <span class="comment">%     set(xlab,'Position',get(xlab,'Position') - [0 100 0])</span>
+0233 
+0234 <span class="keyword">else</span>
+0235     set(gca,<span class="string">'XTickLabel'</span>,[]) 
+0236 <span class="keyword">end</span>
+0237 
+0238 
+0239 <span class="keyword">end</span>
+0240 
+0241 
+0242 
+0243 <a name="_sub2" href="#_subfunctions" class="code">function states = convert(N)</a>
+0244 states = zeros(N,log2(N));
+0245 <span class="keyword">for</span> i=1: N
+0246     sigma = <a href="trans2.html" class="code" title="function [binary] = trans2(value,length)">trans2</a>(i-1,log2(N));
+0247     states(i,:) = sigma';
+0248 <span class="keyword">end</span>
+0249 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of partial_prob_comp</title>
+  <meta name="keywords" content="partial_prob_comp">
+  <meta name="description" content="compute the conditional probability p(x0_b | x1_b)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; partial_prob_comp.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>partial_prob_comp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>compute the conditional probability p(x0_b | x1_b)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function prob = partial_prob_comp(x0_b,x1_b,x1,p,b_table,op_fb,M,C_j) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> compute the conditional probability p(x0_b | x1_b)
+
+ x1: data, x0_b: partition of x0, x1_b: partition of x1
+ p: probability matrix in the whole system</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>	This function finds the complement of a M1 where M is the full set</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="iit_run.html" class="code" title="function iit_run(tpm, in_connect_mat, current_state, in_noise, in_options, in_nodes, past_state)">iit_run</a>	IIT_RUN Computes concepts, small and big phi, and partition information</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function prob = partial_prob_comp(x0_b,x1_b,x1,p,b_table,op_fb,M,C_j)</a>
+0002 <span class="comment">% compute the conditional probability p(x0_b | x1_b)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% x1: data, x0_b: partition of x0, x1_b: partition of x1</span>
+0005 <span class="comment">% p: probability matrix in the whole system</span>
+0006 
+0007 
+0008 
+0009 N = log2(size(p,1)); <span class="comment">% number of elements in the whole system</span>
+0010 <span class="comment">% two_pow = zeros(N,1);</span>
+0011 <span class="comment">% for i=1: N</span>
+0012 <span class="comment">%     two_pow(i) = 2^(i-1);</span>
+0013 <span class="comment">% end</span>
+0014 
+0015 two_pow = 2.^(0:(N-1))';
+0016 
+0017 N0_b = length(x0_b); <span class="comment">% number of elements in x0</span>
+0018 x0_r = 1:N;
+0019 x0_r(x0_b) = []; <span class="comment">% the rest of x0</span>
+0020 N0_r = length(x0_r); <span class="comment">% number of elements in the rest of x0</span>
+0021 
+0022 N1_b = length(x1_b);
+0023 x1_r = 1:N;
+0024 x1_r(x1_b) = []; <span class="comment">% the rest of x1</span>
+0025 N1_r = length(x1_r); <span class="comment">% number of elements in the rest of x1</span>
+0026 
+0027 <span class="comment">% x1_i1 = sum(two_pow(x1_b).*x1(x1_b));</span>
+0028 
+0029 <span class="keyword">if</span> N0_r == 0
+0030     x0_i2_vec = 0;
+0031 <span class="keyword">else</span>
+0032     x0_i2_vec = zeros(2^N0_r,1); <span class="comment">% a vector the size of the number of states over the complement of x0_b</span>
+0033     <span class="keyword">for</span> j=1: 2^N0_r
+0034         <span class="comment">% x0_rs = trans2(j-1,N0_r);</span>
+0035         x0_rs = b_table{j,N0_r}; <span class="comment">%this gets the column of b_table that holds binary values the size of N0_r</span>
+0036         x0_i2 = sum(two_pow(x0_r).*x0_rs); <span class="comment">% this converts back to decimal? - doesn't appear to happen anyway</span>
+0037         x0_i2_vec(j) = x0_i2;
+0038     <span class="keyword">end</span>
+0039 <span class="keyword">end</span>
+0040 
+0041 <span class="keyword">if</span> N1_r == 0
+0042     x1_i2_vec = 0;
+0043 <span class="keyword">else</span>
+0044     x1_i2_vec = zeros(2^N1_r,1);
+0045     <span class="keyword">for</span> j=1: 2^N1_r
+0046         x1_rs = b_table{j,N1_r};
+0047         x1_i2 = sum(two_pow(x1_r).*x1_rs);
+0048         x1_i2_vec(j) = x1_i2;
+0049     <span class="keyword">end</span>
+0050 <span class="keyword">end</span>
+0051 
+0052 <span class="comment">%% original version</span>
+0053 <span class="keyword">if</span> op_fb == 1
+0054     <span class="comment">%% backward computation</span>
+0055     <span class="comment">% p: 2^N by N</span>
+0056     prob = zeros(2^N0_b,1); <span class="comment">% output</span>
+0057     <span class="keyword">for</span> i = 1:2^N0_b <span class="comment">% states of x0 inside the partition</span>
+0058         prob(i) = 1;
+0059         x0_bs = b_table{i,N0_b};
+0060         x0_i1 = sum(two_pow(x0_b).*x0_bs);
+0061         <span class="keyword">for</span> k = 1:N1_b <span class="comment">%% index of x1 neurons</span>
+0062             x1_s = x1(x1_b(k)); <span class="comment">% state of the x1 neuron</span>
+0063             p_k = 0;
+0064             <span class="keyword">for</span> j=1: 2^N0_r <span class="comment">% summation over the rest of x0 (outside the partition)</span>
+0065                 x0_i2 = x0_i2_vec(j);
+0066                 x0_i = 1+x0_i1 + x0_i2;
+0067                 <span class="keyword">if</span> x1_s == 1
+0068                     p_k = p_k + p(x0_i,x1_b(k));
+0069                 <span class="keyword">else</span>
+0070                     p_k = p_k + (1-p(x0_i,x1_b(k)));
+0071                 <span class="keyword">end</span>
+0072             <span class="keyword">end</span>
+0073             prob(i) = prob(i)*p_k;
+0074         <span class="keyword">end</span>
+0075     <span class="keyword">end</span>
+0076 <span class="keyword">else</span>
+0077     <span class="comment">%% forward computation</span>
+0078     prob = zeros(2^N1_b,1); <span class="comment">% the coditional entropy p(x0_b(not fixed)|x1_b(fixed))</span>
+0079     <span class="keyword">if</span> op_fb == 0
+0080         <span class="comment">% partition</span>
+0081         source = [];
+0082         <span class="keyword">for</span> j=1: length(C_j)
+0083             source =  [source x0_b(x0_b==C_j(j))];
+0084         <span class="keyword">end</span>
+0085         x0_in = <a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>(x0_b,source); <span class="comment">% the rest of x0 in M</span>
+0086         x0_out = <a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>(1:N,x0_b); <span class="comment">% the rest of x0 outside M</span>
+0087     <span class="keyword">elseif</span> op_fb == 2
+0088         <span class="comment">% perspective</span>
+0089         source = x0_b;
+0090         x0_in = <a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>(M,x0_b); <span class="comment">% the rest of x0 in M</span>
+0091         x0_out = <a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>(1:N,M); <span class="comment">% the rest of x0 outside M</span>
+0092     <span class="keyword">end</span>
+0093     N_in = length(x0_in);
+0094     N_out = length(x0_out);
+0095     x0_in_vec = zeros(2^N_in,1);
+0096     x0_out_vec = zeros(2^N_out,1);
+0097     <span class="keyword">if</span> N_in ~= 0
+0098         <span class="keyword">for</span> j=1: 2^N_in
+0099             x0_s_in = b_table{j,N_in};
+0100             x0_in_i = sum(two_pow(x0_in).*x0_s_in);
+0101             x0_in_vec(j) = x0_in_i;
+0102         <span class="keyword">end</span>
+0103     <span class="keyword">else</span>
+0104         x0_in_vec = 0;
+0105     <span class="keyword">end</span>
+0106     <span class="keyword">if</span> N_out ~= 0
+0107         <span class="keyword">for</span> j=1: 2^N_out
+0108             x0_s_out = b_table{j,N_out};
+0109             x0_out_i = sum(two_pow(x0_out).*x0_s_out);
+0110             x0_out_vec(j) = x0_out_i;
+0111         <span class="keyword">end</span>
+0112     <span class="keyword">else</span>
+0113         x0_out_vec = 0;
+0114     <span class="keyword">end</span>
+0115     
+0116     <span class="comment">% index of the source, Note: interpret x1 as current state</span>
+0117     <span class="keyword">if</span> isempty(source) == 1
+0118         x0_so_i = 0;
+0119     <span class="keyword">elseif</span> length(x1) ~= N
+0120         x0_so_i = sum(two_pow(source).*x1);
+0121     <span class="keyword">else</span>
+0122         x0_so_i = sum(two_pow(source).*x1(source));
+0123     <span class="keyword">end</span>
+0124     
+0125     <span class="keyword">for</span> i=1: 2^N1_b <span class="comment">% states of x1 inside the partition</span>
+0126         x1_bs = b_table{i,N1_b};
+0127         prob(i) = 0;
+0128         <span class="comment">% fprintf('%s\n',mat2str(x0_bs))</span>
+0129         <span class="keyword">for</span> j=1: 2^N_in <span class="comment">% summation over the rest of x0 in M</span>
+0130             x0_in_i = x0_in_vec(j);
+0131             <span class="comment">% fprintf('%d\n',x0_in_i);</span>
+0132             temp = 1;
+0133             <span class="keyword">for</span> k=1: N1_b <span class="comment">% multiplication over x1 states</span>
+0134                 x1_s = x1_bs(k);
+0135                 p_k = 0;
+0136                 <span class="keyword">for</span> l=1: 2^N_out <span class="comment">% summation over the rest of x0 outside M</span>
+0137                     x0_out_i = x0_out_vec(l);
+0138                     x0_i = 1+x0_so_i+x0_in_i + x0_out_i;
+0139                     <span class="keyword">if</span> x1_s == 1
+0140                         p_k = p_k + p(x0_i,x1_b(k));
+0141                     <span class="keyword">else</span>
+0142                         p_k = p_k + (1-p(x0_i,x1_b(k)));
+0143                     <span class="keyword">end</span>
+0144                     <span class="comment">% fprintf('k=%d l=%d p_k=%f\n',l,k,p_k);</span>
+0145                 <span class="keyword">end</span>
+0146                 temp = temp*p_k;
+0147             <span class="keyword">end</span>
+0148             <span class="comment">% fprintf('temp=%f\n',temp);</span>
+0149             prob(i) = prob(i) + temp;
+0150         <span class="keyword">end</span>
+0151         <span class="comment">% fprintf('prob(i)=%f\n',prob(i));</span>
+0152     <span class="keyword">end</span>
+0153     
+0154 <span class="keyword">end</span>
+0155 
+0156 
+0157 <span class="comment">%% Normalization</span>
+0158 <span class="keyword">if</span> sum(prob) ~= 0
+0159     prob = prob/sum(prob);
+0160 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

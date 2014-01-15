@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cpt_factory_tpm</title>
+  <meta name="keywords" content="cpt_factory_tpm">
+  <meta name="description" content="THIS FUNCTION CURRENTLY ONLY WORKS FOR BINARY NODES!">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; cpt_factory_tpm.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>cpt_factory_tpm
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>THIS FUNCTION CURRENTLY ONLY WORKS FOR BINARY NODES!</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function cpt = cpt_factory_tpm(this_node, inputs, nodes, num_total_nodes, tpm) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> THIS FUNCTION CURRENTLY ONLY WORKS FOR BINARY NODES!
+ Because it takes the state x nodes tpm</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="cpt_removal_network.html" class="code" title="function Rem_network = cpt_removal_network(this_subset, network)">cpt_removal_network</a>	build a cell array that contains all of the subsets</li><li><a href="iit.html" class="code" title="function varargout = iit(varargin)">iit</a>	VERSION v0.04 - 11.14.2012</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function cpt = cpt_factory_tpm(this_node, inputs, nodes, num_total_nodes, tpm)</a>
+0002 
+0003 <span class="comment">% THIS FUNCTION CURRENTLY ONLY WORKS FOR BINARY NODES!</span>
+0004 <span class="comment">% Because it takes the state x nodes tpm</span>
+0005 
+0006 num_sys_nodes = num_total_nodes/2;
+0007 
+0008 dim_sizes = ones(1,num_total_nodes);
+0009 dim_sizes(1:num_sys_nodes) = [nodes(1:num_sys_nodes).num_states];
+0010 
+0011 prob_this_node_on = reshape(tpm(:,this_node.num-num_sys_nodes),dim_sizes);
+0012 
+0013 
+0014 dim_sizes(this_node.num) = this_node.num_states;
+0015 cpt = zeros(dim_sizes);
+0016 indices = cell(1,num_total_nodes);
+0017 indices(:) = {<span class="string">':'</span>};
+0018 indices{this_node.num} = 2;
+0019 
+0020 cpt(indices{:}) = prob_this_node_on;
+0021 
+0022 indices = cell(1,num_total_nodes);
+0023 indices(:) = {<span class="string">':'</span>};
+0024 indices{this_node.num} = 1;
+0025 
+0026 cpt(indices{:}) = 1 - prob_this_node_on;
+0027 
+0028 <span class="keyword">for</span> i = 1:num_sys_nodes
+0029     
+0030     <span class="keyword">if</span> ~any(i == inputs)
+0031         cpt = sum(cpt,i)/2;
+0032     <span class="keyword">end</span>
+0033 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of MIP_search_reentry</title>
+  <meta name="keywords" content="MIP_search_reentry">
+  <meta name="description" content="%">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; MIP_search_reentry.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>MIP_search_reentry
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>%</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [Big_phi_MIP MIP Big_phi_cand MIP_cand BFCut] = MIP_search_reentry(subsystem,N,Big_phi_M,M_IRR_M,prob_M, phi_M,options, concept_MIP_M, network) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">%
+ Find the Big-phi MIP in a subset M
+ M: a subset where Big_phi_MIP is computed
+ N: number of elements in the whole system
+ Big_phi_M: Big_phi values in every subset, M
+ prob - distributions for the concept for each purview
+ phi - phi values for each purview in prob</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="L1norm.html" class="code" title="function D = L1norm(prob,prob2)">L1norm</a>	% compute distance based on L1 norm divided by two to approximate the earth movers</li><li><a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>	compute BRs and FRs for a single perspective but given some fixed</li><li><a href="concept2index.html" class="code" title="function index = concept2index(numerator, subsystem)">concept2index</a>	size of subsystem</li><li><a href="expand_prob.html" class="code" title="function prob_exp = expand_prob(prob_in,M,x_in)">expand_prob</a>	</li><li><a href="expand_prob_general.html" class="code" title="function joint_distribution = expand_prob_general(prob_in,M,x_in,prob_out)">expand_prob_general</a>	</li><li><a href="genEMDDistanceMatrix.html" class="code" title="function [Dist, indD] = genEMDDistanceMatrix(Dists, maxEnt, dist_mat) %past whole and cut distributions">genEMDDistanceMatrix</a>	wholeDists and cutDists are matrices of distributions (each column one</li><li><a href="gen_dist_matrix.html" class="code" title="function D = gen_dist_matrix(N)">gen_dist_matrix</a>	generates the distance matrix between vertices which can be used as</li><li><a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>	</li><li><a href="phi_comp_ex_unidir.html" class="code" title="function [max_phi_MIP, prob, j_max, network] = phi_comp_ex_unidir(subsystem,M1,M2,numerator,whole_sys_state,network,bf_option,bfcut_option)">phi_comp_ex_unidir</a>	pf_tag is 1 for past and 2 for future</li><li><a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>	This function finds the complement of a M1 where M is the full set</li><li><a href="subsystem2index.html" class="code" title="function index = subsystem2index(subsystem)">subsystem2index</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="complex_search.html" class="code" title="function [Big_phi_MIP MIP Complex M_i_max BFCut Big_phi_MIP_M MIP_M Big_phi_MIP_all_M MIP_all_M BFCut_M] = complex_search(Big_phi_M,M_cell,M_IRR_M,N,prob_M, phi_M,options,concept_MIP_M,network)">complex_search</a>	% Find complex</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Big_phi_MIP MIP Big_phi_cand MIP_cand BFCut] = MIP_search_reentry(subsystem,N,Big_phi_M,M_IRR_M,prob_M, phi_M,options, concept_MIP_M, network)</a>
+0002 <span class="comment">%%</span>
+0003 <span class="comment">% Find the Big-phi MIP in a subset M</span>
+0004 <span class="comment">% M: a subset where Big_phi_MIP is computed</span>
+0005 <span class="comment">% N: number of elements in the whole system</span>
+0006 <span class="comment">% Big_phi_M: Big_phi values in every subset, M</span>
+0007 <span class="comment">% prob - distributions for the concept for each purview</span>
+0008 <span class="comment">% phi - phi values for each purview in prob</span>
+0009 
+0010 <span class="comment">%%</span>
+0011 op_small_phi = options(4);
+0012 op_big_phi = options(5);
+0013 op_normalize = options(7);
+0014 op_console = options(8);
+0015 op_extNodes = options(11);
+0016 
+0017 N_M = length(subsystem);
+0018 
+0019 <span class="keyword">if</span> op_extNodes == 1 &amp;&amp; N ~= length(subsystem)
+0020     M = 1:length(subsystem);
+0021 <span class="keyword">else</span>
+0022     M = subsystem;
+0023 <span class="keyword">end</span>  
+0024 
+0025 <span class="keyword">if</span> op_extNodes == 0
+0026     extNodes = setdiff(network.full_system, subsystem);
+0027 <span class="keyword">else</span>
+0028     extNodes = [];
+0029 <span class="keyword">end</span> 
+0030 
+0031 
+0032 C = [];
+0033 <span class="keyword">for</span> i=1: floor(N_M/2)
+0034     C_temp = nchoosek(M,i); 
+0035     <span class="keyword">if</span> i == floor(N_M/2) &amp;&amp; mod(N_M,2) == 0 
+0036         <span class="comment">% if M is even only half of the partitions have to be evaluated, the others already appeared</span>
+0037         <span class="comment">% eg. M1 = [1 2] -&gt; M2 = [3 4] doesn't need to be calculated</span>
+0038         N_C = size(C_temp,1)/2;
+0039     <span class="keyword">else</span> 
+0040         N_C = size(C_temp,1);
+0041     <span class="keyword">end</span>    
+0042     C = [C; num2cell(C_temp(1:N_C,:),2)];
+0043 <span class="keyword">end</span>   
+0044 
+0045 N_Bp = size(C,1);   <span class="comment">%Number of possible PHI partitions</span>
+0046 
+0047 Big_phi_cand = zeros(N_Bp,2);
+0048 MIP_cand = cell(N_Bp,1);
+0049 M_indexCut = zeros(N_Bp,1);
+0050 
+0051 whole_i = <a href="subsystem2index.html" class="code" title="function index = subsystem2index(subsystem)">subsystem2index</a>(subsystem);     <span class="comment">% Full system index</span>
+0052 Big_phi_w = Big_phi_M(whole_i);
+0053 
+0054 phi_whole = phi_M{whole_i}(:,1)';
+0055 concept_numind = find(phi_whole ~= 0);
+0056 phi_w_concepts = phi_whole(phi_whole ~= 0);
+0057 IRR_whole = M_IRR_M{whole_i};
+0058 
+0059 l = 1;
+0060 <span class="keyword">for</span> j = 1:N_Bp
+0061     M1 = C{j};
+0062     M2 = <a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>(M,M1);
+0063 
+0064     M1_i = <a href="subsystem2index.html" class="code" title="function index = subsystem2index(subsystem)">subsystem2index</a>(M1);
+0065     M2_i = <a href="subsystem2index.html" class="code" title="function index = subsystem2index(subsystem)">subsystem2index</a>(M2);  
+0066    
+0067     <span class="comment">%Big_phi_partition = Big_phi_M(M1_i) + Big_phi_M(M2_i);</span>
+0068     PhiCutSum = [0; 0];  <span class="comment">%Larissa: cutting first M1 &lt;- M2 (causes on M1, effects from M2) and then M1 -&gt; M2 (causes on M2, effects from M1)</span>
+0069     <span class="keyword">if</span> op_big_phi ~= 0
+0070         BRcut_dist = cell(length(phi_w_concepts), 2, 2); <span class="comment">%dim1: per concept, dim2: past/future, dim2: whole/cut</span>
+0071         BRcut_phi = zeros(length(phi_w_concepts),1);
+0072         FRcut_dist = cell(length(phi_w_concepts), 2, 2);
+0073         FRcut_phi = zeros(length(phi_w_concepts),1);
+0074     <span class="keyword">end</span>    
+0075     <span class="keyword">for</span> k = 1:length(phi_w_concepts)
+0076         IRR_w = IRR_whole{k};
+0077         <span class="keyword">if</span> all(ismember(IRR_w,M1)) 
+0078             <span class="comment">% for M1 &lt;- M2 cut take BR of M1 and FR from M</span>
+0079             <span class="keyword">if</span> op_extNodes &lt; 2 || isempty(prob_M{M1_i,1})
+0080                 <span class="comment">% need to compute R/Rf for BRcut and R/Rb for FRcut</span>
+0081                 [phi_BRcut_BR, cutpdist, denom_pnew, network] = <a href="phi_comp_ex_unidir.html" class="code" title="function [max_phi_MIP, prob, j_max, network] = phi_comp_ex_unidir(subsystem,M1,M2,numerator,whole_sys_state,network,bf_option,bfcut_option)">phi_comp_ex_unidir</a>(M,M1,M2,IRR_w,network.current_state,network,<span class="string">'backward'</span>,<span class="string">'BRcut'</span>);
+0082                 [phi_FRcut_FR, cutfdist, denom_fnew, network] = <a href="phi_comp_ex_unidir.html" class="code" title="function [max_phi_MIP, prob, j_max, network] = phi_comp_ex_unidir(subsystem,M1,M2,numerator,whole_sys_state,network,bf_option,bfcut_option)">phi_comp_ex_unidir</a>(M,M1,M2,IRR_w,network.current_state,network,<span class="string">'forward'</span>,<span class="string">'FRcut'</span>);
+0083                 phi_BRcut = min(phi_BRcut_BR, phi_M{whole_i}(concept_numind(k),3));
+0084                 phi_FRcut = min(phi_M{whole_i}(concept_numind(k),2),phi_FRcut_FR);
+0085                    
+0086             <span class="keyword">else</span>  <span class="comment">% M1 complex was already computed</span>
+0087                 indm = <a href="concept2index.html" class="code" title="function index = concept2index(numerator, subsystem)">concept2index</a>(IRR_w,M1);
+0088                 phi_BRcut = min(phi_M{M1_i}(indm,2), phi_M{whole_i}(concept_numind(k),3));
+0089                 phi_FRcut = min(phi_M{whole_i}(concept_numind(k),2), phi_M{M1_i}(indm,3));
+0090                 <span class="keyword">if</span> op_big_phi ~= 0 <span class="comment">%L1 or Earthmover</span>
+0091                     <span class="comment">%Larissa: distributions that are identical anyways are empty</span>
+0092         <span class="comment">%                         denom_p = sort([concept_MIP_M{M1_i}{indm}{:,1,1}]);</span>
+0093         <span class="comment">%                         denom_f = sort([concept_MIP_M{M1_i}{indm}{:,1,2}]);</span>
+0094 
+0095                     cutpdist = <a href="expand_prob.html" class="code" title="function prob_exp = expand_prob(prob_in,M,x_in)">expand_prob</a>(prob_M{M1_i,1}{indm}{1},M,M1);
+0096                     <span class="comment">%compute the max ent forward dist (or the marginal forward) of M2</span>
+0097                     forward_max_ent_M2 = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(network.nodes,[],M2,network.current_state,<span class="string">'forward'</span>,extNodes);
+0098                     cutfdist = <a href="expand_prob_general.html" class="code" title="function joint_distribution = expand_prob_general(prob_in,M,x_in,prob_out)">expand_prob_general</a>(prob_M{M1_i,1}{indm}{2},M,M1,forward_max_ent_M2(:));               
+0099                 <span class="keyword">end</span>                       
+0100             <span class="keyword">end</span>    
+0101             <span class="keyword">if</span> op_big_phi ~= 0
+0102                 BRcut_phi(k) = phi_BRcut;
+0103                 FRcut_phi(k) = phi_FRcut;
+0104                 BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} cutpdist};
+0105                 FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} cutfdist};
+0106                 <span class="comment">%Larissa: These have to be there. Maybe there is a more efficient way though</span>
+0107                 BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}}; 
+0108                 FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}}; 
+0109             <span class="keyword">end</span>    
+0110         <span class="keyword">elseif</span> all(ismember(IRR_w,M2))
+0111             
+0112             <span class="keyword">if</span> op_extNodes &lt; 2 || isempty(prob_M{M2_i,1})
+0113                 <span class="comment">% need to compute R/Rf for BRcut and R/Rb for FRcut</span>
+0114                 [phi_BRcut_FR, cutfdist, denom_pnew, network] = <a href="phi_comp_ex_unidir.html" class="code" title="function [max_phi_MIP, prob, j_max, network] = phi_comp_ex_unidir(subsystem,M1,M2,numerator,whole_sys_state,network,bf_option,bfcut_option)">phi_comp_ex_unidir</a>(M,M1,M2,IRR_w,network.current_state,network,<span class="string">'forward'</span>,<span class="string">'BRcut'</span>);
+0115                 [phi_FRcut_BR, cutpdist, denom_fnew, network] = <a href="phi_comp_ex_unidir.html" class="code" title="function [max_phi_MIP, prob, j_max, network] = phi_comp_ex_unidir(subsystem,M1,M2,numerator,whole_sys_state,network,bf_option,bfcut_option)">phi_comp_ex_unidir</a>(M,M1,M2,IRR_w,network.current_state,network,<span class="string">'backward'</span>,<span class="string">'FRcut'</span>);
+0116                 phi_BRcut = min(phi_M{whole_i}(concept_numind(k),2), phi_BRcut_FR);
+0117                 phi_FRcut = min(phi_FRcut_BR, phi_M{whole_i}(concept_numind(k),3));
+0118                 
+0119             <span class="keyword">else</span>  <span class="comment">% M2 complex was already computed</span>
+0120                 indm = <a href="concept2index.html" class="code" title="function index = concept2index(numerator, subsystem)">concept2index</a>(IRR_w,M2);
+0121                 phi_BRcut = min(phi_M{whole_i}(concept_numind(k),2), phi_M{M2_i}(indm,3));
+0122                 phi_FRcut = min(phi_M{M2_i}(indm,2), phi_M{whole_i}(concept_numind(k),3));
+0123                 <span class="keyword">if</span> op_big_phi ~= 0 <span class="comment">%L1 or Earthmover</span>
+0124                     <span class="comment">%compute the max ent forward dist (or the marginal forward) of M1</span>
+0125                     forward_max_ent_M1 = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(network.nodes,[],M1,network.current_state,<span class="string">'forward'</span>,extNodes);
+0126                     cutfdist = <a href="expand_prob_general.html" class="code" title="function joint_distribution = expand_prob_general(prob_in,M,x_in,prob_out)">expand_prob_general</a>(prob_M{M2_i,1}{indm}{2},M,M2,forward_max_ent_M1(:));
+0127                     cutpdist = <a href="expand_prob.html" class="code" title="function prob_exp = expand_prob(prob_in,M,x_in)">expand_prob</a>(prob_M{M2_i,1}{indm}{1},M,M2); 
+0128                 <span class="keyword">end</span>   
+0129             <span class="keyword">end</span>
+0130             <span class="keyword">if</span> op_big_phi ~= 0 <span class="comment">%L1 or Earthmover</span>
+0131                     BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} cutfdist}; <span class="comment">%future might have changed</span>
+0132                     FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} cutpdist}; <span class="comment">%back might have changed, future is the same</span>
+0133                     BRcut_phi(k) = phi_BRcut;
+0134                     FRcut_phi(k) = phi_FRcut;
+0135                     <span class="comment">%Larissa: These have to be there. Maybe there is a more efficient way though</span>
+0136                     BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}}; 
+0137                     FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}};
+0138             <span class="keyword">end</span> 
+0139              
+0140         <span class="keyword">else</span> <span class="comment">% if numerator has elements from both sides</span>
+0141             denom_p = sort([concept_MIP_M{whole_i}{concept_numind(k)}{:,1,1}]);    <span class="comment">%Larissa: The sort may be important</span>
+0142             denom_f = sort([concept_MIP_M{whole_i}{concept_numind(k)}{:,1,2}]);
+0143             <span class="comment">% for BRcut (M1 &lt;- M2 is cut) M1M2/[M1]p[M2]f is still intact</span>
+0144             BRcut_pdist = []; BRcut_fdist = []; FRcut_pdist = []; FRcut_fdist = []; <span class="comment">%Only needed for op_big_phi = 6 or 7</span>
+0145             <span class="keyword">if</span> all(ismember(denom_p,M1))
+0146                 phi_BRcut_BR = phi_M{whole_i}(concept_numind(k),2); <span class="comment">%stays the same</span>
+0147                 <span class="keyword">if</span> all(ismember(denom_f,M2))
+0148                     phi_BRcut_FR = phi_M{whole_i}(concept_numind(k),3);
+0149                 <span class="keyword">else</span>
+0150                     <span class="comment">% check the new forward phi_mip M1M2/[M1M2]f for all</span>
+0151                     <span class="comment">% possible denominators</span>
+0152                     [phi_BRcut_FR, BRcut_fdist, denom_fnew, network] = <a href="phi_comp_ex_unidir.html" class="code" title="function [max_phi_MIP, prob, j_max, network] = phi_comp_ex_unidir(subsystem,M1,M2,numerator,whole_sys_state,network,bf_option,bfcut_option)">phi_comp_ex_unidir</a>(M,M1,M2,IRR_w,network.current_state,network,<span class="string">'forward'</span>,<span class="string">'BRcut'</span>);
+0153                 <span class="keyword">end</span>    
+0154             <span class="keyword">else</span>
+0155                 <span class="keyword">if</span> all(ismember(denom_f,M2))
+0156                     phi_BRcut_FR = phi_M{whole_i}(concept_numind(k),3);
+0157                     <span class="comment">% check the new backward phi_mip M1M2/[M1M2]p for all</span>
+0158                     <span class="comment">% possible denominators</span>
+0159                     [phi_BRcut_BR, BRcut_pdist, denom_pnew, network] = <a href="phi_comp_ex_unidir.html" class="code" title="function [max_phi_MIP, prob, j_max, network] = phi_comp_ex_unidir(subsystem,M1,M2,numerator,whole_sys_state,network,bf_option,bfcut_option)">phi_comp_ex_unidir</a>(M,M1,M2,IRR_w,network.current_state,network,<span class="string">'backward'</span>,<span class="string">'BRcut'</span>);
+0160                 <span class="keyword">else</span>
+0161                     <span class="comment">% check the new back and forward phi_mip M1M2/[M1M2]p[M1M2]f for all</span>
+0162                     <span class="comment">% possible denominators</span>
+0163                     [phi_BRcut_BR, BRcut_pdist, denom_pnew, network] = <a href="phi_comp_ex_unidir.html" class="code" title="function [max_phi_MIP, prob, j_max, network] = phi_comp_ex_unidir(subsystem,M1,M2,numerator,whole_sys_state,network,bf_option,bfcut_option)">phi_comp_ex_unidir</a>(M,M1,M2,IRR_w,network.current_state,network,<span class="string">'backward'</span>,<span class="string">'BRcut'</span>);
+0164                     [phi_BRcut_FR, BRcut_fdist, denom_fnew, network] = <a href="phi_comp_ex_unidir.html" class="code" title="function [max_phi_MIP, prob, j_max, network] = phi_comp_ex_unidir(subsystem,M1,M2,numerator,whole_sys_state,network,bf_option,bfcut_option)">phi_comp_ex_unidir</a>(M,M1,M2,IRR_w,network.current_state,network,<span class="string">'forward'</span>,<span class="string">'BRcut'</span>);
+0165                 <span class="keyword">end</span>    
+0166             <span class="keyword">end</span>
+0167 
+0168             <span class="comment">% for FRcut (M1 -&gt; M2 is cut) M1M2/[M2]p[M1]f is still intact</span>
+0169             <span class="keyword">if</span> all(ismember(denom_p,M2))
+0170                 phi_FRcut_BR = phi_M{whole_i}(concept_numind(k),2); <span class="comment">%stays the same</span>
+0171                 <span class="keyword">if</span> all(ismember(denom_f,M1))
+0172                     phi_FRcut_FR = phi_M{whole_i}(concept_numind(k),3);
+0173                 <span class="keyword">else</span>
+0174                     <span class="comment">% check the new forward phi_mip M1M2/[M1M2]f for all</span>
+0175                     <span class="comment">% possible denominators</span>
+0176                     [phi_FRcut_FR, FRcut_fdist, denom_fnew, network] = <a href="phi_comp_ex_unidir.html" class="code" title="function [max_phi_MIP, prob, j_max, network] = phi_comp_ex_unidir(subsystem,M1,M2,numerator,whole_sys_state,network,bf_option,bfcut_option)">phi_comp_ex_unidir</a>(M,M1,M2,IRR_w,network.current_state,network,<span class="string">'forward'</span>,<span class="string">'FRcut'</span>);
+0177                 <span class="keyword">end</span>    
+0178             <span class="keyword">else</span>
+0179                 <span class="keyword">if</span> all(ismember(denom_f,M1))
+0180                     phi_FRcut_FR = phi_M{whole_i}(concept_numind(k),3);
+0181                     <span class="comment">% check the new backward phi_mip M1M2/[M1M2]p for all</span>
+0182                     <span class="comment">% possible denominators</span>
+0183                     [phi_FRcut_BR, FRcut_pdist, denom_pnew, network] = <a href="phi_comp_ex_unidir.html" class="code" title="function [max_phi_MIP, prob, j_max, network] = phi_comp_ex_unidir(subsystem,M1,M2,numerator,whole_sys_state,network,bf_option,bfcut_option)">phi_comp_ex_unidir</a>(M,M1,M2,IRR_w,network.current_state,network,<span class="string">'backward'</span>,<span class="string">'FRcut'</span>);
+0184                 <span class="keyword">else</span>
+0185                     <span class="comment">% check the new back and forward phi_mip M1M2/[M1M2]p[M1M2]f for all</span>
+0186                     <span class="comment">% possible denominators</span>
+0187                     [phi_FRcut_BR, FRcut_pdist, denom_pnew, network] = <a href="phi_comp_ex_unidir.html" class="code" title="function [max_phi_MIP, prob, j_max, network] = phi_comp_ex_unidir(subsystem,M1,M2,numerator,whole_sys_state,network,bf_option,bfcut_option)">phi_comp_ex_unidir</a>(M,M1,M2,IRR_w,network.current_state,network,<span class="string">'backward'</span>,<span class="string">'FRcut'</span>);
+0188                     [phi_FRcut_FR, FRcut_fdist, denom_fnew, network] = <a href="phi_comp_ex_unidir.html" class="code" title="function [max_phi_MIP, prob, j_max, network] = phi_comp_ex_unidir(subsystem,M1,M2,numerator,whole_sys_state,network,bf_option,bfcut_option)">phi_comp_ex_unidir</a>(M,M1,M2,IRR_w,network.current_state,network,<span class="string">'forward'</span>,<span class="string">'FRcut'</span>);
+0189                 <span class="keyword">end</span>    
+0190             <span class="keyword">end</span>
+0191 
+0192             <span class="comment">%Larissa: if we would want to take op_big_phi into</span>
+0193             <span class="comment">%account still, this has to be changed</span>
+0194             phi_BRcut = min(phi_BRcut_BR, phi_BRcut_FR);
+0195             phi_FRcut = min(phi_FRcut_BR, phi_FRcut_FR);
+0196     <span class="comment">%                     if phi_BRcut ~= 0</span>
+0197     <span class="comment">%                         [M1; M2; IRR_w; denom_p; denom_pnew]</span>
+0198     <span class="comment">%                     end</span>
+0199             <span class="keyword">if</span> op_big_phi ~= 0 <span class="comment">%L1 or Earthmover</span>
+0200                 <span class="keyword">if</span> ~isempty(BRcut_pdist)
+0201                     BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} BRcut_pdist};
+0202                 <span class="keyword">else</span>
+0203                     BRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}};
+0204                 <span class="keyword">end</span>
+0205                 <span class="keyword">if</span> ~isempty(BRcut_fdist)
+0206                     BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} BRcut_fdist};
+0207                 <span class="keyword">else</span>
+0208                     BRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}};
+0209                 <span class="keyword">end</span>
+0210                 <span class="keyword">if</span> ~isempty(FRcut_pdist)
+0211                     FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} FRcut_pdist};
+0212                 <span class="keyword">else</span>
+0213                     FRcut_dist(k,1,:) = {prob_M{whole_i,1}{concept_numind(k)}{1} prob_M{whole_i,1}{concept_numind(k)}{1}};
+0214                 <span class="keyword">end</span>
+0215                 <span class="keyword">if</span> ~isempty(FRcut_fdist)
+0216                     FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} FRcut_fdist};
+0217                 <span class="keyword">else</span>
+0218                     FRcut_dist(k,2,:) = {prob_M{whole_i,1}{concept_numind(k)}{2} prob_M{whole_i,1}{concept_numind(k)}{2}};
+0219                 <span class="keyword">end</span>
+0220 
+0221                 BRcut_phi(k) = phi_BRcut;
+0222                 FRcut_phi(k) = phi_FRcut;
+0223             <span class="keyword">end</span>   
+0224         <span class="keyword">end</span> <span class="comment">% if</span>
+0225         PhiCutSum = PhiCutSum + [phi_BRcut; phi_FRcut];
+0226     <span class="keyword">end</span> <span class="comment">%for k</span>
+0227     [Big_phi_partition, indexCut] = max(PhiCutSum);       <span class="comment">% max here means the minimum of the difference between whole and partitioned system</span>
+0228     
+0229     <span class="keyword">if</span> op_big_phi == 0
+0230         <span class="comment">% 07-06-12 CHANGED TO ABS VALUE</span>
+0231         d_Big_phi = abs(Big_phi_w - Big_phi_partition);
+0232         
+0233     <span class="keyword">elseif</span> op_big_phi == 1
+0234         back_maxent = <a href="expand_prob.html" class="code" title="function prob_exp = expand_prob(prob_in,M,x_in)">expand_prob</a>([],M,[]);
+0235         forward_maxent = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(network.nodes,[],M,network.current_state,<span class="string">'forward'</span>,extNodes);
+0236         forward_maxent = forward_maxent(:);
+0237 
+0238         BRcut_Phi = 0;
+0239         FRcut_Phi = 0;
+0240         <span class="keyword">for</span> k = 1:length(phi_w_concepts) <span class="comment">%Larissa: Can maybe made more efficient if cut_phi is 0, cause then I don't need to do the distance</span>
+0241             <span class="keyword">if</span> op_small_phi == 1    <span class="comment">%L1 for distributions = distances between concepts in qualia space and on constellation</span>
+0242                 BRcut_Phi = BRcut_Phi + <a href="L1norm.html" class="code" title="function D = L1norm(prob,prob2)">L1norm</a>(BRcut_dist{k,1,1},BRcut_dist{k,1,2})*BRcut_phi(k) + <a href="L1norm.html" class="code" title="function D = L1norm(prob,prob2)">L1norm</a>(BRcut_dist{k,1,1},back_maxent)*(phi_w_concepts(k)-BRcut_phi(k));
+0243                 BRcut_Phi = BRcut_Phi + <a href="L1norm.html" class="code" title="function D = L1norm(prob,prob2)">L1norm</a>(BRcut_dist{k,2,1},BRcut_dist{k,2,2})*BRcut_phi(k) + <a href="L1norm.html" class="code" title="function D = L1norm(prob,prob2)">L1norm</a>(BRcut_dist{k,2,1},forward_maxent)*(phi_w_concepts(k)-BRcut_phi(k));
+0244                 FRcut_Phi = FRcut_Phi + <a href="L1norm.html" class="code" title="function D = L1norm(prob,prob2)">L1norm</a>(FRcut_dist{k,1,1},FRcut_dist{k,1,2})*FRcut_phi(k) + <a href="L1norm.html" class="code" title="function D = L1norm(prob,prob2)">L1norm</a>(FRcut_dist{k,1,1},back_maxent)*(phi_w_concepts(k)-FRcut_phi(k));
+0245                 FRcut_Phi = FRcut_Phi + <a href="L1norm.html" class="code" title="function D = L1norm(prob,prob2)">L1norm</a>(FRcut_dist{k,2,1},FRcut_dist{k,2,2})*FRcut_phi(k) + <a href="L1norm.html" class="code" title="function D = L1norm(prob,prob2)">L1norm</a>(FRcut_dist{k,2,1},forward_maxent)*(phi_w_concepts(k)-FRcut_phi(k));
+0246             <span class="keyword">elseif</span> op_small_phi == 2 <span class="comment">%L1 only on constellations</span>
+0247                 BRcut_Phi = BRcut_Phi + emd_hat_gd_metric_mex(BRcut_dist{k,1,1},BRcut_dist{k,1,2},<a href="gen_dist_matrix.html" class="code" title="function D = gen_dist_matrix(N)">gen_dist_matrix</a>(length(BRcut_dist{k,1,1})))*BRcut_phi(k) + emd_hat_gd_metric_mex(BRcut_dist{k,1,1},back_maxent,<a href="gen_dist_matrix.html" class="code" title="function D = gen_dist_matrix(N)">gen_dist_matrix</a>(length(BRcut_dist{k,1,1})))*(phi_w_concepts(k)-BRcut_phi(k));
+0248                 BRcut_Phi = BRcut_Phi + emd_hat_gd_metric_mex(BRcut_dist{k,2,1},BRcut_dist{k,2,2},<a href="gen_dist_matrix.html" class="code" title="function D = gen_dist_matrix(N)">gen_dist_matrix</a>(length(BRcut_dist{k,1,1})))*BRcut_phi(k) + emd_hat_gd_metric_mex(BRcut_dist{k,2,1},forward_maxent,<a href="gen_dist_matrix.html" class="code" title="function D = gen_dist_matrix(N)">gen_dist_matrix</a>(length(BRcut_dist{k,1,1})))*(phi_w_concepts(k)-BRcut_phi(k));
+0249                 FRcut_Phi = FRcut_Phi + emd_hat_gd_metric_mex(FRcut_dist{k,1,1},FRcut_dist{k,1,2},<a href="gen_dist_matrix.html" class="code" title="function D = gen_dist_matrix(N)">gen_dist_matrix</a>(length(BRcut_dist{k,1,1})))*FRcut_phi(k) + emd_hat_gd_metric_mex(FRcut_dist{k,1,1},back_maxent,<a href="gen_dist_matrix.html" class="code" title="function D = gen_dist_matrix(N)">gen_dist_matrix</a>(length(BRcut_dist{k,1,1})))*(phi_w_concepts(k)-FRcut_phi(k));
+0250                 FRcut_Phi = FRcut_Phi + emd_hat_gd_metric_mex(FRcut_dist{k,2,1},FRcut_dist{k,2,2},<a href="gen_dist_matrix.html" class="code" title="function D = gen_dist_matrix(N)">gen_dist_matrix</a>(length(BRcut_dist{k,1,1})))*FRcut_phi(k) + emd_hat_gd_metric_mex(FRcut_dist{k,2,1},forward_maxent,<a href="gen_dist_matrix.html" class="code" title="function D = gen_dist_matrix(N)">gen_dist_matrix</a>(length(BRcut_dist{k,1,1})))*(phi_w_concepts(k)-FRcut_phi(k));
+0251             <span class="keyword">end</span>    
+0252         <span class="keyword">end</span> 
+0253         [d_Big_phi, indexCut] = min([BRcut_Phi, FRcut_Phi]);
+0254           
+0255     <span class="keyword">elseif</span> op_big_phi == 2  <span class="comment">%earth movers for concepts</span>
+0256         back_maxent = <a href="expand_prob.html" class="code" title="function prob_exp = expand_prob(prob_in,M,x_in)">expand_prob</a>([],M,[]);
+0257         forward_maxent = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(network.nodes,[],M,network.current_state,<span class="string">'forward'</span>,extNodes);
+0258         forward_maxent = forward_maxent(:);
+0259         
+0260         BRphiDiff = sum(phi_w_concepts)-sum(BRcut_phi);
+0261         tempVphi = [phi_w_concepts'; 0];
+0262         tempVphicut = [BRcut_phi; BRphiDiff];
+0263         
+0264         [DistMat, indD] = <a href="genEMDDistanceMatrix.html" class="code" title="function [Dist, indD] = genEMDDistanceMatrix(Dists, maxEnt, dist_mat) %past whole and cut distributions">genEMDDistanceMatrix</a>(BRcut_dist, [back_maxent,forward_maxent],network.gen_dist_matrix); <span class="comment">%past whole and cut distributions</span>
+0265         Vphi = tempVphi(indD);
+0266         Vphicut = tempVphicut(indD);
+0267         <span class="comment">%This has to be so complicated, because the emd function gives 0</span>
+0268         <span class="comment">%if phi and phicut have the same value. Even if there is a distance</span>
+0269         <span class="comment">%for the two of them.</span>
+0270         BRcut_Phi = emd_hat_gd_metric_mex([Vphi; zeros(size(Vphicut))],[zeros(size(Vphi));Vphicut],[zeros(size(DistMat)), DistMat; DistMat' zeros(size(DistMat))]);
+0271         
+0272         [DistMat, indD] = <a href="genEMDDistanceMatrix.html" class="code" title="function [Dist, indD] = genEMDDistanceMatrix(Dists, maxEnt, dist_mat) %past whole and cut distributions">genEMDDistanceMatrix</a>(FRcut_dist, [back_maxent,forward_maxent],network.gen_dist_matrix); <span class="comment">%past whole and cut distributions</span>
+0273         FRphiDiff = sum(phi_w_concepts)-sum(FRcut_phi);
+0274         tempVphicut = [FRcut_phi; FRphiDiff];
+0275         Vphi = tempVphi(indD);
+0276         Vphicut = tempVphicut(indD);
+0277         FRcut_Phi = emd_hat_gd_metric_mex([Vphi; zeros(size(Vphicut))],[zeros(size(Vphi));Vphicut],[zeros(size(DistMat)), DistMat; DistMat' zeros(size(DistMat))]);
+0278         
+0279         [d_Big_phi, indexCut] = min([BRcut_Phi, FRcut_Phi]);
+0280         
+0281     <span class="keyword">elseif</span> op_big_phi == 3
+0282         BRcut_Phi = 0;
+0283         FRcut_Phi = 0;
+0284         <span class="keyword">for</span> k = 1:length(phi_w_concepts)    <span class="comment">%Larissa: Now no empty distr. could be made more efficient, or take out option again</span>
+0285             <span class="keyword">if</span> ~isempty(BRcut_dist{k,1,1}) <span class="comment">%backward repertoires (if empty they stayed the same!)</span>
+0286                 BRcut_Phi = BRcut_Phi + KLD(BRcut_dist{k,1,1},BRcut_dist{k,1,2});
+0287             <span class="keyword">end</span>
+0288             <span class="keyword">if</span> ~isempty(BRcut_dist{k,2,1}) <span class="comment">%forward repertoires</span>
+0289                 BRcut_Phi = BRcut_Phi + KLD(BRcut_dist{k,2,1},BRcut_dist{k,2,2});
+0290             <span class="keyword">end</span>
+0291 
+0292             <span class="keyword">if</span> ~isempty(FRcut_dist{k,1,1}) <span class="comment">%backward repertoires (if empty they stayed the same!)</span>
+0293                 FRcut_Phi = FRcut_Phi + KLD(FRcut_dist{k,1,1},FRcut_dist{k,1,2});
+0294             <span class="keyword">end</span>
+0295             <span class="keyword">if</span> ~isempty(FRcut_dist{k,2,1}) <span class="comment">%forward repertoires</span>
+0296                 FRcut_Phi = FRcut_Phi + KLD(FRcut_dist{k,2,1},FRcut_dist{k,2,2});
+0297             <span class="keyword">end</span>
+0298         <span class="keyword">end</span> 
+0299         [d_Big_phi, indexCut] = min([BRcut_Phi, FRcut_Phi]);
+0300     <span class="keyword">end</span> 
+0301 
+0302     <span class="comment">% Norm = min(length(M1),length(M2)) + min(length(M1),length(M2));</span>
+0303     <span class="comment">% Norm = 1; % No normalization</span>
+0304     Norm = 2^min(length(M1),length(M2))-1;
+0305     Big_phi_cand(l,1) = d_Big_phi;
+0306     Big_phi_cand(l,2) = d_Big_phi/Norm;
+0307     
+0308     <span class="keyword">if</span> op_extNodes == 1 &amp;&amp; N ~= length(subsystem)
+0309         MIP_cand{l} = subsystem(M1);
+0310     <span class="keyword">else</span>
+0311         MIP_cand{l} = M1;
+0312     <span class="keyword">end</span>
+0313     
+0314     M_indexCut(l) = indexCut;
+0315 
+0316 <span class="comment">%         if N_M == N</span>
+0317 <span class="comment">%             fprintf('M1=%s-%s: ',mod_mat2str(M1),mod_mat2str(M2));</span>
+0318 <span class="comment">%             fprintf('%f-(%f+%f)=%f %f\n',Big_phi_w,Big_phi1,Big_phi2,d_Big_phi,d_Big_phi/Norm);</span>
+0319 <span class="comment">%         end</span>
+0320 
+0321     l = l + 1;   
+0322 <span class="keyword">end</span>
+0323 
+0324 <span class="keyword">if</span> (op_normalize == 1 || op_normalize == 2) <span class="comment">% Option to normalize or not for new methods of computing big phi</span>
+0325     [min_norm_Big_phi i_phi_min] = min(Big_phi_cand(:,2));
+0326 <span class="keyword">else</span>
+0327     [min_norm_Big_phi i_phi_min] = min(Big_phi_cand(:,1));
+0328 <span class="keyword">end</span>
+0329 
+0330 <span class="keyword">if</span> (op_normalize == 0 || op_normalize == 1)
+0331     Big_phi_MIP = Big_phi_cand(i_phi_min,1);
+0332 <span class="keyword">else</span>
+0333     Big_phi_MIP = Big_phi_cand(i_phi_min,2);
+0334 <span class="keyword">end</span>
+0335 
+0336 MIP = MIP_cand{i_phi_min};
+0337 M2 = <a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>(subsystem,MIP);
+0338 
+0339 BFCut = M_indexCut(i_phi_min);
+0340 
+0341 
+0342 <span class="keyword">if</span> (op_console &amp;&amp; Big_phi_MIP ~= 0)
+0343     fprintf(<span class="string">'M = %s\nMIP = %s-%s, Big_phi_MIP = %f\n'</span>,mat2str(M),<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(MIP),<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(M2),Big_phi_MIP);
+0344 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

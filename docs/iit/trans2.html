@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of trans2</title>
+  <meta name="keywords" content="trans2">
+  <meta name="description" content="TRANS2(VALUE,LENGTH) returns an array of LENGTH 0's and 1's, representing">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; trans2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>trans2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>TRANS2(VALUE,LENGTH) returns an array of LENGTH 0's and 1's, representing</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [binary] = trans2(value,length) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> TRANS2(VALUE,LENGTH) returns an array of LENGTH 0's and 1's, representing 
+   the binary number equal to VALUE
+
+   This function also comes as compiled MEX files, the m-file here is a
+   backup if the current</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="cpt_removal_network.html" class="code" title="function Rem_network = cpt_removal_network(this_subset, network)">cpt_removal_network</a>	build a cell array that contains all of the subsets</li><li><a href="expand_prob.html" class="code" title="function prob_exp = expand_prob(prob_in,M,x_in)">expand_prob</a>	</li><li><a href="expand_prob_general.html" class="code" title="function joint_distribution = expand_prob_general(prob_in,M,x_in,prob_out)">expand_prob_general</a>	</li><li><a href="gen_dist_matrix2.html" class="code" title="function D = gen_dist_matrix2(N)">gen_dist_matrix2</a>	generates the distance matrix between vertices which can be used as</li><li><a href="iit.html" class="code" title="function varargout = iit(varargin)">iit</a>	VERSION v0.04 - 11.14.2012</li><li><a href="iit_explorer.html" class="code" title="function varargout = iit_explorer(varargin)">iit_explorer</a>	IIT_EXPLORER MATLAB code for iit_explorer.fig</li><li><a href="iit_run.html" class="code" title="function iit_run(tpm, in_connect_mat, current_state, in_noise, in_options, in_nodes, past_state)">iit_run</a>	IIT_RUN Computes concepts, small and big phi, and partition information</li><li><a href="permute_stateXnode_tpm.html" class="code" title="function permuted_tpm = permute_stateXnode_tpm(tpm)">permute_stateXnode_tpm</a>	</li><li><a href="plot_REP.html" class="code" title="function [] = plot_REP(Big_phi, REP_cell,phi,MIP_cell, M, plot_panel)">plot_REP</a>	op_min = options(9);</li><li><a href="plot_partition_bar.html" class="code" title="function plot_partition_bar(concepts, nWholeConcepts, whole_phis, parts_phis, selected_indices, plot_panel,whole_purviews, parts_purviews, Big_phi_MIP)">plot_partition_bar</a>	function plot_partition_bar(Big_phi, REP_cell,phi,MIP_cell, M, plot_panel)</li><li><a href="prob_prod_comp.html" class="code" title="function prob_prod = prob_prod_comp(prob1,prob2,whole_set,x0_p1,op_fb)">prob_prod_comp</a>	COMPUTES THE DISTRIBUTION OVER THE STATES OF THE WHOLE SET GIVEN THE DISTRIBUTIONS OF</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [binary] = trans2(value,length)</a>
+0002 <span class="comment">% TRANS2(VALUE,LENGTH) returns an array of LENGTH 0's and 1's, representing</span>
+0003 <span class="comment">%   the binary number equal to VALUE</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%   This function also comes as compiled MEX files, the m-file here is a</span>
+0006 <span class="comment">%   backup if the current</span>
+0007 
+0008 <span class="comment">% SHOULD WE FLIPLR RESULT</span>
+0009 
+0010 <span class="comment">% this is a case where the for loop seems to be faster, see for yourself...</span>
+0011 <span class="comment">% tic</span>
+0012 <span class="comment">% binary = mod(floor(value./(2.^(0:length-1))),2)</span>
+0013 <span class="comment">% toc</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% tic</span>
+0016 binary = zeros(length,1);
+0017 <span class="keyword">for</span> i = 1:length
+0018     binary(i) = value - 2 * floor(value/2);
+0019     value = floor(value/2);
+0020 <span class="keyword">end</span>
+0021 <span class="comment">% binary</span>
+0022 <span class="comment">% toc</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of patial_prob_comp_bf</title>
+  <meta name="keywords" content="patial_prob_comp_bf">
+  <meta name="description" content="computing the conditional probability of the past xp and the future xf">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">iit</a> &gt; <a href="index.html">Old</a> &gt; patial_prob_comp_bf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit/Old&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>patial_prob_comp_bf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>computing the conditional probability of the past xp and the future xf</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function prob = patial_prob_comp_bf(T,x0_so,x0_in,x0_out,x1_in,x1_out,source,p,b_table) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> computing the conditional probability of the past xp and the future xf
+ given current state x0, p(xp,xf|x0) 
+ x1_b: partition in the past and the future
+ x0_so: target in the current state
+ x0_in: x0 inside the partition in the current state
+ x0_out: x0 outside the partition in the current state
+ source: given data
+ p: transition probability matrix (TPM)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function prob = patial_prob_comp_bf(T,x0_so,x0_in,x0_out,x1_in,x1_out,source,p,b_table)</a>
+0002 
+0003 <span class="comment">% computing the conditional probability of the past xp and the future xf</span>
+0004 <span class="comment">% given current state x0, p(xp,xf|x0)</span>
+0005 <span class="comment">% x1_b: partition in the past and the future</span>
+0006 <span class="comment">% x0_so: target in the current state</span>
+0007 <span class="comment">% x0_in: x0 inside the partition in the current state</span>
+0008 <span class="comment">% x0_out: x0 outside the partition in the current state</span>
+0009 <span class="comment">% source: given data</span>
+0010 <span class="comment">% p: transition probability matrix (TPM)</span>
+0011 
+0012 N1 = length(x1_in);
+0013 
+0014 x0_all = [x0_so x0_in];
+0015 x0_all = sort(x0_all);
+0016 N0_in = length(x0_in);
+0017 
+0018 x0_state = source;
+0019 
+0020 <span class="comment">%% backward computation p(xp|x0)</span>
+0021 p_b = zeros(2^N1,2^N0_in);
+0022 p_f = zeros(2^N1,2^N0_in);
+0023 
+0024 <span class="keyword">for</span> i=1: 2^N0_in
+0025     <span class="keyword">if</span> N0_in ~= 0
+0026         x0_state(x0_in) = b_table{i,N0_in};
+0027     <span class="keyword">end</span>
+0028     <span class="comment">% backward without normalization</span>
+0029     op_fb = 3;
+0030     xp_so = x1_in;
+0031     xp_in = [];
+0032     xp_out = x1_out;
+0033     xc = x0_all; <span class="comment">% current state</span>
+0034     p_b(:,i) = partial_prob_comp_time(T,xp_so,xp_in,xp_out,xc,x0_state,p,b_table,op_fb);
+0035     
+0036     <span class="comment">% forward with normalization</span>
+0037     op_fb = 0;
+0038     xc_so = x0_all;
+0039     xc_in = [];
+0040     xc_out = x0_out;
+0041     xf = x1_in; <span class="comment">% future state</span>
+0042     p_f(:,i) = partial_prob_comp_time(T,xc_so,xc_in,xc_out,xf,x0_state,p,b_table,op_fb);
+0043     
+0044     <span class="comment">% fprintf('x0=%s p_b=%s p_f=%s\n',mat2str(x0_state),mat2str(p_b(:,i)),mat2str(p_f(:,i)));</span>
+0045 <span class="keyword">end</span>
+0046 
+0047 
+0048 prob = p_b*p_f';
+0049 Norm = sum(sum(prob));
+0050 
+0051 
+0052 <span class="keyword">if</span> Norm ~= 0
+0053     prob = prob/Norm;
+0054 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of big_phi_all</title>
+  <meta name="keywords" content="big_phi_all">
+  <meta name="description" content="compute Big-phi in every possible subset">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; big_phi_all.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>big_phi_all
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>compute Big-phi in every possible subset</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [Big_phi_M phi_M prob_M subsets MIP_M M_IRR_M network MIP_M_subsys] = big_phi_all(network,whole_sys_state) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> compute Big-phi in every possible subset</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="big_phi_comp_fb.html" class="code" title="function [Big_phi phi_all_values prob_cell MIP M_IRR network] = big_phi_comp_fb(subsystem,whole_sys_state,network)">big_phi_comp_fb</a>	%  compute big phi for a subset, subsystem</li><li><a href="cpt_removal_network.html" class="code" title="function Rem_network = cpt_removal_network(this_subset, network)">cpt_removal_network</a>	build a cell array that contains all of the subsets</li><li><a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="iit_run.html" class="code" title="function iit_run(tpm, in_connect_mat, current_state, in_noise, in_options, in_nodes, past_state)">iit_run</a>	IIT_RUN Computes concepts, small and big phi, and partition information</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function PotIrrComplex = checkStrongCon(this_subset, network)</a></li><li><a href="#_sub2" class="code">function MIP_M_subsys = MIP_subsys_nodes(MIP,this_subset)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Big_phi_M phi_M prob_M subsets MIP_M M_IRR_M network MIP_M_subsys] = big_phi_all(network,whole_sys_state)</a>
+0002 <span class="comment">% compute Big-phi in every possible subset</span>
+0003 op_console = network.options(8);
+0004 op_parfor = network.options(9); <span class="comment">% used by Animat program</span>
+0005 op_strongconn = network.options(10);
+0006 op_extNodes = network.options(11);
+0007 op_complex = network.options(3);
+0008 
+0009 N = network.num_nodes; <span class="comment">% number of elements in the whole system</span>
+0010 nodes_vec = network.full_system;
+0011 
+0012 <span class="comment">% subset - build a cell array that contains all of the subsets</span>
+0013 <span class="comment">% subsets builds arrays that use the actual node numbers as opposed to</span>
+0014 <span class="comment">% logicals - perhaps we should make one of these that is global as well</span>
+0015 subsets = cell(network.num_states-1,1); <span class="comment">% subtract one since we don't consider the empty system</span>
+0016 <span class="keyword">for</span> i = 1:network.num_states-1 <span class="comment">% don't include empty set, this is why for-loop starts at 2</span>
+0017     subsets{i} = nodes_vec(logical(network.b_table{i+1,N}));
+0018 <span class="keyword">end</span>
+0019 
+0020 <span class="comment">% compute big phi in every possible subset</span>
+0021 Big_phi_M = zeros(network.num_states-1,1); <span class="comment">% Big_phi for each subset except the empty set</span>
+0022 phi_M = cell(network.num_states-1,1);
+0023 prob_M = cell(network.num_states-1,2); 
+0024 MIP_M = cell(network.num_states-1,1); <span class="comment">% the partition that gives Big_phi_MIP for each subset</span>
+0025 M_IRR_M = cell(network.num_states-1,1);
+0026 <span class="comment">% the following is only used for removals but needs to be preallocated for</span>
+0027 <span class="comment">% possible output anyways.</span>
+0028 removal_networks = cell(network.num_states-1,1); 
+0029 MIP_M_subsys = cell(network.num_states-1,1); <span class="comment">% only used for removals</span>
+0030 
+0031 <span class="keyword">if</span> op_parfor == 2 &amp;&amp; op_extNodes == 0 &amp;&amp; op_complex == 1
+0032     network.BRs = cell(network.num_states-1,1); <span class="comment">% backward repertoire</span>
+0033     network.FRs = cell(network.num_states-1,1); <span class="comment">% forward repertoire</span>
+0034     <span class="keyword">for</span> i = 1:network.num_states-1
+0035         network.BRs{i} = cell(network.num_subsets); <span class="comment">%In principle this could be smaller, but then the indexing gets more complicated later. So now we keep it full system size.</span>
+0036         network.FRs{i} = cell(network.num_subsets);
+0037     <span class="keyword">end</span>    
+0038 <span class="keyword">end</span>
+0039 
+0040 <span class="comment">% With parfor it's probably faster for a single simulation, if many simulations are run in parallel,</span>
+0041 <span class="comment">% then it's better to do the for loop which enables the back-passing of network, so BR and FR don't</span>
+0042 <span class="comment">% have to be calculated in each loop and the Complex Search can later access</span>
+0043 <span class="comment">% all the distributions in BRs and FRs</span>
+0044 <span class="keyword">if</span> op_parfor == 1
+0045     parfor sub_index = 1:network.num_states-1 <span class="comment">% for all non empty subsets of the system\</span>
+0046         this_subset = subsets{sub_index}; <span class="comment">% get the subset</span>
+0047         <span class="keyword">if</span> op_strongconn == 0
+0048             PotIrrComplex = <a href="#_sub1" class="code" title="subfunction PotIrrComplex = checkStrongCon(this_subset, network)">checkStrongCon</a>(this_subset, network);
+0049         <span class="keyword">else</span> 
+0050             PotIrrComplex = 1;
+0051         <span class="keyword">end</span>    
+0052         <span class="keyword">if</span> PotIrrComplex == 1
+0053             <span class="keyword">if</span> op_extNodes == 1 &amp;&amp; N ~= numel(this_subset)
+0054                 <span class="comment">%Put an extra thing into network with the new connectivity</span>
+0055                 <span class="comment">%matrices and the new nodes for each subset</span>
+0056                 removal_networks{sub_index} = <a href="cpt_removal_network.html" class="code" title="function Rem_network = cpt_removal_network(this_subset, network)">cpt_removal_network</a>(this_subset,network);
+0057                 [Big_phi phi prob_cell MIP M_IRR] = <a href="big_phi_comp_fb.html" class="code" title="function [Big_phi phi_all_values prob_cell MIP M_IRR network] = big_phi_comp_fb(subsystem,whole_sys_state,network)">big_phi_comp_fb</a>(removal_networks{sub_index}.full_system,whole_sys_state,removal_networks{sub_index}); 
+0058                 MIP_M_subsys{sub_index} = <a href="#_sub2" class="code" title="subfunction MIP_M_subsys = MIP_subsys_nodes(MIP,this_subset)">MIP_subsys_nodes</a>(MIP,this_subset);
+0059             <span class="keyword">else</span>
+0060                 [Big_phi phi prob_cell MIP M_IRR] = <a href="big_phi_comp_fb.html" class="code" title="function [Big_phi phi_all_values prob_cell MIP M_IRR network] = big_phi_comp_fb(subsystem,whole_sys_state,network)">big_phi_comp_fb</a>(this_subset,whole_sys_state,network); 
+0061             <span class="keyword">end</span>  
+0062             MIP_M{sub_index} = MIP;
+0063             Big_phi_M(sub_index) = Big_phi; <span class="comment">% Big_phi for each subset</span>
+0064             phi_M{sub_index} = phi; <span class="comment">% Set of small_phis for each purview of each subset</span>
+0065             M_IRR_M{sub_index} = M_IRR; <span class="comment">% numerators of purviews with non-zero/positive phi</span>
+0066             <span class="comment">% concept distributions</span>
+0067             prob_M(sub_index,:) = prob_cell(:); <span class="comment">% first layer is subset, second is purview, third is backward/forward</span>
+0068         <span class="keyword">end</span>  
+0069     <span class="keyword">end</span>
+0070 <span class="keyword">else</span>
+0071     <span class="keyword">for</span> sub_index = 1:network.num_states-1 <span class="comment">% for all non empty subsets of the system</span>
+0072         this_subset = subsets{sub_index}; <span class="comment">% get the subset</span>
+0073         <span class="keyword">if</span> op_strongconn == 0
+0074             PotIrrComplex = <a href="#_sub1" class="code" title="subfunction PotIrrComplex = checkStrongCon(this_subset, network)">checkStrongCon</a>(this_subset, network);
+0075         <span class="keyword">else</span> 
+0076             PotIrrComplex = 1;
+0077         <span class="keyword">end</span>  
+0078         <span class="keyword">if</span> PotIrrComplex == 1
+0079             <span class="keyword">if</span> op_extNodes == 1 &amp;&amp; N ~= numel(this_subset)
+0080                 <span class="comment">%Put an extra thing into network with the new connectivity</span>
+0081                 <span class="comment">%matrices and the new nodes for each subset</span>
+0082                 removal_networks{sub_index} = <a href="cpt_removal_network.html" class="code" title="function Rem_network = cpt_removal_network(this_subset, network)">cpt_removal_network</a>(this_subset,network);
+0083                 [Big_phi phi prob_cell MIP M_IRR removal_networks{sub_index}] = <a href="big_phi_comp_fb.html" class="code" title="function [Big_phi phi_all_values prob_cell MIP M_IRR network] = big_phi_comp_fb(subsystem,whole_sys_state,network)">big_phi_comp_fb</a>(removal_networks{sub_index}.full_system,whole_sys_state,removal_networks{sub_index}); 
+0084                 MIP_M_subsys{sub_index} = <a href="#_sub2" class="code" title="subfunction MIP_M_subsys = MIP_subsys_nodes(MIP,this_subset)">MIP_subsys_nodes</a>(MIP,this_subset);
+0085             <span class="keyword">else</span>
+0086                 [Big_phi phi prob_cell MIP M_IRR network] = <a href="big_phi_comp_fb.html" class="code" title="function [Big_phi phi_all_values prob_cell MIP M_IRR network] = big_phi_comp_fb(subsystem,whole_sys_state,network)">big_phi_comp_fb</a>(this_subset,whole_sys_state,network); 
+0087             <span class="keyword">end</span>  
+0088             MIP_M{sub_index} = MIP;
+0089             Big_phi_M(sub_index) = Big_phi; <span class="comment">% Big_phi for each subset</span>
+0090             phi_M{sub_index} = phi; <span class="comment">% Set of small_phis for each purview of each subset</span>
+0091             M_IRR_M{sub_index} = M_IRR; <span class="comment">% numerators of purviews with non-zero/positive phi</span>
+0092             <span class="comment">% concept distributions</span>
+0093             prob_M(sub_index,:) = prob_cell(:); <span class="comment">% first layer is subset, second is purview, third is backward/forward</span>
+0094             <span class="comment">%save('OizumiSegmentBigPhi','Big_phi_M', 'phi_M', 'prob_M', 'MIP_M', 'M_IRR_M', 'MIP_M_subsys');</span>
+0095             <span class="comment">%fprintf('this_subset=%s: Big_phi=%f\n',mod_mat2str(subsets{sub_index}),Big_phi_M(sub_index));</span>
+0096         <span class="keyword">end</span>   
+0097     <span class="keyword">end</span>
+0098 <span class="keyword">end</span>
+0099 
+0100 <span class="keyword">if</span> op_extNodes == 1 
+0101     network.removal_networks = removal_networks;
+0102 <span class="keyword">end</span>
+0103 <span class="comment">%% display</span>
+0104 <span class="keyword">if</span> op_console
+0105     fprintf(<span class="string">'\n'</span>)
+0106     fprintf(<span class="string">'--------------------------------------------------------------\n\n'</span>)
+0107     fprintf(<span class="string">'Big phi values in subset this_subset:\n\n'</span>)
+0108     <span class="keyword">for</span> sub_index = 1: network.num_states-1
+0109         <span class="keyword">if</span> (Big_phi_M(sub_index) ~= 0 &amp;&amp; ~isnan(Big_phi_M(sub_index)))
+0110             fprintf(<span class="string">'this_subset=%s: Big_phi=%f\n'</span>,<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(subsets{sub_index}),Big_phi_M(sub_index));
+0111         <span class="keyword">end</span>
+0112     <span class="keyword">end</span>
+0113 <span class="keyword">end</span>
+0114 <span class="keyword">end</span>
+0115 
+0116 <a name="_sub1" href="#_subfunctions" class="code">function PotIrrComplex = checkStrongCon(this_subset, network)</a>
+0117     <span class="keyword">if</span> length(this_subset) == 1
+0118         PotIrrComplex = network.connect_mat(this_subset, this_subset);  <span class="comment">%Check for self loop</span>
+0119     <span class="keyword">else</span>    
+0120         J_sparse = sparse(network.connect_mat(this_subset, this_subset));
+0121         [X,PotComplex] = graphconncomp(J_sparse);
+0122         PotIrrComplex = length(unique(PotComplex))==1;
+0123     <span class="keyword">end</span>
+0124 <span class="keyword">end</span>
+0125 
+0126 <a name="_sub2" href="#_subfunctions" class="code">function MIP_M_subsys = MIP_subsys_nodes(MIP,this_subset)</a>
+0127     MIP_M_subsys = cell(MIP);
+0128     <span class="keyword">for</span> i = 1:size(MIP,1)
+0129         temp = reshape(MIP{i},[],8);
+0130         <span class="keyword">for</span> j = 1:length(temp)
+0131             temp{j} = this_subset(temp{j});
+0132         <span class="keyword">end</span>    
+0133         MIP_M_subsys{i} = reshape(temp,[2 2 2]);
+0134     <span class="keyword">end</span>    
+0135 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

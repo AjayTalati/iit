@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of qualeplot</title>
+  <meta name="keywords" content="qualeplot">
+  <meta name="description" content="tableplot.m -- Programmatic main function to set up a GUI">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; qualeplot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>qualeplot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>tableplot.m -- Programmatic main function to set up a GUI</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = qualeplot(concepts,labels,phis) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> tableplot.m -- Programmatic main function to set up a GUI
+                containing a uitable and an axes which
+                displays columns of the table as lines,
+                plus markers that show table selections.
+
+ The following callbacks are also provided, as subfunctions:
+    plot1_callback   - Plot column selected on menu as line
+    select_callback  - Plot selected table data as markers 
+  Being subfunctions, they do not need handles passed to them.
+
+   Copyright 2008 The MathWorks, Inc.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function select_callback(hObject, eventdata)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function varargout = qualeplot(concepts,labels,phis)</a>
+0002 <span class="comment">% tableplot.m -- Programmatic main function to set up a GUI</span>
+0003 <span class="comment">%                containing a uitable and an axes which</span>
+0004 <span class="comment">%                displays columns of the table as lines,</span>
+0005 <span class="comment">%                plus markers that show table selections.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% The following callbacks are also provided, as subfunctions:</span>
+0008 <span class="comment">%    plot1_callback   - Plot column selected on menu as line</span>
+0009 <span class="comment">%    select_callback  - Plot selected table data as markers</span>
+0010 <span class="comment">%  Being subfunctions, they do not need handles passed to them.</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%   Copyright 2008 The MathWorks, Inc.</span>
+0013 
+0014 <span class="comment">% Create a figure that will have a uitable, axes and checkboxes</span>
+0015 figure(<span class="string">'Position'</span>, [100, 300, 600, 460],<span class="keyword">...</span>
+0016        <span class="string">'Name'</span>, <span class="string">'TablePlot'</span>,<span class="keyword">...</span><span class="comment">  % Title figure</span>
+0017        <span class="string">'NumberTitle'</span>, <span class="string">'off'</span>,<span class="keyword">...</span><span class="comment"> % Do not show figure number</span>
+0018        <span class="string">'MenuBar'</span>, <span class="string">'none'</span>);      <span class="comment">% Hide standard menu bar menus</span>
+0019 
+0020 <span class="comment">% Create a uitable on the left side of the figure</span>
+0021 hlist = uicontrol(<span class="string">'Style'</span>,<span class="string">'listbox'</span>,<span class="keyword">...</span>
+0022                  <span class="string">'Units'</span>, <span class="string">'normalized'</span>,<span class="keyword">...</span>
+0023                  <span class="string">'Position'</span>, [0.025 0.03 0.375 0.92],<span class="keyword">...</span>
+0024                  <span class="string">'String'</span>, labels,<span class="keyword">...</span>
+0025                  <span class="string">'ToolTipString'</span>,<span class="keyword">...</span>
+0026                  <span class="string">'Select concepts to highlight them on the plot'</span>,<span class="keyword">...</span>
+0027                  <span class="string">'CellSelectionCallback'</span>, {@<a href="#_sub1" class="code" title="subfunction select_callback(hObject, eventdata)">select_callback</a>});
+0028 
+0029 <span class="comment">% Create an axes on the right side; set x and y limits to the</span>
+0030 <span class="comment">% table value extremes, and format labels for the demo data.</span>
+0031 [~,~,haxes] = plotmatrix(concepts);
+0032 
+0033 title(haxes, <span class="string">'Hourly Traffic Counts'</span>)   <span class="comment">% Describe data set</span>
+0034 <span class="comment">% Prevent axes from clearing when new lines or markers are plotted</span>
+0035 hold(haxes, <span class="string">'all'</span>)
+0036 
+0037 <span class="comment">% Create an invisible marker plot of the data and save handles</span>
+0038 <span class="comment">% to the lineseries objects; use this to simulate data brushing.</span>
+0039 hmkrs = plot(concepts, <span class="string">'LineStyle'</span>, <span class="string">'none'</span>,<span class="keyword">...</span>
+0040                     <span class="string">'Marker'</span>, <span class="string">'o'</span>,<span class="keyword">...</span>
+0041                     <span class="string">'MarkerFaceColor'</span>, <span class="string">'y'</span>,<span class="keyword">...</span>
+0042                     <span class="string">'HandleVisibility'</span>, <span class="string">'off'</span>,<span class="keyword">...</span>
+0043                     <span class="string">'Visible'</span>, <span class="string">'off'</span>);
+0044 
+0045                
+0046 <span class="comment">% Subfuntions implementing the two callbacks</span>
+0047 <span class="comment">% ------------------------------------------</span>
+0048 
+0049     <a name="_sub1" href="#_subfunctions" class="code">function select_callback(hObject, eventdata)</a>
+0050     <span class="comment">% hObject    Handle to uitable1 (see GCBO)</span>
+0051     <span class="comment">% eventdata  Currently selected table indices</span>
+0052     <span class="comment">% Callback to erase and replot markers, showing only those</span>
+0053     <span class="comment">% corresponding to user-selected cells in table.</span>
+0054     <span class="comment">% Repeatedly called while user drags across cells of the uitable</span>
+0055 
+0056         <span class="comment">% hmkrs are handles to lines having markers only</span>
+0057         set(hmkrs, <span class="string">'Visible'</span>, <span class="string">'off'</span>) <span class="comment">% turn them off to begin</span>
+0058         
+0059         <span class="comment">% Get the list of currently selected table cells</span>
+0060         sel = eventdata.Indices;     <span class="comment">% Get selection indices (row, col)</span>
+0061                                      <span class="comment">% Noncontiguous selections are ok</span>
+0062         selcols = unique(sel(:,2));  <span class="comment">% Get all selected data col IDs</span>
+0063         table = get(hObject,<span class="string">'Data'</span>); <span class="comment">% Get copy of uitable data</span>
+0064         
+0065         <span class="comment">% Get vectors of x,y values for each column in the selection;</span>
+0066         <span class="keyword">for</span> idx = 1:numel(selcols)
+0067             col = selcols(idx);
+0068             xvals = sel(:,1);
+0069             xvals(sel(:,2) ~= col) = [];
+0070             yvals = table(xvals, col)';
+0071             <span class="comment">% Create Z-vals = 1 in order to plot markers above lines</span>
+0072             zvals = col*ones(size(xvals));
+0073             <span class="comment">% Plot markers for xvals and yvals using a line object</span>
+0074             set(hmkrs(col), <span class="string">'Visible'</span>, <span class="string">'on'</span>,<span class="keyword">...</span>
+0075                             <span class="string">'XData'</span>, xvals,<span class="keyword">...</span>
+0076                             <span class="string">'YData'</span>, yvals,<span class="keyword">...</span>
+0077                             <span class="string">'ZData'</span>, zvals)
+0078         <span class="keyword">end</span>
+0079     <span class="keyword">end</span>
+0080  <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

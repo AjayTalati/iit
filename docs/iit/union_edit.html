@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of union_edit</title>
+  <meta name="keywords" content="union_edit">
+  <meta name="description" content="UNION  Set union.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; union_edit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>union_edit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>UNION  Set union.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [c,ia,ib] = union(a,b,flag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">UNION  Set union.
+   UNION(A,B) for vectors A and B, returns the combined values of the two
+   vectors with no repetitions. MATLAB sorts the results. A and B can be
+   cell arrays of strings.
+
+   UNION(A,B,'rows') for matrices A are B that have the same number of
+   columns, returns the combined rows from the two matrices with no 
+   repetitions. MATLAB ignores the 'rows' flag for all cell arrays.
+
+   [C,IA,IB] = UNION(...) also returns index vectors IA and IB such
+   that C is a sorted combination of the elements A(IA) and B(IB) 
+   (or A(IA,:) and B(IB,:)).
+
+   Class support for inputs A,B:
+      float: double, single
+
+   See also UNIQUE, INTERSECT, SETDIFF, SETXOR, ISMEMBER.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [c,ia,ib] = union(a,b,flag)</a>
+0002 <span class="comment">%UNION  Set union.</span>
+0003 <span class="comment">%   UNION(A,B) for vectors A and B, returns the combined values of the two</span>
+0004 <span class="comment">%   vectors with no repetitions. MATLAB sorts the results. A and B can be</span>
+0005 <span class="comment">%   cell arrays of strings.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%   UNION(A,B,'rows') for matrices A are B that have the same number of</span>
+0008 <span class="comment">%   columns, returns the combined rows from the two matrices with no</span>
+0009 <span class="comment">%   repetitions. MATLAB ignores the 'rows' flag for all cell arrays.</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%   [C,IA,IB] = UNION(...) also returns index vectors IA and IB such</span>
+0012 <span class="comment">%   that C is a sorted combination of the elements A(IA) and B(IB)</span>
+0013 <span class="comment">%   (or A(IA,:) and B(IB,:)).</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%   Class support for inputs A,B:</span>
+0016 <span class="comment">%      float: double, single</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%   See also UNIQUE, INTERSECT, SETDIFF, SETXOR, ISMEMBER.</span>
+0019 
+0020 <span class="comment">%   Copyright 1984-2004 The MathWorks, Inc.</span>
+0021 <span class="comment">%   $Revision: 1.20.4.5 $  $Date: 2008/03/13 17:32:07 $</span>
+0022 
+0023 <span class="comment">%   Cell array implementation in @cell/union.m</span>
+0024 
+0025 nIn = nargin;
+0026 
+0027 <span class="keyword">if</span> nIn &lt; 2
+0028   error(<span class="string">'MATLAB:UNION:NotEnoughInputs'</span>, <span class="string">'Not enough input arguments.'</span>);
+0029 <span class="keyword">elseif</span> nIn &gt; 3
+0030   error(<span class="string">'MATLAB:UNION:TooManyInputs'</span>, <span class="string">'Too many input arguments.'</span>);
+0031 <span class="keyword">end</span>
+0032 
+0033 <span class="keyword">if</span> nIn == 2
+0034   flag = [];
+0035 <span class="keyword">end</span>
+0036 
+0037 isrows = strcmpi(flag,<span class="string">'rows'</span>);
+0038 
+0039 rowsA = size(a,1);
+0040 colsA = size(a,2);
+0041 rowsB = size(b,1);
+0042 colsB = size(b,2);
+0043 
+0044 rowvec = ~((rowsA &gt; 1 &amp;&amp; colsB &lt;= 1) || (rowsB &gt; 1 &amp;&amp; colsA &lt;= 1) || isrows);
+0045 
+0046 numelA = numel(a);
+0047 numelB = numel(b);
+0048 nOut = nargout;
+0049 
+0050 <span class="keyword">if</span> isempty(a)
+0051     c = b;
+0052     <span class="keyword">return</span>
+0053 <span class="keyword">elseif</span> isempty(b)
+0054     c = a;
+0055     <span class="keyword">return</span>
+0056 <span class="keyword">end</span>
+0057 
+0058 <span class="keyword">if</span> isempty(flag)
+0059   
+0060   <span class="keyword">if</span> length(a)~=numelA || length(b)~=numelB
+0061     error(<span class="string">'MATLAB:UNION:AandBvectorsOrRowsFlag'</span>,<span class="keyword">...</span>
+0062           <span class="string">'A and B must be vectors or ''rows'' must be specified.'</span>);
+0063   <span class="keyword">end</span>
+0064   
+0065   <span class="comment">% Handle empty: no elements.</span>
+0066   
+0067   <span class="keyword">if</span> (numelA == 0 || numelB == 0)
+0068     
+0069     <span class="comment">% Predefine outputs to be of the correct type.</span>
+0070     c = [a([]);b([])];
+0071     
+0072     <span class="keyword">if</span> (numelA == 0 &amp;&amp; numelB == 0)
+0073       ia = []; ib = [];
+0074       <span class="keyword">if</span> (max(size(a)) &gt; 0 || max(size(b)) &gt; 0)
+0075         c = reshape(c,0,1);
+0076       <span class="keyword">end</span>
+0077     <span class="keyword">elseif</span> (numelB == 0)
+0078       <span class="comment">% Call UNIQUE on one list if the other is empty.</span>
+0079       [c, ia] = unique(a(:));
+0080       ib = zeros(0,1);
+0081     <span class="keyword">else</span>
+0082       [c, ib] = unique(b(:));
+0083       ia = zeros(0,1);
+0084     <span class="keyword">end</span>
+0085     
+0086     <span class="comment">% General handling.</span>
+0087     
+0088   <span class="keyword">else</span>        
+0089     <span class="comment">% Convert to columns.</span>
+0090     a = a(:);
+0091     b = b(:);
+0092     
+0093     <span class="keyword">if</span> nOut &lt;= 1
+0094       <span class="comment">% Call UNIQUE to do all the work.</span>
+0095       c = unique([a;b]);
+0096     <span class="keyword">else</span>
+0097       [c,ndx] = unique([a;b]);
+0098       <span class="comment">% Indices determine whether an element was in A or in B.</span>
+0099       d = ndx &gt; numelA;
+0100       ia = ndx(~d);
+0101       ib = ndx(d)-numelA;
+0102     <span class="keyword">end</span>
+0103   <span class="keyword">end</span>
+0104   
+0105   <span class="comment">% If row vector, return as row vector.</span>
+0106   <span class="keyword">if</span> rowvec
+0107     c = c.';
+0108     <span class="keyword">if</span> nOut &gt; 1
+0109         ia = ia.';
+0110         ib = ib.';
+0111     <span class="keyword">end</span>
+0112   <span class="keyword">end</span>
+0113   
+0114 <span class="keyword">else</span>    <span class="comment">% 'rows' case</span>
+0115   <span class="keyword">if</span> ~isrows
+0116     error(<span class="string">'MATLAB:UNION:UnknownFlag'</span>, <span class="string">'Unknown flag.'</span>);
+0117   <span class="keyword">end</span>
+0118   <span class="comment">% Automatically pad strings with spaces</span>
+0119   <span class="keyword">if</span> ischar(a) &amp;&amp; ischar(b)
+0120     <span class="keyword">if</span> colsA &gt; colsB
+0121       b = [b repmat(<span class="string">' '</span>,rowsB,colsA-colsB)];
+0122     <span class="keyword">elseif</span> colsA &lt; colsB 
+0123       a = [a repmat(<span class="string">' '</span>,rowsA,colsB-colsA)];
+0124     <span class="keyword">end</span>
+0125   <span class="keyword">elseif</span> colsA ~= colsB
+0126     error(<span class="string">'MATLAB:UNION:AandBColnumAgree'</span>,<span class="keyword">...</span>
+0127           <span class="string">'A and B must have the same number of columns.'</span>);
+0128   <span class="keyword">end</span>
+0129   
+0130   <span class="keyword">if</span> nOut &lt;= 1
+0131     <span class="comment">% Call UNIQUE to do all the work.</span>
+0132     c = unique([a;b],flag);
+0133   <span class="keyword">else</span>
+0134     [c,ndx] = unique([a;b],flag);
+0135     <span class="comment">% Indices determine whether an element was in A or in B.</span>
+0136     d = ndx &gt; rowsA;
+0137     ia = ndx(~d);
+0138     ib = ndx(d) - rowsA;
+0139   <span class="keyword">end</span>
+0140 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

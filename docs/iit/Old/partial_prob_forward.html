@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of partial_prob_forward</title>
+  <meta name="keywords" content="partial_prob_forward">
+  <meta name="description" content="compute the conditional probability of x1 given x0, p(x1(fixed)|x0(fixed))">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">iit</a> &gt; <a href="index.html">Old</a> &gt; partial_prob_forward.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit/Old&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>partial_prob_forward
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>compute the conditional probability of x1 given x0, p(x1(fixed)|x0(fixed))</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function prob = partial_prob_forward(x0_so,x0_in,x0_out,x1_b,x0,x1,p,b_table) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> compute the conditional probability of x1 given x0, p(x1(fixed)|x0(fixed))
+ x0_so: fixed state, x0_in: injecting noise in units (maxEnt)
+ x0_out: injecting noise in connections (complete noise)
+ x0, x1: given data
+ p: transition probability matrix (TPM)
+ b_table: table used for converting binary sequences into decimal number</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function prob = partial_prob_forward(x0_so,x0_in,x0_out,x1_b,x0,x1,p,b_table)</a>
+0002 
+0003 <span class="comment">% compute the conditional probability of x1 given x0, p(x1(fixed)|x0(fixed))</span>
+0004 <span class="comment">% x0_so: fixed state, x0_in: injecting noise in units (maxEnt)</span>
+0005 <span class="comment">% x0_out: injecting noise in connections (complete noise)</span>
+0006 <span class="comment">% x0, x1: given data</span>
+0007 <span class="comment">% p: transition probability matrix (TPM)</span>
+0008 <span class="comment">% b_table: table used for converting binary sequences into decimal number</span>
+0009 
+0010 N = size(p,2); <span class="comment">% number of elements in the whole system</span>
+0011 <span class="comment">% two_pow = zeros(N,1);</span>
+0012 <span class="comment">% for i=1: N</span>
+0013 <span class="comment">%     two_pow(i) = 2^(i-1);</span>
+0014 <span class="comment">% end</span>
+0015 two_pow = 2.^(0:N-1)';
+0016 
+0017 <span class="comment">% this is always 0????</span>
+0018 N_in = length(x0_in); <span class="comment">% number of elements of x0 inside the partition (maxEnt)</span>
+0019 N_out = length(x0_out); <span class="comment">% number of elements of x0 outside the partition (complete noise)</span>
+0020 N1_b = length(x1_b); <span class="comment">% number of elements of x1 in target</span>
+0021 
+0022 x0_in_vec = zeros(2^N_in,1);
+0023 x0_out_vec = zeros(2^N_out,1);
+0024 <span class="keyword">if</span> N_in ~= 0
+0025     <span class="keyword">for</span> j=1: 2^N_in
+0026         x0_s_in = b_table{j,N_in};
+0027         x0_in_i = sum(two_pow(x0_in).*x0_s_in);
+0028         x0_in_vec(j) = x0_in_i;
+0029     <span class="keyword">end</span>
+0030 <span class="keyword">else</span>
+0031     x0_in_vec = 0;
+0032 <span class="keyword">end</span>
+0033 
+0034 <span class="keyword">if</span> N_out ~= 0
+0035     <span class="keyword">for</span> j=1: 2^N_out
+0036         x0_s_out = b_table{j,N_out};
+0037         x0_out_i = sum(two_pow(x0_out).*x0_s_out);
+0038         x0_out_vec(j) = x0_out_i;
+0039     <span class="keyword">end</span>
+0040 <span class="keyword">else</span>
+0041     x0_out_vec = 0;
+0042 <span class="keyword">end</span>
+0043 
+0044 <span class="comment">% index of the denominator</span>
+0045 <span class="keyword">if</span> isempty(x0_so) == 1
+0046     x0_so_i = 0;
+0047 <span class="keyword">else</span>
+0048     x0_so_i = sum(two_pow(x0_so).*x0);
+0049 <span class="keyword">end</span>
+0050 
+0051 prob = 0; <span class="comment">% the coditional entropy p(x1(fixed)|x0(fixed))</span>
+0052 
+0053 <span class="comment">% this looks like OR(AND(OR)) which is to say SUM OF PRODUCTS OF SUMS</span>
+0054 <span class="comment">% for each state of x0_in which is always empty set?</span>
+0055 <span class="keyword">for</span> j=1: 2^N_in <span class="comment">% summation over the rest of x0 inside the partition</span>
+0056     x0_in_i = x0_in_vec(j); <span class="comment">% always 0?</span>
+0057     temp = 1;
+0058     
+0059     <span class="comment">% for each element in numerator</span>
+0060     <span class="keyword">for</span> k = 1:N1_b
+0061         x1_s = x1(k); <span class="comment">% state of this element</span>
+0062         p_k = 0; <span class="comment">% set OR prob to 0</span>
+0063         <span class="keyword">for</span> l = 1:2^N_out <span class="comment">% summation over the rest of denominator outside the partition</span>
+0064             x0_out_i = x0_out_vec(l); <span class="comment">% get the state of rest of denom</span>
+0065             <span class="comment">% fprintf('%d %d %d\n',x0_so_i,x0_in_i,x0_out_i);</span>
+0066             <span class="comment">% x0_i</span>
+0067             x0_i = 1+x0_so_i+x0_in_i + x0_out_i; <span class="comment">% get full state number</span>
+0068             <span class="keyword">if</span> x1_s == 1
+0069                 <span class="comment">% add in prob</span>
+0070                 p_k = p_k + p(x0_i,x1_b(k));
+0071             <span class="keyword">else</span>
+0072                 p_k = p_k + (1-p(x0_i,x1_b(k)));
+0073             <span class="keyword">end</span>
+0074         <span class="keyword">end</span>
+0075         temp = temp*p_k;
+0076     <span class="keyword">end</span>
+0077     prob = prob + temp;
+0078     <span class="comment">% fprintf('j=%d prob=%f temp=%f\n',j,prob,temp)</span>
+0079 <span class="keyword">end</span>
+0080 
+0081 <span class="comment">% prob = prob/2^(N_in+N_out);</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

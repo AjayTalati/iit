@@ -1,0 +1,244 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plot_partition_bar</title>
+  <meta name="keywords" content="plot_partition_bar">
+  <meta name="description" content="function plot_partition_bar(Big_phi, REP_cell,phi,MIP_cell, M, plot_panel)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; plot_partition_bar.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>plot_partition_bar
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function plot_partition_bar(Big_phi, REP_cell,phi,MIP_cell, M, plot_panel)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function plot_partition_bar(concepts, nWholeConcepts, whole_phis, parts_phis, selected_indices, plot_panel,whole_purviews, parts_purviews, Big_phi_MIP) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> function plot_partition_bar(Big_phi, REP_cell,phi,MIP_cell, M, plot_panel)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>	</li><li><a href="rotateXLabels.html" class="code" title="function hh = rotateXLabels( ax, angle, varargin )">rotateXLabels</a>	rotateXLabels: rotate any xticklabels</li><li><a href="trans2.html" class="code" title="function [binary] = trans2(value,length)">trans2</a>	TRANS2(VALUE,LENGTH) returns an array of LENGTH 0's and 1's, representing</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="iit_explorer.html" class="code" title="function varargout = iit_explorer(varargin)">iit_explorer</a>	IIT_EXPLORER MATLAB code for iit_explorer.fig</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [] = plot_BRFR(concept,pos,plot_title,labelON,plot_panel,color)</a></li><li><a href="#_sub2" class="code">function states = convert(N)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% function plot_partition_bar(Big_phi, REP_cell,phi,MIP_cell, M, plot_panel)</span>
+0002 <a name="_sub0" href="#_subfunctions" class="code">function plot_partition_bar(concepts, nWholeConcepts, whole_phis, parts_phis, selected_indices, plot_panel,</a><span class="keyword">...</span>
+0003                             whole_purviews, parts_purviews, Big_phi_MIP)
+0004 
+0005 
+0006 nPartConcepts = length(parts_phis); 
+0007 
+0008 
+0009 <span class="comment">% if op_figures</span>
+0010 <span class="comment">%     figure(20+fig_st);</span>
+0011 <span class="comment">%     plot_phi(phi,MIP_cell, M)</span>
+0012 <span class="comment">%     title('\phi  For Each Purview','FontSize',20);</span>
+0013 <span class="comment">%     xlabel('Purview','FontSize',16)</span>
+0014 <span class="comment">%     ylabel('\phi','FontSize',20)</span>
+0015 <span class="comment">% end</span>
+0016 
+0017 <span class="keyword">if</span> isempty(selected_indices)
+0018     whole_concepts = concepts(1:nWholeConcepts,:);
+0019     parts_concepts = concepts(nWholeConcepts+1:<span class="keyword">end</span>,:);
+0020 <span class="keyword">else</span>    
+0021     whole_concepts = concepts(selected_indices(selected_indices &lt;= nWholeConcepts),:);
+0022     parts_concepts = concepts(selected_indices(selected_indices &gt; nWholeConcepts)-nWholeConcepts,:);
+0023 <span class="keyword">end</span>
+0024 
+0025 nWholeConcepts = size(whole_concepts,1);
+0026 nPartConcepts = size(parts_concepts,1);
+0027 N = max(nWholeConcepts,nPartConcepts);        
+0028 
+0029 r = N;
+0030 c = 2;
+0031 
+0032 
+0033 
+0034 <span class="comment">% pw = 300; % panel width including margin in pixels</span>
+0035 <span class="comment">% ph = 50; % panel height including margin in pixels</span>
+0036 <span class="comment">% mb = 20; % bottom margin</span>
+0037 <span class="comment">% mt = 20; % top margin</span>
+0038 <span class="comment">% mh = 25; % margin height</span>
+0039 <span class="comment">% mw = 10; % margin width</span>
+0040 <span class="comment">% % panel_size = [0, 0, pw, ph]'; % panel size including margin</span>
+0041 <span class="comment">% panel_size_w = [50, 0, pw-mw*2, ph-mh]'; % panel size without margin</span>
+0042 <span class="comment">% fig_size = [0, 0,  pw*c + 100, ph*r + mb+mt + 50]'; % size of figure window</span>
+0043 <span class="comment">% pos_fig = [100,100,0,0]' + fig_size; % position of figure</span>
+0044 
+0045 <span class="keyword">if</span> r &gt;= 4
+0046     scaling = r/4;
+0047 <span class="keyword">else</span>
+0048     scaling = 1;
+0049 <span class="keyword">end</span>
+0050 
+0051 
+0052 <span class="keyword">if</span> scaling &gt; 1
+0053       
+0054     panel_pos = get(plot_panel,<span class="string">'Position'</span>);
+0055     
+0056     panel_height = panel_pos(4)*scaling;
+0057     panel_pos(4) = panel_height;
+0058     panel_pos(2) = 1 - panel_pos(4);
+0059     
+0060     set(plot_panel,<span class="string">'Position'</span>,panel_pos);
+0061     
+0062     left_marg_col1 = .03;
+0063     left_marg_col2 = .57;
+0064     top_start = 1 - .45/panel_height;
+0065     vert_marg = .1/panel_height;
+0066     plot_h = .075/panel_height;
+0067     plot_w = .4;
+0068     
+0069 <span class="comment">%     setappdata(plot_panel,'limit',top_start-(vert_marg + plot_h)*(r-1)+.03)</span>
+0070     
+0071 <span class="keyword">else</span>
+0072     
+0073     panel_height = 1;
+0074     left_marg_col1 = .03;
+0075     left_marg_col2 = .57;
+0076     top_start = .55;
+0077     vert_marg = .1;
+0078     plot_h = .075;
+0079     plot_w = .4;
+0080     panel_pos = get(plot_panel,<span class="string">'Position'</span>);
+0081     setappdata(plot_panel,<span class="string">'limit'</span>,panel_pos(2))
+0082 <span class="keyword">end</span>
+0083 
+0084 pos_vec = zeros(4,r,c);
+0085 
+0086 <span class="keyword">for</span> i=1: r
+0087     <span class="keyword">for</span> j=1:c
+0088         <span class="keyword">if</span> (j == 1)
+0089             pos_vec(:,i,j) = [left_marg_col1 top_start-(vert_marg + plot_h)*(i-1) plot_w plot_h];
+0090         <span class="keyword">else</span>
+0091             pos_vec(:,i,j) = [left_marg_col2 top_start-(vert_marg + plot_h)*(i-1) plot_w plot_h];
+0092         <span class="keyword">end</span>
+0093     <span class="keyword">end</span>
+0094 <span class="keyword">end</span>
+0095 
+0096 sy = [<span class="string">'Big Phi (partition) = '</span>,num2str(Big_phi_MIP)];
+0097     
+0098     
+0099 <span class="keyword">for</span> i = 1:N
+0100         
+0101         pos_whole = pos_vec(:,i,1)';
+0102         pos_part = pos_vec(:,i,2)';
+0103             
+0104         <span class="keyword">if</span> i &lt;= nWholeConcepts
+0105         
+0106             prob_whole = whole_concepts(i,:);
+0107             phi_whole = whole_phis(i);
+0108             
+0109         
+0110             whole_title = [<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(whole_purviews{i}) <span class="string">',  \phi='</span> num2str(phi_whole)];
+0111 
+0112             <span class="keyword">if</span> i == nWholeConcepts
+0113                 labelON = 1;
+0114             <span class="keyword">else</span>
+0115                 labelON = 0;
+0116             <span class="keyword">end</span>
+0117             
+0118             <a href="#_sub1" class="code" title="subfunction [] = plot_BRFR(concept,pos,plot_title,labelON,plot_panel,color)">plot_BRFR</a>(prob_whole,pos_whole,whole_title,labelON,plot_panel,<span class="string">'b'</span>);
+0119             
+0120         <span class="keyword">end</span>
+0121         
+0122         <span class="keyword">if</span> i &lt;= nPartConcepts
+0123             
+0124             prob_part = parts_concepts(i,:);
+0125             phi_part = parts_phis(i);
+0126             
+0127         
+0128             part_title = [<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(parts_purviews{i}) <span class="string">',  \phi='</span> num2str(phi_part)];
+0129 
+0130             <span class="keyword">if</span> i == nPartConcepts
+0131                 labelON = 1;
+0132             <span class="keyword">else</span>
+0133                 labelON = 0;
+0134             <span class="keyword">end</span>
+0135             
+0136             <a href="#_sub1" class="code" title="subfunction [] = plot_BRFR(concept,pos,plot_title,labelON,plot_panel,color)">plot_BRFR</a>(prob_part,pos_part,part_title,labelON,plot_panel,<span class="string">'r'</span>)
+0137             
+0138         <span class="keyword">end</span>
+0139 
+0140         <span class="keyword">if</span> i == N
+0141 
+0142             uicontrol(<span class="string">'Style'</span>, <span class="string">'text'</span>,<span class="keyword">...</span>
+0143             <span class="string">'String'</span>, {<span class="string">'Whole and Partitioned Concepts'</span>,sy},<span class="keyword">...</span><span class="comment"> %replace something with the text you want</span>
+0144             <span class="string">'Units'</span>,<span class="string">'normalized'</span>,<span class="keyword">...</span>
+0145             <span class="string">'FontSize'</span>,16,<span class="keyword">...</span>
+0146             <span class="string">'BackgroundColor'</span>,<span class="string">'w'</span>,<span class="keyword">...</span>
+0147             <span class="string">'Position'</span>, [0.33 1-.2/panel_height 0.33 0.12/panel_height],<span class="keyword">...</span>
+0148             <span class="string">'Parent'</span>,plot_panel,<span class="keyword">...</span>
+0149             <span class="string">'Clipping'</span>,<span class="string">'on'</span>);
+0150 
+0151         <span class="keyword">end</span>
+0152 
+0153 
+0154 <span class="keyword">end</span>
+0155 
+0156 <span class="keyword">end</span>
+0157 
+0158                 
+0159 
+0160 
+0161 <a name="_sub1" href="#_subfunctions" class="code">function [] = plot_BRFR(concept,pos,plot_title,labelON,plot_panel,color)</a>
+0162 
+0163 
+0164 subplot(<span class="string">'Position'</span>,pos,<span class="string">'Parent'</span>,plot_panel)
+0165 h = bar(0:length(concept)-1,concept,<span class="string">'hist'</span>);
+0166 set(h,<span class="string">'FaceColor'</span>,color)
+0167 set(gca,<span class="string">'XTick'</span>,0:length(concept)-1)
+0168 set(gca,<span class="string">'YTickLabel'</span>,[0 .5 1])
+0169 
+0170 states = <a href="#_sub2" class="code" title="subfunction states = convert(N)">convert</a>(length(concept));
+0171 axis([-0.5 length(concept)-0.5 0 1.0])
+0172 title(plot_title)
+0173 <span class="keyword">if</span> labelON== 1
+0174     set(gca,<span class="string">'XTickLabel'</span>,num2str(states,<span class="string">'%d'</span>)) <span class="comment">% uncomment this to have a binary valued x-axis</span>
+0175     <a href="rotateXLabels.html" class="code" title="function hh = rotateXLabels( ax, angle, varargin )">rotateXLabels</a>( gca(), 90) <span class="comment">% uncomment if binary values are used on the x-axis</span>
+0176 <span class="comment">%     xlab = xlabel('State (Node Order: [1...N])','FontSize',14,'Units','pixels');</span>
+0177 <span class="comment">%     disp(get(xlab,'Position'))</span>
+0178 <span class="comment">%     set(xlab,'Position',get(xlab,'Position') - [0 100 0])</span>
+0179 <span class="comment">% disp(get(xlab,'Position'))</span>
+0180 <span class="keyword">else</span>
+0181     set(gca,<span class="string">'XTickLabel'</span>,[]) 
+0182 <span class="keyword">end</span>
+0183 
+0184 
+0185 <span class="keyword">end</span>
+0186 
+0187 
+0188 
+0189 <a name="_sub2" href="#_subfunctions" class="code">function states = convert(N)</a>
+0190 states = zeros(N,log2(N));
+0191 <span class="keyword">for</span> i=1: N
+0192     sigma = <a href="trans2.html" class="code" title="function [binary] = trans2(value,length)">trans2</a>(i-1,log2(N));
+0193     states(i,:) = sigma';
+0194 <span class="keyword">end</span>
+0195 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

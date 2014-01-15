@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of modaldlg</title>
+  <meta name="keywords" content="modaldlg">
+  <meta name="description" content="MODALDLG Application M-file for untitled.fig">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; modaldlg.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>modaldlg
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MODALDLG Application M-file for untitled.fig</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = modaldlg(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> MODALDLG Application M-file for untitled.fig
+   MODALDLG, by itself, creates a new MODALDLG or raises the existing
+   singleton*.
+
+   H = MODALDLG returns the handle to a new MODALDLG or the handle to
+   the existing singleton*.
+
+   MODALDLG('CALLBACK',hObject,eventData,handles,...) calls the local
+   function named CALLBACK in MODALDLG.M with the given input arguments.
+
+   MODALDLG('Property','Value',...) creates a new MODALDLG or raises the
+   existing singleton*.  Starting from the left, property value pairs are
+   applied to the GUI before modaldlg_OpeningFunction gets called.  An
+   unrecognized property name or invalid value makes property application
+   stop.  All inputs are passed to modaldlg_OpeningFcn via varargin.
+
+   *See GUI Options - GUI allows only one instance to run (singleton).
+
+ See also: GUIDE, GUIDATA, GUIHANDLES</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function modaldlg_OpeningFcn(hObject, eventdata, handles, varargin)</a></li><li><a href="#_sub2" class="code">function varargout = modaldlg_OutputFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub3" class="code">function yes_button_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub4" class="code">function no_button_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub5" class="code">function figure1_CloseRequestFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub6" class="code">function figure1_KeyPressFcn(hObject, eventdata, handles)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function varargout = modaldlg(varargin)</a>
+0002 <span class="comment">% MODALDLG Application M-file for untitled.fig</span>
+0003 <span class="comment">%   MODALDLG, by itself, creates a new MODALDLG or raises the existing</span>
+0004 <span class="comment">%   singleton*.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%   H = MODALDLG returns the handle to a new MODALDLG or the handle to</span>
+0007 <span class="comment">%   the existing singleton*.</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%   MODALDLG('CALLBACK',hObject,eventData,handles,...) calls the local</span>
+0010 <span class="comment">%   function named CALLBACK in MODALDLG.M with the given input arguments.</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%   MODALDLG('Property','Value',...) creates a new MODALDLG or raises the</span>
+0013 <span class="comment">%   existing singleton*.  Starting from the left, property value pairs are</span>
+0014 <span class="comment">%   applied to the GUI before modaldlg_OpeningFunction gets called.  An</span>
+0015 <span class="comment">%   unrecognized property name or invalid value makes property application</span>
+0016 <span class="comment">%   stop.  All inputs are passed to modaldlg_OpeningFcn via varargin.</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%   *See GUI Options - GUI allows only one instance to run (singleton).</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% See also: GUIDE, GUIDATA, GUIHANDLES</span>
+0021 
+0022 <span class="comment">% Edit the above text to modify the response to help untitled</span>
+0023 
+0024 <span class="comment">% Copyright 2000-2006 The MathWorks, Inc.</span>
+0025 
+0026 <span class="comment">% Last Modified by GUIDE v2.5 08-Apr-2002 16:30:17</span>
+0027 
+0028 <span class="comment">% Begin initialization code - DO NOT EDIT</span>
+0029 gui_Singleton = 1;
+0030 gui_State = struct(<span class="string">'gui_Name'</span>,          mfilename, <span class="keyword">...</span>
+0031                    <span class="string">'gui_Singleton'</span>,     gui_Singleton, <span class="keyword">...</span>
+0032                    <span class="string">'gui_OpeningFcn'</span>,    @<a href="#_sub1" class="code" title="subfunction modaldlg_OpeningFcn(hObject, eventdata, handles, varargin)">modaldlg_OpeningFcn</a>, <span class="keyword">...</span>
+0033                    <span class="string">'gui_OutputFcn'</span>,     @<a href="#_sub2" class="code" title="subfunction varargout = modaldlg_OutputFcn(hObject, eventdata, handles)">modaldlg_OutputFcn</a>, <span class="keyword">...</span>
+0034                    <span class="string">'gui_LayoutFcn'</span>,     [], <span class="keyword">...</span>
+0035                    <span class="string">'gui_Callback'</span>,      []);
+0036 <span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+0037    gui_State.gui_Callback = str2func(varargin{1});
+0038 <span class="keyword">end</span>
+0039 
+0040 <span class="keyword">if</span> nargout
+0041     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+0042 <span class="keyword">else</span>
+0043     gui_mainfcn(gui_State, varargin{:});
+0044 <span class="keyword">end</span>
+0045 <span class="comment">% End initialization code - DO NOT EDIT</span>
+0046 
+0047 
+0048 <span class="comment">% --- Executes just before modaldlg is made visible.</span>
+0049 <a name="_sub1" href="#_subfunctions" class="code">function modaldlg_OpeningFcn(hObject, eventdata, handles, varargin)</a>
+0050 <span class="comment">% This function has no output args, see OutputFcn.</span>
+0051 <span class="comment">% hObject    handle to figure</span>
+0052 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0053 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0054 <span class="comment">% varargin   command line arguments to modaldlg (see VARARGIN)</span>
+0055 
+0056 <span class="comment">% Choose default command line output for modaldlg</span>
+0057 handles.output = <span class="string">'Yes'</span>;
+0058 
+0059 <span class="comment">% Update handles structure</span>
+0060 guidata(hObject, handles);
+0061 
+0062 <span class="comment">% Insert custom Title and Text if specified by the user</span>
+0063 <span class="keyword">if</span>(nargin &gt; 3)
+0064     <span class="keyword">for</span> index = 1:2:(nargin-3),
+0065         <span class="keyword">switch</span> lower(varargin{index})
+0066         <span class="keyword">case</span> <span class="string">'title'</span>
+0067             set(hObject, <span class="string">'Name'</span>, varargin{index+1});
+0068         <span class="keyword">case</span> <span class="string">'string'</span>
+0069             set(handles.string, <span class="string">'String'</span>, varargin{index+1});
+0070         <span class="keyword">otherwise</span>
+0071             error(<span class="string">'Invalid input arguments'</span>);
+0072         <span class="keyword">end</span>
+0073     <span class="keyword">end</span>
+0074 <span class="keyword">end</span>
+0075 
+0076 <span class="comment">% Determine the position of the dialog - centered on the callback figure</span>
+0077 <span class="comment">% if available, else, centered on the screen</span>
+0078 FigPos=get(0,<span class="string">'DefaultFigurePosition'</span>);
+0079 FigWidth=215;FigHeight=88;
+0080 <span class="keyword">if</span> isempty(gcbf)
+0081     ScreenUnits=get(0,<span class="string">'Units'</span>);
+0082     set(0,<span class="string">'Units'</span>,<span class="string">'points'</span>);
+0083     ScreenSize=get(0,<span class="string">'ScreenSize'</span>);
+0084     set(0,<span class="string">'Units'</span>,ScreenUnits);
+0085 
+0086     FigPos(1)=1/2*(ScreenSize(3)-FigWidth);
+0087     FigPos(2)=2/3*(ScreenSize(4)-FigHeight);
+0088 <span class="keyword">else</span>
+0089     GCBFOldUnits = get(gcbf,<span class="string">'Units'</span>);
+0090     set(gcbf,<span class="string">'Units'</span>,<span class="string">'points'</span>);
+0091     GCBFPos = get(gcbf,<span class="string">'Position'</span>);
+0092     set(gcbf,<span class="string">'Units'</span>,GCBFOldUnits);
+0093     FigPos(1:2) = [(GCBFPos(1) + GCBFPos(3) / 2) - FigWidth / 2, <span class="keyword">...</span>
+0094                    (GCBFPos(2) + GCBFPos(4) / 2) - FigHeight / 2];
+0095 <span class="keyword">end</span>
+0096 FigPos(3:4)=[FigWidth FigHeight];
+0097 set(hObject, <span class="string">'position'</span>, FigPos);
+0098 
+0099 <span class="comment">% Show a question icon from dialogicons.mat - variables questIconData</span>
+0100 <span class="comment">% and questIconMap</span>
+0101 load dialogicons.mat
+0102 
+0103 IconData=questIconData;
+0104 questIconMap(256,:)=get(handles.figure1,<span class="string">'color'</span>);
+0105 IconCMap=questIconMap;
+0106 
+0107 axes(handles.axes1);
+0108 Img=image(IconData);
+0109 set(handles.figure1, <span class="string">'Colormap'</span>, IconCMap);
+0110 
+0111 set(gca, <span class="keyword">...</span>
+0112     <span class="string">'Visible'</span>, <span class="string">'off'</span>, <span class="keyword">...</span>
+0113     <span class="string">'YDir'</span>   ,<span class="string">'reverse'</span>       , <span class="keyword">...</span>
+0114     <span class="string">'XLim'</span>   ,get(Img,<span class="string">'XData'</span>), <span class="keyword">...</span>
+0115     <span class="string">'YLim'</span>   ,get(Img,<span class="string">'YData'</span>)  <span class="keyword">...</span>
+0116     );
+0117     
+0118 <span class="comment">% UIWAIT makes modaldlg wait for user response (see UIRESUME)</span>
+0119 uiwait(handles.figure1);
+0120 
+0121 <span class="comment">% --- Outputs from this function are returned to the command line.</span>
+0122 <a name="_sub2" href="#_subfunctions" class="code">function varargout = modaldlg_OutputFcn(hObject, eventdata, handles)</a>
+0123 <span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+0124 <span class="comment">% hObject    handle to figure</span>
+0125 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0126 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0127 
+0128 <span class="comment">% Get default command line output from handles structure</span>
+0129 varargout{1} = handles.output;
+0130 
+0131 <span class="comment">% The figure can be deleted now</span>
+0132 delete(handles.figure1);
+0133 
+0134 <span class="comment">% --- Executes on button press in yes_button.</span>
+0135 <a name="_sub3" href="#_subfunctions" class="code">function yes_button_Callback(hObject, eventdata, handles)</a>
+0136 <span class="comment">% hObject    handle to yes_button (see GCBO)</span>
+0137 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0138 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0139 
+0140 handles.output = get(hObject,<span class="string">'String'</span>);
+0141 
+0142 <span class="comment">% Update handles structure</span>
+0143 guidata(hObject, handles);
+0144 
+0145 <span class="comment">% Use UIRESUME instead of delete because the OutputFcn needs</span>
+0146 <span class="comment">% to get the updated handles structure.</span>
+0147 uiresume(handles.figure1);
+0148 
+0149 <span class="comment">% --- Executes on button press in no_button.</span>
+0150 <a name="_sub4" href="#_subfunctions" class="code">function no_button_Callback(hObject, eventdata, handles)</a>
+0151 <span class="comment">% hObject    handle to no_button (see GCBO)</span>
+0152 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0153 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0154 
+0155 handles.output = get(hObject,<span class="string">'String'</span>);
+0156 
+0157 <span class="comment">% Update handles structure</span>
+0158 guidata(hObject, handles);
+0159 
+0160 <span class="comment">% Use UIRESUME instead of delete because the OutputFcn needs</span>
+0161 <span class="comment">% to get the updated handles structure.</span>
+0162 uiresume(handles.figure1);
+0163 
+0164 
+0165 <span class="comment">% --- Executes when user attempts to close figure1.</span>
+0166 <a name="_sub5" href="#_subfunctions" class="code">function figure1_CloseRequestFcn(hObject, eventdata, handles)</a>
+0167 <span class="comment">% hObject    handle to figure1 (see GCBO)</span>
+0168 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0169 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0170 
+0171 <span class="keyword">if</span> isequal(get(handles.figure1, <span class="string">'waitstatus'</span>), <span class="string">'waiting'</span>)
+0172     <span class="comment">% The GUI is still in UIWAIT, us UIRESUME</span>
+0173     uiresume(handles.figure1);
+0174 <span class="keyword">else</span>
+0175     <span class="comment">% The GUI is no longer waiting, just close it</span>
+0176     delete(handles.figure1);
+0177 <span class="keyword">end</span>
+0178 
+0179 
+0180 <span class="comment">% --- Executes on key press over figure1 with no controls selected.</span>
+0181 <a name="_sub6" href="#_subfunctions" class="code">function figure1_KeyPressFcn(hObject, eventdata, handles)</a>
+0182 <span class="comment">% hObject    handle to figure1 (see GCBO)</span>
+0183 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0184 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0185 
+0186 <span class="comment">% Check for &quot;enter&quot; - do uiresume if we get it</span>
+0187 <span class="keyword">if</span> isequal(get(hObject,<span class="string">'CurrentKey'</span>),<span class="string">'return'</span>)
+0188     uiresume(handles.figure1);
+0189 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

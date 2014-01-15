@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of big_phi_comp_fb</title>
+  <meta name="keywords" content="big_phi_comp_fb">
+  <meta name="description" content="%  compute big phi for a subset, subsystem">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; big_phi_comp_fb.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>big_phi_comp_fb
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>%  compute big phi for a subset, subsystem</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [Big_phi phi_all_values prob_cell MIP M_IRR network] = big_phi_comp_fb(subsystem,whole_sys_state,network) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">%  compute big phi for a subset, subsystem
+ subsystem: a subset of the whole system (can be the whole system itself)
+ whole_sys_state: current state</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>	compute BRs and FRs for a single perspective but given some fixed</li><li><a href="make_title_fb.html" class="code" title="function [string_p string] = make_title_fb(MIP,op_context,op_min)">make_title_fb</a>	</li><li><a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>	</li><li><a href="phi_comp_ex.html" class="code" title="function [phi prob prob_prod_MIP MIP network] = phi_comp_ex(subsystem,numerator,whole_sys_state,subsets_subsys,network)">phi_comp_ex</a>	% compute small phi for a purview</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="big_phi_all.html" class="code" title="function [Big_phi_M phi_M prob_M subsets MIP_M M_IRR_M network MIP_M_subsys] = big_phi_all(network,whole_sys_state)">big_phi_all</a>	compute Big-phi in every possible subset</li><li><a href="iit_run.html" class="code" title="function iit_run(tpm, in_connect_mat, current_state, in_noise, in_options, in_nodes, past_state)">iit_run</a>	IIT_RUN Computes concepts, small and big phi, and partition information</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Big_phi phi_all_values prob_cell MIP M_IRR network] = big_phi_comp_fb(subsystem,whole_sys_state,network)</a>
+0002 <span class="comment">%%  compute big phi for a subset, subsystem</span>
+0003 <span class="comment">% subsystem: a subset of the whole system (can be the whole system itself)</span>
+0004 <span class="comment">% whole_sys_state: current state</span>
+0005 
+0006 <span class="comment">% global BRs, global FRs</span>
+0007 num_nodes_subsys = length(subsystem);
+0008 num_states_subsys = prod([network.nodes(subsystem).num_states]);
+0009 
+0010 op_single = network.options(12);     <span class="comment">% just needed for console output</span>
+0011 op_console = network.options(8);   <span class="comment">%(1: display the results, 0: not)</span>
+0012 op_extNodes = network.options(11);
+0013 
+0014 <span class="keyword">if</span> op_extNodes == 0
+0015     extNodes = setdiff(network.full_system, subsystem);
+0016 <span class="keyword">else</span>
+0017     extNodes = [];
+0018 <span class="keyword">end</span> 
+0019 
+0020 <span class="comment">%% numerator data</span>
+0021 <span class="comment">% ???This is where we build subsets_subsys of purviews (power-set exclude empty</span>
+0022 <span class="comment">% set)</span>
+0023 subsets_subsys = cell(num_states_subsys-1,1); <span class="comment">% subtract one since we don't consider the empty system</span>
+0024 
+0025 <span class="comment">% we can do this better for sure - TODO Larissa: Do it as in big_phi_all</span>
+0026 <span class="comment">% the subsets!!</span>
+0027 k = 1;
+0028 <span class="keyword">for</span> subset_size = 1:num_nodes_subsys <span class="comment">% can this be done in one for-loop over k = 1:num_states_subsys-1 ?</span>
+0029     C = nchoosek(subsystem,subset_size); <span class="comment">% create a matrix of combinations of subsystem of size i</span>
+0030     N_C = size(C,1);
+0031     <span class="comment">% fprintf('i=%d N_c=%d\n',i,N_C);</span>
+0032     <span class="keyword">for</span> j = 1:N_C <span class="comment">% for all combos of size i</span>
+0033         numerator = C(j,:); <span class="comment">% pick a combination</span>
+0034         subsets_subsys{k} = numerator;<span class="comment">% store combo</span>
+0035         k = k + 1;
+0036     <span class="keyword">end</span>
+0037 <span class="keyword">end</span>
+0038 
+0039 <span class="comment">% Larissa: Do subsets_subsys the way subsets is done in big_phi_all</span>
+0040 <span class="comment">% for i = 1:network.num_states-1 % don't include empty set, this is why for-loop starts at 2</span>
+0041 <span class="comment">%     subsets_subsys{i} = subsystem(logical(network.b_table{i+1,num_nodes_subsys}));</span>
+0042 <span class="comment">% end</span>
+0043 <span class="comment">%</span>
+0044 
+0045 MIP = cell(num_states_subsys-1,1); <span class="comment">% MIP in the past, the present, and the future &lt;--?</span>
+0046 phi_all_values = zeros(num_states_subsys-1,3); <span class="comment">% small phis (for each purview) overall, backward, and forward</span>
+0047 
+0048 prob = cell(num_states_subsys-1,1); <span class="comment">% transition repertoire</span>
+0049 prob_prod = cell(num_states_subsys-1,1); <span class="comment">% partitioned transition repertoire</span>
+0050 
+0051 M_IRR = cell(0,0);
+0052 
+0053 <span class="comment">%% computing small phis</span>
+0054 EmptyCon = zeros(num_states_subsys-1,1);
+0055 <span class="keyword">for</span> ci=1: num_states_subsys-1  <span class="comment">% loop over purview subsets_subsys</span>
+0056     numerator = subsets_subsys{ci}; <span class="comment">% given data of numerator</span>
+0057     <span class="comment">%Smart purviews: if any element inside the numerator does not have inputs or outputs,</span>
+0058     <span class="comment">%no need to calculate purview</span>
+0059     <span class="comment">%Larissa: actually one only needs to check WITHIN the Subsystem!!!</span>
+0060     Nconnect = [sum(network.connect_mat(numerator,subsystem),2) sum(network.connect_mat(subsystem,numerator))'];
+0061     EmptyCon(ci) = numel(Nconnect)-nnz(Nconnect);
+0062     <span class="comment">%EmptyCon(ci) =0; % Old version without smart purviews, to check</span>
+0063     <span class="keyword">if</span> EmptyCon(ci) == 0
+0064         [phi_all_values(ci,:) prob{ci} prob_prod{ci} MIP{ci} network] <span class="keyword">...</span>
+0065             =  <a href="phi_comp_ex.html" class="code" title="function [phi prob prob_prod_MIP MIP network] = phi_comp_ex(subsystem,numerator,whole_sys_state,subsets_subsys,network)">phi_comp_ex</a>(subsystem,numerator,whole_sys_state,subsets_subsys,network);
+0066         <span class="comment">%dlmwrite('OizumiSegment2.txt', numerator, '-append', 'delimiter', ' ', 'precision', 1);</span>
+0067         <span class="comment">%dlmwrite('OizumiSegment2.txt', phi_all_values(ci,:), '-append', 'delimiter', ' ', 'precision', 5);</span>
+0068     <span class="keyword">else</span>
+0069         phi_all_values(ci,:) = [0 0 0];
+0070         uniform_dist = ones(num_states_subsys,1)/num_states_subsys;
+0071         forward_maxent_dist = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(network.nodes,[],subsystem,whole_sys_state,<span class="string">'forward'</span>, extNodes);
+0072         prob{ci} = {uniform_dist, forward_maxent_dist(:)}; 
+0073         prob_prod{ci} = {uniform_dist, forward_maxent_dist(:)}; 
+0074         MIP{ci} = cell(2,2,2); <span class="comment">% should we change these to uniform, full sys... etc</span>
+0075     <span class="keyword">end</span>    
+0076 <span class="keyword">end</span>
+0077 
+0078 prob_cell = cell(2,1);
+0079 prob_cell{1} = prob;
+0080 prob_cell{2} = prob_prod;
+0081 phi = phi_all_values(:,1);
+0082 phi_m = zeros(num_nodes_subsys,3); <span class="comment">% cumulative sum</span>
+0083 index_vec_IRR = find(phi ~= 0);
+0084 N_IRR = length(index_vec_IRR); <span class="comment">%Number of irreducible concepts</span>
+0085 
+0086 <span class="keyword">if</span>(N_IRR~=0)
+0087     concepts = zeros(num_states_subsys,N_IRR);  <span class="comment">%Larissa: This is only used for strange big phis</span>
+0088     concept_phis = zeros(1,N_IRR);
+0089     j = 1;
+0090     <span class="keyword">for</span> i = 1:num_states_subsys-1
+0091         <span class="keyword">if</span> (phi(i) ~= 0)
+0092             concepts(:,j) = prob{i}{1};
+0093             concept_phis(j) = phi(i);
+0094             j = j + 1;
+0095         <span class="keyword">end</span>
+0096     <span class="keyword">end</span>
+0097 
+0098     M_IRR = cell(N_IRR,1);
+0099     <span class="keyword">for</span> i=1: N_IRR
+0100         j = index_vec_IRR(i);
+0101         M_IRR{i} = subsets_subsys{j};
+0102     <span class="keyword">end</span>
+0103 <span class="keyword">end</span>
+0104 
+0105 Big_phi = sum(phi); <span class="comment">%Now for all big_phi options</span>
+0106 
+0107 <span class="comment">% if op_big_phi == 0</span>
+0108 <span class="comment">%     Big_phi = sum(phi);</span>
+0109 <span class="comment">% else</span>
+0110 <span class="comment">%     err = MException('Options:UnSetValue', ...</span>
+0111 <span class="comment">%         'Option for method of computing Big Phi is incorrect');</span>
+0112 <span class="comment">%     throw(err);</span>
+0113 <span class="comment">% end</span>
+0114 
+0115 <span class="comment">%% display</span>
+0116 <span class="keyword">if</span> op_console
+0117     <span class="keyword">for</span> i_C=1: num_states_subsys-1
+0118         C = subsets_subsys{i_C};
+0119         i = length(C);
+0120     
+0121         <span class="keyword">if</span> abs(phi(i_C)) &lt; 10^-8
+0122             phi(i_C) = 0;
+0123         <span class="keyword">end</span>
+0124         
+0125         <span class="keyword">if</span> EmptyCon(i_C) &gt; 0
+0126 <span class="comment">%             fprintf('C=%s: nodes lack input or output \n',mod_mat2str(C))</span>
+0127         <span class="keyword">else</span>
+0128             <span class="keyword">if</span> i &gt; 1 || op_single == 1        
+0129                 [string_p string] = <a href="make_title_fb.html" class="code" title="function [string_p string] = make_title_fb(MIP,op_context,op_min)">make_title_fb</a>(MIP{i_C},0,1); <span class="comment">% op_context = 0; op_min = 1</span>
+0130                 fprintf(<span class="string">'C = %s: Core Concept: %s\n'</span>,<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(C),string{3});
+0131                 fprintf(<span class="string">'MIP = %s\n'</span>, string_p{3});
+0132                 fprintf(<span class="string">'\tPast: phi_b = %f\n'</span>,phi_all_values(i_C,2));
+0133 <span class="comment">%                 fprintf('Partition: %s\n',string_p{3});</span>
+0134 <span class="comment">%                 fprintf('Distribution (full):\n');</span>
+0135 <span class="comment">%                 disp(prob{i_C}{1}');</span>
+0136 <span class="comment">%                 fprintf('Distribution (partitioned):\n');</span>
+0137 <span class="comment">%                 disp(prob_prod{i_C}{1}');</span>
+0138                 fprintf(<span class="string">'\tFuture: phi_f = %f\n'</span>,phi_all_values(i_C,3));
+0139 <span class="comment">%                 fprintf('Distribution (full):\n');</span>
+0140 <span class="comment">%                 disp(prob{i_C}{2}');</span>
+0141 <span class="comment">%                 fprintf('Distribution (partitioned):\n');</span>
+0142 <span class="comment">%                 disp(prob_prod{i_C}{2}');</span>
+0143             <span class="keyword">end</span>
+0144 
+0145             fprintf(<span class="string">'\tphi_mip = %f\n\n'</span>,phi(i_C));
+0146         <span class="keyword">end</span>
+0147     <span class="keyword">end</span>
+0148 <span class="keyword">end</span>
+0149 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

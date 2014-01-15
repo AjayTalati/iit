@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of phi_comp_ex</title>
+  <meta name="keywords" content="phi_comp_ex">
+  <meta name="description" content="% compute small phi for a purview">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; phi_comp_ex.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>phi_comp_ex
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>% compute small phi for a purview</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [phi prob prob_prod_MIP MIP network] = phi_comp_ex(subsystem,numerator,whole_sys_state,subsets_subsys,network) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">% compute small phi for a purview</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>	compute BRs and FRs for a single perspective but given some fixed</li><li><a href="expand_prob.html" class="code" title="function prob_exp = expand_prob(prob_in,M,x_in)">expand_prob</a>	</li><li><a href="expand_prob_general.html" class="code" title="function joint_distribution = expand_prob_general(prob_in,M,x_in,prob_out)">expand_prob_general</a>	</li><li><a href="phi_comp_bORf.html" class="code" title="function [phi_MIP prob prob_prod_MIP MIP network] = phi_comp_bORf(subsystem,numerator,denom,whole_sys_state,network,bf,M1,M2,bfcut_option)">phi_comp_bORf</a>	Larissa: for smart purviews, op_context is assumed 0, op_min is assumed</li><li><a href="phi_comp_bf.html" class="code" title="function [phi_MIP, prob, prob_prod_MIP, MIP, network] = phi_comp_bf(subsystem,numerator,denom_past,denom_future,whole_sys_state,network)">phi_comp_bf</a>	compute small phi of a given purview...?</li><li><a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>	This function finds the complement of a M1 where M is the full set</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="big_phi_comp_fb.html" class="code" title="function [Big_phi phi_all_values prob_cell MIP M_IRR network] = big_phi_comp_fb(subsystem,whole_sys_state,network)">big_phi_comp_fb</a>	%  compute big phi for a subset, subsystem</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [X_max i_max j_max] = max2(X,subsets_subsys)</a></li><li><a href="#_sub2" class="code">function [X_max i_max] = max_ex(X,subsets_subsys)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [phi prob prob_prod_MIP MIP network] = phi_comp_ex(subsystem,numerator,whole_sys_state,subsets_subsys,network)</a>
+0002 <span class="comment">%% compute small phi for a purview</span>
+0003 op_extNodes = network.options(11);
+0004 
+0005 <span class="keyword">if</span> op_extNodes == 0
+0006     extNodes = setdiff(network.full_system, subsystem);
+0007 <span class="keyword">else</span>
+0008     extNodes = [];
+0009 <span class="keyword">end</span>   
+0010 
+0011 num_nodes_subsys = length(subsystem);
+0012 num_states_subsys = prod([network.nodes([subsystem]).num_states]);
+0013    
+0014 phi_MIP = zeros(num_states_subsys-1,2);
+0015 prob_cand = cell(num_states_subsys-1,1);
+0016 prob_prod_MIP_cand = cell(num_states_subsys-1,1);
+0017 MIP_cand = cell(num_states_subsys-1,1);
+0018 
+0019 <span class="keyword">for</span> i=1: num_states_subsys-1
+0020     <span class="comment">%Smart purviews: Only test those connections that actually exist</span>
+0021     denom = subsets_subsys{i};
+0022     <span class="keyword">if</span> nnz(sum(network.connect_mat(numerator,denom),1) == 0) &gt; 0 <span class="comment">% some denom is not input of numerator (numerator) --&gt; no phiBR</span>
+0023         <span class="keyword">if</span> nnz(sum(network.connect_mat(denom,numerator),2) == 0) == 0 <span class="comment">% but denom is output</span>
+0024             [phi_MIP(i,:) prob_cand{i} prob_prod_MIP_cand{i} MIP_cand{i} network] <span class="keyword">...</span>
+0025                 = <a href="phi_comp_bORf.html" class="code" title="function [phi_MIP prob prob_prod_MIP MIP network] = phi_comp_bORf(subsystem,numerator,denom,whole_sys_state,network,bf,M1,M2,bfcut_option)">phi_comp_bORf</a>(subsystem,numerator,denom,whole_sys_state,network,2);
+0026         <span class="keyword">else</span>
+0027             uniform_dist = ones(num_states_subsys,1)/num_states_subsys; <span class="comment">% for BR uniform maxent, for FR forward maxent</span>
+0028             forward_maxent_dist = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(network.nodes,[],subsystem,whole_sys_state,<span class="string">'forward'</span>, extNodes);
+0029             prob_cand{i} = {uniform_dist; forward_maxent_dist(:)};
+0030             prob_prod_MIP_cand{i} = cell(2,1);
+0031             MIP_cand{i} = cell(2,2,2);
+0032         <span class="keyword">end</span>
+0033     <span class="keyword">else</span>
+0034         <span class="keyword">if</span> nnz(sum(network.connect_mat(denom,numerator),2) == 0) &gt; 0 <span class="comment">% denom is not output, but denom is input</span>
+0035             [phi_MIP(i,:) prob_cand{i} prob_prod_MIP_cand{i} MIP_cand{i} network] <span class="keyword">...</span>
+0036                 = <a href="phi_comp_bORf.html" class="code" title="function [phi_MIP prob prob_prod_MIP MIP network] = phi_comp_bORf(subsystem,numerator,denom,whole_sys_state,network,bf,M1,M2,bfcut_option)">phi_comp_bORf</a>(subsystem,numerator,denom,whole_sys_state,network,1); 
+0037         <span class="keyword">else</span> <span class="comment">% denom is both</span>
+0038             [phi_MIP(i,:) prob_cand{i} prob_prod_MIP_cand{i} MIP_cand{i} network] <span class="keyword">...</span>
+0039                 = <a href="phi_comp_bf.html" class="code" title="function [phi_MIP, prob, prob_prod_MIP, MIP, network] = phi_comp_bf(subsystem,numerator,denom_past,denom_future,whole_sys_state,network)">phi_comp_bf</a>(subsystem,numerator,denom,denom,whole_sys_state,network); 
+0040         <span class="keyword">end</span> 
+0041     <span class="keyword">end</span>    
+0042 <span class="keyword">end</span>
+0043 
+0044 <span class="comment">%% exlusion principle</span>
+0045 max_phi_MIP_bf = zeros(2,1); <span class="comment">% backward and forward phi</span>
+0046 MIP = cell(2,2,2);
+0047 prob = cell(2,1);
+0048 prob_prod_MIP = cell(2,1);
+0049 <span class="keyword">for</span> bf = 1:2
+0050     [max_phi_MIP_bf(bf) j_max] = <a href="#_sub2" class="code" title="subfunction [X_max i_max] = max_ex(X,subsets_subsys)">max_ex</a>(phi_MIP(:,bf),subsets_subsys);
+0051     MIP(:,:,bf) = MIP_cand{j_max}(:,:,bf);
+0052     prob{bf} = prob_cand{j_max}{bf};
+0053     prob_prod_MIP{bf} = prob_prod_MIP_cand{j_max}{bf};
+0054     <span class="keyword">if</span> bf == 1
+0055         xp = subsets_subsys{j_max};
+0056     <span class="keyword">else</span>
+0057         xf = subsets_subsys{j_max};
+0058     <span class="keyword">end</span>
+0059 <span class="keyword">end</span>
+0060 
+0061 phi = [0 max_phi_MIP_bf']; <span class="comment">% phi = [overall backwards forwards]</span>
+0062 phi(1) = min(max_phi_MIP_bf(1),max_phi_MIP_bf(2));
+0063 
+0064 <span class="comment">%% imposing maxent on units outside of perspectives</span>
+0065 <span class="keyword">for</span> i = 1:2
+0066     <span class="keyword">if</span> i == 1
+0067         denom = xp;
+0068         <span class="keyword">if</span> length(denom) ~= num_nodes_subsys <span class="comment">%Larissa: in principle it could happen that although the denominator is smaller prob is already expanded</span>
+0069                                              <span class="comment">%(if there were no connections and it was set to maxent, but</span>
+0070                                              <span class="comment">%that should not happen, as it wouldn't j_max</span>
+0071             prob{i} = <a href="expand_prob.html" class="code" title="function prob_exp = expand_prob(prob_in,M,x_in)">expand_prob</a>(prob{i},subsystem,denom);
+0072             prob_prod_MIP{i} = <a href="expand_prob.html" class="code" title="function prob_exp = expand_prob(prob_in,M,x_in)">expand_prob</a>(prob_prod_MIP{i},subsystem,denom);
+0073         <span class="keyword">end</span>
+0074     <span class="keyword">else</span>
+0075         denom = xf;
+0076         <span class="keyword">if</span> length(denom) ~= num_nodes_subsys 
+0077             denom_rest = <a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>(subsystem,denom);
+0078             fmaxent_denom_rest = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(network.nodes,[],denom_rest,whole_sys_state,<span class="string">'forward'</span>,extNodes);
+0079             prob{i} = <a href="expand_prob_general.html" class="code" title="function joint_distribution = expand_prob_general(prob_in,M,x_in,prob_out)">expand_prob_general</a>(prob{i},subsystem,denom,fmaxent_denom_rest(:));
+0080             prob_prod_MIP{i} = <a href="expand_prob_general.html" class="code" title="function joint_distribution = expand_prob_general(prob_in,M,x_in,prob_out)">expand_prob_general</a>(prob_prod_MIP{i},subsystem,denom,fmaxent_denom_rest(:));
+0081         <span class="keyword">end</span>
+0082     <span class="keyword">end</span> 
+0083 <span class="keyword">end</span>
+0084 
+0085 <span class="comment">% if op_console</span>
+0086 <span class="comment">%     fprintf('Core concept: numerator=%s xp=%s  xf=%s\n',mod_mat2str(numerator),mod_mat2str(xp),mod_mat2str(xf));</span>
+0087 <span class="comment">%     fprintf('phi=%f\n',phi);</span>
+0088 <span class="comment">% end</span>
+0089 <span class="comment">% figure(1)</span>
+0090 <span class="comment">% subplot(1,2,1),imagesc(prob)</span>
+0091 <span class="comment">% subplot(1,2,2),imagesc(prob_prod_MIP)</span>
+0092 <span class="comment">% phi_MIP</span>
+0093 <span class="comment">% [phi i j] = max2(phi_MIP,subsets_subsys)</span>
+0094 <span class="comment">% pause;</span>
+0095 
+0096 <span class="keyword">end</span>
+0097 
+0098 <a name="_sub1" href="#_subfunctions" class="code">function [X_max i_max j_max] = max2(X,subsets_subsys)</a>
+0099 <span class="comment">% exclusion principle: if the value is the same, take the bigger one</span>
+0100 X_max = -Inf;
+0101 i_max = 1;
+0102 j_max = 1;
+0103 s_max = 0;
+0104 <span class="keyword">for</span> i=1: size(X,1)
+0105     <span class="keyword">for</span> j=1: size(X,2)
+0106         s = length(subsets_subsys{i}) + length(subsets_subsys{j});
+0107         cond1 = X(i,j) &gt; X_max;
+0108         cond2 = X(i,j) == X_max &amp;&amp; s&gt;= s_max;
+0109         <span class="keyword">if</span> cond1 || cond2
+0110             X_max = X(i,j);
+0111             i_max = i;
+0112             j_max = j;
+0113             s_max = s;
+0114         <span class="keyword">end</span>
+0115     <span class="keyword">end</span>
+0116 <span class="keyword">end</span>
+0117 
+0118 <span class="keyword">end</span>
+0119 
+0120 
+0121 <a name="_sub2" href="#_subfunctions" class="code">function [X_max i_max] = max_ex(X,subsets_subsys)</a>
+0122 <span class="comment">% exclusion principle: if the value is the same, take the bigger one</span>
+0123 epsilon = 10^-6;    <span class="comment">%EMD has very low precision</span>
+0124 X_max = -Inf;
+0125 i_max = 1;
+0126 s_max = 0;
+0127 <span class="keyword">for</span> i=1: size(X,1)
+0128     s = length(subsets_subsys{i});
+0129     cond1 = X(i) &gt; X_max;
+0130     cond2 = abs(X(i) - X_max) &lt; epsilon &amp;&amp; s&gt;= s_max;
+0131     <span class="keyword">if</span> cond1 || cond2
+0132         X_max = X(i);
+0133         i_max = i;
+0134         s_max = s;
+0135     <span class="keyword">end</span>
+0136 <span class="keyword">end</span>
+0137 
+0138 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

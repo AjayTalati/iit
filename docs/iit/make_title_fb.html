@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of make_title_fb</title>
+  <meta name="keywords" content="make_title_fb">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; make_title_fb.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>make_title_fb
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [string_p string] = make_title_fb(MIP,op_context,op_min) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="combine.html" class="code" title="function ab = combine(a,b)">combine</a>	</li><li><a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="big_phi_comp_fb.html" class="code" title="function [Big_phi phi_all_values prob_cell MIP M_IRR network] = big_phi_comp_fb(subsystem,whole_sys_state,network)">big_phi_comp_fb</a>	%  compute big phi for a subset, subsystem</li><li><a href="plot_REP.html" class="code" title="function [] = plot_REP(Big_phi, REP_cell,phi,MIP_cell, M, plot_panel)">plot_REP</a>	op_min = options(9);</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [string_p string] = make_title_fb(MIP,op_context,op_min)</a>
+0002 
+0003 <span class="keyword">if</span> nargin &lt; 3
+0004     op_min = 0;
+0005 <span class="keyword">end</span>
+0006 
+0007 <span class="keyword">if</span> op_min == 0
+0008     xp_b1 = MIP{1,1};
+0009     xp_b2 = MIP{2,1};
+0010     x0_b1 = MIP{1,2};
+0011     x0_b2 = MIP{2,2};
+0012     xf_b1 = MIP{1,3};
+0013     xf_b2 = MIP{2,3};
+0014     x0 = <a href="combine.html" class="code" title="function ab = combine(a,b)">combine</a>(x0_b1,x0_b2);
+0015     xp = <a href="combine.html" class="code" title="function ab = combine(a,b)">combine</a>(xp_b1,xp_b2);
+0016     xf = <a href="combine.html" class="code" title="function ab = combine(a,b)">combine</a>(xf_b1,xf_b2);
+0017     
+0018     sp_1 = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(xp_b1);
+0019     s0_1 = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(x0_b1);
+0020     sf_1 = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(xf_b1);
+0021     sp_2 = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(xp_b2);
+0022     s0_2 = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(x0_b2);
+0023     sf_2 = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(xf_b2);
+0024     
+0025     s0 = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(x0);
+0026     sp = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(xp);
+0027     sf = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(xf);
+0028     
+0029     <span class="keyword">if</span> op_context == 0
+0030         string{1} = [sp,<span class="string">'-'</span>,s0];
+0031         string{2} = [s0,<span class="string">'-'</span>,sf];
+0032         string{3} = [sp,<span class="string">'-'</span>,s0,<span class="string">'-'</span>,sf];
+0033         string_p{1} = [sp_1,<span class="string">'-'</span>,s0_1,<span class="string">'x'</span>,sp_2,<span class="string">'-'</span>,s0_2];
+0034         string_p{2} = [s0_1,<span class="string">'-'</span>,sf_1,<span class="string">'x'</span>,s0_2,<span class="string">'-'</span>,sf_2];
+0035         string_p{3} = [sp_1,<span class="string">'-'</span>,s0_1,<span class="string">'-'</span>,sf_1,<span class="string">'x'</span>,sp_2,<span class="string">'-'</span>,s0_2,<span class="string">'-'</span>,sf_2];
+0036     <span class="keyword">else</span>
+0037         string = [sp,<span class="string">'-'</span>,s0,<span class="string">'-'</span>,sf];
+0038         string_p = [sp_1,<span class="string">'-'</span>,s0_1,<span class="string">'-'</span>,sf_1,<span class="string">'x'</span>,sp_2,<span class="string">'-'</span>,s0_2,<span class="string">'-'</span>,sf_2];
+0039     <span class="keyword">end</span>
+0040 <span class="keyword">else</span>
+0041     string = cell(3,1);
+0042     string_p = cell(3,1);
+0043     <span class="keyword">for</span> bf = 1: 2
+0044         xpf_b1 = MIP{1,1,bf};
+0045         xpf_b2 = MIP{2,1,bf};
+0046         x0_b1 = MIP{1,2,bf};
+0047         x0_b2 = MIP{2,2,bf};
+0048         x0 = <a href="combine.html" class="code" title="function ab = combine(a,b)">combine</a>(x0_b1,x0_b2);
+0049         xpf = <a href="combine.html" class="code" title="function ab = combine(a,b)">combine</a>(xpf_b1,xpf_b2);
+0050         
+0051         s0_1 = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(x0_b1);
+0052         s0_2 = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(x0_b2);
+0053         s0 = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(x0);
+0054         
+0055         <span class="keyword">if</span> bf == 1
+0056             sp = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(xpf);
+0057             sp_1 = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(xpf_b1);
+0058             sp_2 = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(xpf_b2);
+0059             string{bf} = [sp,<span class="string">' &lt;- '</span>,s0];
+0060             string_p{bf} = [<span class="string">'('</span>,sp_1,<span class="string">' &lt;- '</span>,s0_1,<span class="string">') x ('</span>,sp_2,<span class="string">' &lt;- '</span>,s0_2,<span class="string">')'</span>];
+0061         <span class="keyword">else</span>
+0062             sf = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(xpf);
+0063             sf_1 = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(xpf_b1);
+0064             sf_2 = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(xpf_b2);
+0065             string{bf} = [s0,<span class="string">' -&gt; '</span>,sf];
+0066             string_p{bf} = [<span class="string">'('</span>,s0_1,<span class="string">' -&gt; '</span>,sf_1,<span class="string">') x ('</span>,s0_2,<span class="string">' -&gt; '</span>,sf_2,<span class="string">')'</span>];
+0067         <span class="keyword">end</span>
+0068     <span class="keyword">end</span>
+0069     string{3} = [<span class="string">'('</span>,sp,<span class="string">'&lt;-'</span>,s0,<span class="string">'-&gt;'</span>,sf,<span class="string">')'</span>];
+0070     string_p{3} = [<span class="string">'('</span>,sp_1,<span class="string">'&lt;-'</span>,s0_1,<span class="string">') x ('</span>,sp_2,<span class="string">'&lt;-'</span>,s0_2,<span class="string">') &amp; ('</span>,s0_1,<span class="string">'-&gt;'</span>,sf_1,<span class="string">') x ('</span>,s0_2,<span class="string">'-&gt;'</span>,sf_2,<span class="string">')'</span>];
+0071 <span class="keyword">end</span>
+0072 
+0073 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

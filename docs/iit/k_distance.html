@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of k_distance</title>
+  <meta name="keywords" content="k_distance">
+  <meta name="description" content="% compute Intra and interdistance based on the Kernel idea, for distributions">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; k_distance.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>k_distance
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>% compute Intra and interdistance based on the Kernel idea, for distributions</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [k_diff, intra_1, intra_2, inter] = k_distance(P,Q) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">% compute Intra and interdistance based on the Kernel idea, for distributions
+ P,Q : Two distributions</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="k_inter.html" class="code" title="function [inter] = k_inter(P,Q)">k_inter</a>	% compute Interdistace between two distributions using the kernel.</li><li><a href="k_intra.html" class="code" title="function [intra] = k_intra(P)">k_intra</a>	% compute Intradistance for a distribution</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [k_diff, intra_1, intra_2, inter] = k_distance(P,Q)</a>
+0002 
+0003 <span class="comment">%% compute Intra and interdistance based on the Kernel idea, for distributions</span>
+0004 <span class="comment">% P,Q : Two distributions</span>
+0005 
+0006 
+0007 <span class="comment">%%</span>
+0008 
+0009 <span class="comment">% if (sum(P)~= 1) || (sum(Q)~= 1)</span>
+0010 <span class="comment">%     warning('Either or both distributions do not add up to 1');</span>
+0011 <span class="comment">% end</span>
+0012 
+0013 <span class="keyword">if</span> min(min(P),min(Q)) &lt; 0
+0014     warning(<span class="string">'Either or both distributions contain negative values'</span>);
+0015 <span class="keyword">end</span> 
+0016 
+0017 <span class="keyword">if</span> (length(P)~= length(Q))
+0018     warning(<span class="string">'Distributions do not have the same support'</span>);
+0019 <span class="keyword">end</span>
+0020 
+0021 <span class="comment">%compute interdistance:</span>
+0022 inter = <a href="k_inter.html" class="code" title="function [inter] = k_inter(P,Q)">k_inter</a>(P,P) + <a href="k_inter.html" class="code" title="function [inter] = k_inter(P,Q)">k_inter</a>(Q,Q) - 2* <a href="k_inter.html" class="code" title="function [inter] = k_inter(P,Q)">k_inter</a>(P,Q);
+0023 
+0024 <span class="comment">%compute intradistances:</span>
+0025 intra_1 = <a href="k_intra.html" class="code" title="function [intra] = k_intra(P)">k_intra</a>(P);
+0026 intra_2 = <a href="k_intra.html" class="code" title="function [intra] = k_intra(P)">k_intra</a>(Q);
+0027 
+0028 k_diff = (intra_1 + intra_2) * inter;
+0029 
+0030 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

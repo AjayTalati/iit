@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of dec2multibase</title>
+  <meta name="keywords" content="dec2multibase">
+  <meta name="description" content="TRANS2(VALUE,STATE_SIZE_VEC) returns an array of LENGTH 0's and 1's, representing">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; dec2multibase.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>dec2multibase
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>TRANS2(VALUE,STATE_SIZE_VEC) returns an array of LENGTH 0's and 1's, representing</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [multidec_array] = dec2multibase(value,state_size_vec) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> TRANS2(VALUE,STATE_SIZE_VEC) returns an array of LENGTH 0's and 1's, representing 
+   the binary number equal to VALUE
+
+   This function also comes as compiled MEX files, the m-file here is a
+   backup if the current</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="iit_run.html" class="code" title="function iit_run(tpm, in_connect_mat, current_state, in_noise, in_options, in_nodes, past_state)">iit_run</a>	IIT_RUN Computes concepts, small and big phi, and partition information</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [multidec_array] = dec2multibase(value,state_size_vec)</a>
+0002 <span class="comment">% TRANS2(VALUE,STATE_SIZE_VEC) returns an array of LENGTH 0's and 1's, representing</span>
+0003 <span class="comment">%   the binary number equal to VALUE</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%   This function also comes as compiled MEX files, the m-file here is a</span>
+0006 <span class="comment">%   backup if the current</span>
+0007 
+0008 <span class="comment">% SHOULD WE FLIPLR RESULT</span>
+0009 
+0010 <span class="comment">% this is a case where the for loop seems to be faster, see for yourself...</span>
+0011 <span class="comment">% tic</span>
+0012 <span class="comment">% binary = mod(floor(value./(2.^(0:length-1))),2)</span>
+0013 <span class="comment">% toc</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% tic</span>
+0016 num_nodes = length(state_size_vec);
+0017 multidec_array = zeros(num_nodes,1);
+0018 <span class="keyword">for</span> i = 1:num_nodes
+0019 <span class="comment">%     multidec_array(i) = value - 2 * floor(value/2);</span>
+0020     multidec_array(i) = mod(value,state_size_vec(i));
+0021     value = floor(value/state_size_vec(i));
+0022 <span class="keyword">end</span>
+0023 <span class="comment">% binary</span>
+0024 <span class="comment">% toc</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

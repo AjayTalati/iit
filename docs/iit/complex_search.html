@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of complex_search</title>
+  <meta name="keywords" content="complex_search">
+  <meta name="description" content="% Find complex">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; complex_search.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>complex_search
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>% Find complex</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [Big_phi_MIP MIP Complex M_i_max BFCut Big_phi_MIP_M MIP_M Big_phi_MIP_all_M MIP_all_M BFCut_M] = complex_search(Big_phi_M,M_cell,M_IRR_M,N,prob_M, phi_M,options,concept_MIP_M,network) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">% Find complex</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="MIP_search_reentry.html" class="code" title="function [Big_phi_MIP MIP Big_phi_cand MIP_cand BFCut] = MIP_search_reentry(subsystem,N,Big_phi_M,M_IRR_M,prob_M, phi_M,options, concept_MIP_M, network)">MIP_search_reentry</a>	%</li><li><a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>	</li><li><a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>	This function finds the complement of a M1 where M is the full set</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="iit_run.html" class="code" title="function iit_run(tpm, in_connect_mat, current_state, in_noise, in_options, in_nodes, past_state)">iit_run</a>	IIT_RUN Computes concepts, small and big phi, and partition information</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [x_max i_max] = max_complex(x,M_cell)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Big_phi_MIP MIP Complex M_i_max BFCut Big_phi_MIP_M MIP_M Big_phi_MIP_all_M MIP_all_M BFCut_M] = complex_search(Big_phi_M,M_cell,M_IRR_M,N,prob_M, phi_M,options,concept_MIP_M,network)</a>
+0002 <span class="comment">%% Find complex</span>
+0003 op_extNodes = options(11);
+0004 op_console = options(8);
+0005 
+0006 Big_phi_MIP_M = zeros(2^N-1,1);
+0007 Big_phi_MIP_all_M = cell(2^N-1,1);
+0008 MIP_M = cell(2^N-1,1);
+0009 MIP_all_M = cell(2^N-1,1);
+0010 
+0011 <span class="keyword">if</span> op_console
+0012     fprintf(<span class="string">'\n'</span>)
+0013     fprintf(<span class="string">'\nBig_phi_MIP in subset M:\n\n'</span>)
+0014 <span class="keyword">end</span>
+0015     
+0016 parfor M_i = 1: 2^N-1
+0017 
+0018     M = M_cell{M_i};
+0019     
+0020     <span class="keyword">if</span> length(M) &gt; 1 &amp;&amp; Big_phi_M(M_i) ~= 0 <span class="comment">% Larissa: faster like this!</span>
+0021         
+0022 <span class="comment">%         [Big_phi_MIP_M(M_i) MIP_M{M_i} Big_phi_MIP_all_M{M_i} MIP_all_M{M_i}] = ...</span>
+0023 <span class="comment">%                                     MIP_search(M,N,Big_phi_M, M_IRR_M, prob_M, phi_M,options);</span>
+0024 <span class="comment">%For reentry uncomment this and comment the one above!</span>
+0025 
+0026     <span class="keyword">if</span> op_extNodes == 1 &amp;&amp; N ~= numel(M)
+0027         rem_network = network.removal_networks{M_i};
+0028         [Big_phi_MIP_M(M_i) MIP_M{M_i} Big_phi_MIP_all_M{M_i} MIP_all_M{M_i} BFCut_M{M_i}] = <span class="keyword">...</span>
+0029                                      <a href="MIP_search_reentry.html" class="code" title="function [Big_phi_MIP MIP Big_phi_cand MIP_cand BFCut] = MIP_search_reentry(subsystem,N,Big_phi_M,M_IRR_M,prob_M, phi_M,options, concept_MIP_M, network)">MIP_search_reentry</a>(M,N,Big_phi_M, M_IRR_M, prob_M, phi_M,options,concept_MIP_M, rem_network); 
+0030     <span class="keyword">else</span>
+0031          [Big_phi_MIP_M(M_i) MIP_M{M_i} Big_phi_MIP_all_M{M_i} MIP_all_M{M_i} BFCut_M{M_i}] = <span class="keyword">...</span>
+0032                                      <a href="MIP_search_reentry.html" class="code" title="function [Big_phi_MIP MIP Big_phi_cand MIP_cand BFCut] = MIP_search_reentry(subsystem,N,Big_phi_M,M_IRR_M,prob_M, phi_M,options, concept_MIP_M, network)">MIP_search_reentry</a>(M,N,Big_phi_M, M_IRR_M, prob_M, phi_M,options,concept_MIP_M, network);                                
+0033     <span class="keyword">end</span>                                 
+0034     <span class="keyword">else</span>
+0035         
+0036         Big_phi_MIP_M(M_i) = Big_phi_M(M_i);
+0037         MIP_M{M_i} = M;
+0038         Big_phi_MIP_all_M{M_i} = Big_phi_M(M_i);
+0039         MIP_all_M{M_i} = M;
+0040         BFCut_M{M_i} = 0;
+0041         
+0042     <span class="keyword">end</span>
+0043     
+0044 <span class="keyword">end</span>
+0045 
+0046 [Big_phi_MIP M_i_max] = <a href="#_sub1" class="code" title="subfunction [x_max i_max] = max_complex(x,M_cell)">max_complex</a>(Big_phi_MIP_M,M_cell);
+0047 Complex = M_cell{M_i_max};
+0048 
+0049 
+0050 MIP = cell(2,1);
+0051 MIP{1} = MIP_M{M_i_max};
+0052 Big_phi = Big_phi_M(M_i_max);
+0053 BFCut = BFCut_M{M_i_max};
+0054 
+0055 MIP{2} = <a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>(Complex,MIP{1});
+0056 
+0057 <span class="keyword">if</span> op_console
+0058     fprintf(<span class="string">'\n'</span>)
+0059     fprintf(<span class="string">'---------------------------------------------------------------------\n\n'</span>)
+0060     fprintf(<span class="string">'Complex = %s\nBig_phi = %f\nMIP = %s-%s\nBig_phi_MIP = %f\n'</span>, <span class="keyword">...</span>
+0061          mat2str(Complex),Big_phi, <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(MIP{1}),<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(MIP{2}),Big_phi_MIP);
+0062 <span class="keyword">end</span>
+0063  
+0064  
+0065 <span class="keyword">end</span>
+0066 
+0067 <a name="_sub1" href="#_subfunctions" class="code">function [x_max i_max] = max_complex(x,M_cell)</a>
+0068 
+0069 N = length(x);
+0070 epsilon = 10^-10;
+0071 x_max = x(1);
+0072 i_max = 1;
+0073 <span class="keyword">for</span> i = 2:N
+0074     <span class="keyword">if</span> x(i) ~= 0
+0075         dif = x_max - x(i);
+0076         <span class="keyword">if</span> abs(dif) &lt; epsilon
+0077             <span class="keyword">if</span> length(M_cell{i-1}) &lt; length(M_cell{i})
+0078                 x_max = x(i);
+0079                 i_max = i;
+0080             <span class="keyword">end</span>
+0081         <span class="keyword">elseif</span> dif &lt; 0
+0082             x_max = x(i);
+0083             i_max = i;
+0084         <span class="keyword">else</span>
+0085         <span class="keyword">end</span>
+0086     <span class="keyword">end</span>
+0087 <span class="keyword">end</span>
+0088 
+0089 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

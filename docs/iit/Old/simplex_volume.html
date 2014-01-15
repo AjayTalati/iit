@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of simplex_volume</title>
+  <meta name="keywords" content="simplex_volume">
+  <meta name="description" content="C = N+1 x Nc matrix of concepts as columns, N = dimension of simplex, Nc">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">iit</a> &gt; <a href="index.html">Old</a> &gt; simplex_volume.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit/Old&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>simplex_volume
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>C = N+1 x Nc matrix of concepts as columns, N = dimension of simplex, Nc</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function simplex_points = simplex_volume(nElements,steps_per_dimension) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> C = N+1 x Nc matrix of concepts as columns, N = dimension of simplex, Nc
+   is the number of concepts</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function simplex_points = simplex_volume(nElements,steps_per_dimension)</a>
+0002 
+0003 <span class="comment">% C = N+1 x Nc matrix of concepts as columns, N = dimension of simplex, Nc</span>
+0004 <span class="comment">%   is the number of concepts</span>
+0005 
+0006 <span class="comment">% C_phi = 1xNc vector of phi values for each concept</span>
+0007 
+0008 <span class="comment">% steps_per_dimension is how many points are seached in each dimension</span>
+0009 
+0010 <span class="comment">% big_phi = BIG PHI!!</span>
+0011 <span class="comment">% matlabpool close force local</span>
+0012 <span class="comment">% matlabpool</span>
+0013 
+0014 tic
+0015 
+0016 <span class="comment">% get dimension of simplex</span>
+0017 N = 2^nElements - 1;
+0018 
+0019 
+0020 <span class="comment">%% Build R</span>
+0021 
+0022 <span class="comment">% initialize R, a matrix of coordinates of the simplex in the projected</span>
+0023 <span class="comment">% space where each column is the coordinates of one of the vertices of the</span>
+0024 <span class="comment">% simplex</span>
+0025 
+0026 R = zeros(N,N+1);
+0027 R(1,1) = 1;
+0028 R(1,2:end) = -1/N;
+0029 
+0030 <span class="keyword">for</span> j = 2:N
+0031     
+0032     R(j,j) = nthroot(sum(R(:,j).^N),N);
+0033     R(j,j+1:end) = -1/N - R(1:j-1,j)'*R(1:j-1,j+1);
+0034 
+0035 <span class="keyword">end</span>
+0036 
+0037 R(N,N+1) = -R(N,N);
+0038 
+0039 <span class="comment">%% Build the transform matrix T which maps from concept space to the space of R</span>
+0040 
+0041 r0_mat = repmat(R(:,1),1,N);
+0042 T = inv(R(:,2:end) - r0_mat);
+0043 
+0044 
+0045 
+0046 <span class="comment">%% Test all points in lattice bounded by [-1,1] for all dimensions with granularity passed in arguments</span>
+0047 
+0048 <span class="comment">% numPoints = (2/grain + 1)^N;</span>
+0049 <span class="comment">% test_points = cell(numPoints,1);</span>
+0050 
+0051 ref_point = ones(N,1) * -1;
+0052 distance = zeros(N,1);
+0053 
+0054 nSimplex = 0;
+0055 step_size = 2 / (steps_per_dimension - 1);
+0056 
+0057 simplex_points = cell(steps_per_dimension^N,1);
+0058 
+0059 <span class="keyword">for</span> i = 0:(steps_per_dimension^N-1)
+0060     
+0061     eval([<span class="string">'simplex_points_'</span> num2str(i) <span class="string">' = cell(steps_per_dimension^N,1);'</span>]);
+0062     eval([<span class="string">'count_'</span> num2str(i) <span class="string">' = 0;'</span>]);
+0063     
+0064 <span class="keyword">end</span>
+0065 
+0066 parfor i = 0:(steps_per_dimension^N-1)
+0067     
+0068    <span class="keyword">for</span> j = 1:N
+0069        
+0070        distance(j) = mod(i,steps_per_dimension);
+0071        i = (i - distance(j)) / steps_per_dimension;
+0072       
+0073    <span class="keyword">end</span>
+0074        
+0075    test_point = ref_point + distance * step_size;
+0076 
+0077    r0 = zeros(N,1); r0(1) = 1;
+0078 
+0079    gammaTemp = T * (test_point - r0);
+0080    gamma = zeros(N+1,1);
+0081    gamma(1) = 1 - sum(gammaTemp);
+0082    gamma(2:end) = gammaTemp;
+0083    
+0084    
+0085    <span class="keyword">if</span> (sum(gamma) == 1 &amp;&amp; all(gamma &gt;= 0))
+0086        
+0087        nSimplex = nSimplex + 1;
+0088 <span class="comment">%        eval(['simplex_points_' num2str(i) '{count_' num2str(i) '} = gamma;']);</span>
+0089 <span class="comment">%        eval(['count_' num2str(i) ' = count_' num2str(i) ' + 1;'])</span>
+0090        
+0091        
+0092    <span class="keyword">end</span>
+0093        
+0094 <span class="keyword">end</span>
+0095 
+0096 
+0097 toc
+0098 <span class="comment">% matlabpool close</span>
+0099 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

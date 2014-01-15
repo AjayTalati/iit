@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of make_TPM</title>
+  <meta name="keywords" content="make_TPM">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; make_TPM.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>make_TPM
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 N = 4;
+0002 p = zeros(2^N,N);
+0003 
+0004 <span class="comment">% 1  0000   1000    none                                        0110   1110     0001                0101                            1011                1111</span>
+0005 <span class="comment">% 2  0000                           1100                1010                            0001                                        0011    1011    0111    1111</span>
+0006 <span class="comment">% 3  0000                                                   1010    0110                0001    1001    0101    1101                                        1111</span>
+0007 <span class="comment">% 4                                     1100    0010                0110   1110     0001    1001                                        1011    0111</span>
+0008 
+0009 i = 1; <span class="comment">% 0000</span>
+0010 p(i,1) = 0; p(i,2) = 0; p(i,3) = 0; p(i,4) = 1;
+0011 i = 2; <span class="comment">% 1000</span>
+0012 p(i,1) = 0; p(i,2) = 1; p(i,3) = 1; p(i,4) = 1;
+0013 i = 3; <span class="comment">% 0100</span>
+0014 p(i,1) = 1; p(i,2) = 1; p(i,3) = 1; p(i,4) = 1;
+0015 i = 4; <span class="comment">% 1100</span>
+0016 p(i,1) = 1; p(i,2) = 0; p(i,3) = 1; p(i,4) = 0;
+0017 i = 5; <span class="comment">% 0010</span>
+0018 p(i,1) = 1; p(i,2) = 1; p(i,3) = 1; p(i,4) = 0;
+0019 i = 6; <span class="comment">% 1010</span>
+0020 p(i,1) = 1; p(i,2) = 0; p(i,3) = 0; p(i,4) = 1;
+0021 i = 7; <span class="comment">% 0110</span>
+0022 p(i,1) = 0; p(i,2) = 1; p(i,3) = 1; p(i,4) = 0;
+0023 i = 8; <span class="comment">% 1110</span>
+0024 p(i,1) = 0; p(i,2) = 1; p(i,3) = 1; p(i,4) = 0;
+0025 i = 9; <span class="comment">% 0001</span>
+0026 p(i,1) = 0; p(i,2) = 0; p(i,3) = 0; p(i,4) = 0;
+0027 i = 10; <span class="comment">% 1001</span>
+0028 p(i,1) = 1; p(i,2) = 1; p(i,3) = 0; p(i,4) = 0;
+0029 i = 11; <span class="comment">% 0101</span>
+0030 p(i,1) = 0; p(i,2) = 1; p(i,3) = 0; p(i,4) = 1;
+0031 i = 12; <span class="comment">% 1101</span>
+0032 p(i,1) = 1; p(i,2) = 1; p(i,3) = 0; p(i,4) = 1;
+0033 i = 13; <span class="comment">% 0011</span>
+0034 p(i,1) = 1; p(i,2) = 0; p(i,3) = 1; p(i,4) = 1;
+0035 i = 14; <span class="comment">% 1011</span>
+0036 p(i,1) = 0; p(i,2) = 0; p(i,3) = 1; p(i,4) = 0;
+0037 i = 15; <span class="comment">% 0111</span>
+0038 p(i,1) = 1; p(i,2) = 0; p(i,3) = 1; p(i,4) = 0;
+0039 i = 16; <span class="comment">% 1111</span>
+0040 p(i,1) = 0; p(i,2) = 0; p(i,3) = 0; p(i,4) = 1;
+0041 
+0042 save TPM p</pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

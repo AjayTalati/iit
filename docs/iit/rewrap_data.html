@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of rewrap_data</title>
+  <meta name="keywords" content="rewrap_data">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; rewrap_data.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>rewrap_data
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function data = rewrap_data(Big_phi_M, phi_M, prob_M, M_cell, concept_MIP_M, purviews_M,Big_phi_MIP, MIP, Complex, M_i_max,  Big_phi_MIP_M, complex_MIP_M, Big_phi_MIP_all_M, complex_MIP_M_all) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="concept2index.html" class="code" title="function index = concept2index(numerator, subsystem)">concept2index</a>	size of subsystem</li><li><a href="index2subsystem.html" class="code" title="function subsystem = index2subsystem(index)">index2subsystem</a>	</li><li><a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>	This function finds the complement of a M1 where M is the full set</li><li><a href="subsystem2index.html" class="code" title="function index = subsystem2index(subsystem)">subsystem2index</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function data = rewrap_data(Big_phi_M, phi_M, prob_M, M_cell, concept_MIP_M, purviews_M,</a><span class="keyword">...</span>
+0002                         Big_phi_MIP, MIP, Complex, M_i_max,  Big_phi_MIP_M, complex_MIP_M, Big_phi_MIP_all_M, complex_MIP_M_all)
+0003                     
+0004                     
+0005 
+0006 N_subsys = length(Big_phi_M);
+0007 data.subsystem(N_subsys).Phi = 0;
+0008 
+0009 <span class="comment">% store main complex of whole system as index</span>
+0010 data.main_complex = <a href="subsystem2index.html" class="code" title="function index = subsystem2index(subsystem)">subsystem2index</a>(Complex);
+0011 
+0012 <span class="comment">% Phi values for each subset, &quot;Big Phi&quot;</span>
+0013 temp_cell = mat2cell(Big_phi_M,ones(1,N_subsys),1);
+0014 [data.subsystem.Phi] = temp_cell{:};
+0015 
+0016 <span class="comment">% Phi_MIP values for each subset, &quot;Big Phi MIP&quot;</span>
+0017 temp_cell = mat2cell(Big_phi_MIP_M,ones(1,N_subsys),1);
+0018 [data.subsystem.Phi_MIP] = temp_cell{:};
+0019 
+0020 
+0021     
+0022 
+0023 <span class="keyword">for</span> subsys = 1:N_subsys
+0024 
+0025     <span class="keyword">if</span> ~isempty(purviews_M{subsys})
+0026 
+0027         subsystem = M_cell{subsys};
+0028         num_concepts = 2^length(subsystem) - 1;
+0029 
+0030         <span class="comment">% MIP for this subsystem</span>
+0031         data.subsystem(subsys).MIP1 = complex_MIP_M{subsys};
+0032         data.subsystem(subsys).MIP2 = <a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>(subsystem,complex_MIP_M{subsys});
+0033 
+0034         <span class="comment">% store Big_Phi_Partitioned values for other partitions of this</span>
+0035         <span class="comment">% sybsystem as well as a way to see what the partitions were... this is</span>
+0036         <span class="comment">% the weakest link as far as storage... tackle another day...</span>
+0037         data.subsystem(subsys).partition_values = Big_phi_MIP_all_M{subsys};
+0038         data.subsystem(subsys).partitions = complex_MIP_M_all{subsys};
+0039 
+0040 
+0041         <span class="comment">% BUILD CONCEPTS!</span>
+0042 
+0043         <span class="comment">% initialize size of concept struct array</span>
+0044         data.subsystem(subsys).concept(num_concepts).phi.min = 0;
+0045 
+0046         <span class="keyword">for</span> concept_i = 1:num_concepts
+0047 
+0048             <span class="comment">% for now we set concept to reducible and correct after for-loop</span>
+0049             <span class="comment">% (see below)</span>
+0050             data.subsystem(subsys).concept(concept_i).is_irreducible = 0;
+0051 
+0052             <span class="comment">% phi values for each concept</span>
+0053             data.subsystem(subsys).concept(concept_i).phi.min = phi_M{subsys}(concept_i,1);
+0054             data.subsystem(subsys).concept(concept_i).phi.backwards = phi_M{subsys}(concept_i,2);
+0055             data.subsystem(subsys).concept(concept_i).phi.forwards = phi_M{subsys}(concept_i,3);
+0056 
+0057             <span class="comment">%distribution</span>
+0058             data.subsystem(subsys).concept(concept_i).distribution.backwards.whole = prob_M{subsys,1}{concept_i}{1};
+0059             data.subsystem(subsys).concept(concept_i).distribution.backwards.MIP = prob_M{subsys,2}{concept_i}{1};
+0060             data.subsystem(subsys).concept(concept_i).distribution.forwards.whole = prob_M{subsys,1}{concept_i}{2};
+0061             data.subsystem(subsys).concept(concept_i).distribution.forwards.MIP = prob_M{subsys,2}{concept_i}{2};
+0062 
+0063             <span class="comment">% denominator</span>
+0064             data.subsystem(subsys).concept(concept_i).denominator.backwards = <span class="keyword">...</span>
+0065                                                                 sort([concept_MIP_M{subsys}{concept_i}{:,1,1}]);
+0066             data.subsystem(subsys).concept(concept_i).denominator.forwards = <span class="keyword">...</span>
+0067                                                                 sort([concept_MIP_M{subsys}{concept_i}{:,1,2}]);
+0068 
+0069             <span class="comment">% MIPs</span>
+0070             data.subsystem(subsys).concept(concept_i).MIP.backwards.numerator1 = sort([concept_MIP_M{subsys}{concept_i}{1,2,1}]);
+0071             data.subsystem(subsys).concept(concept_i).MIP.backwards.numerator2 = sort([concept_MIP_M{subsys}{concept_i}{2,2,1}]);
+0072             data.subsystem(subsys).concept(concept_i).MIP.backwards.denominator1 = sort([concept_MIP_M{subsys}{concept_i}{1,1,1}]);
+0073             data.subsystem(subsys).concept(concept_i).MIP.backwards.denominator2 = sort([concept_MIP_M{subsys}{concept_i}{2,1,1}]);
+0074             data.subsystem(subsys).concept(concept_i).MIP.forwards.numerator1 = sort([concept_MIP_M{subsys}{concept_i}{1,2,2}]);
+0075             data.subsystem(subsys).concept(concept_i).MIP.forwards.numerator2 = sort([concept_MIP_M{subsys}{concept_i}{2,2,2}]);
+0076             data.subsystem(subsys).concept(concept_i).MIP.forwards.denominator1 = sort([concept_MIP_M{subsys}{concept_i}{1,1,2}]);
+0077             data.subsystem(subsys).concept(concept_i).MIP.forwards.denominator2 = sort([concept_MIP_M{subsys}{concept_i}{2,1,2}]);
+0078 
+0079         <span class="keyword">end</span>
+0080 
+0081         <span class="comment">% label irreducible concepts</span>
+0082         <span class="keyword">if</span> ~isempty(purviews_M{subsys})
+0083 
+0084             <span class="keyword">for</span> i = 1:length(purviews_M{subsys})
+0085 
+0086                 data.subsystem(subsys).concept(<a href="concept2index.html" class="code" title="function index = concept2index(numerator, subsystem)">concept2index</a>(purviews_M{subsys}{i},<a href="index2subsystem.html" class="code" title="function subsystem = index2subsystem(index)">index2subsystem</a>(subsys))).is_irreducible = 1;    
+0087 
+0088             <span class="keyword">end</span>
+0089         <span class="keyword">end</span>
+0090     <span class="keyword">end</span>   
+0091 <span class="keyword">end</span>
+0092     
+0093     
+0094</pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

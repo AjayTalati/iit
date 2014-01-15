@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of concept2index</title>
+  <meta name="keywords" content="concept2index">
+  <meta name="description" content="size of subsystem">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; concept2index.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>concept2index
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>size of subsystem</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function index = concept2index(numerator, subsystem) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> size of subsystem</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="MIP_search_reentry.html" class="code" title="function [Big_phi_MIP MIP Big_phi_cand MIP_cand BFCut] = MIP_search_reentry(subsystem,N,Big_phi_M,M_IRR_M,prob_M, phi_M,options, concept_MIP_M, network)">MIP_search_reentry</a>	%</li><li><a href="plot_PHI_Cut_concepts.html" class="code" title="function [PastDistr, FutDistr, phi_w_concepts, CutPastDistr, CutFutDistr, CutPhi] = plot_PHI_Cut_concepts(M,MIP,BFCut,M_IRR_M,prob_M, phi_M,concept_MIP_M, network)">plot_PHI_Cut_concepts</a>	</li><li><a href="rewrap_data.html" class="code" title="function data = rewrap_data(Big_phi_M, phi_M, prob_M, M_cell, concept_MIP_M, purviews_M,Big_phi_MIP, MIP, Complex, M_i_max,  Big_phi_MIP_M, complex_MIP_M, Big_phi_MIP_all_M, complex_MIP_M_all)">rewrap_data</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function index = concept2index(numerator, subsystem)</a>
+0002 
+0003 <span class="comment">% size of subsystem</span>
+0004 N = length(subsystem);
+0005 <span class="comment">% size of numerator</span>
+0006 M = length(numerator);
+0007 
+0008 <span class="comment">% init</span>
+0009 index = 0;
+0010 <span class="comment">% count concepts with smaller numerators</span>
+0011 <span class="keyword">for</span> i = 1:M-1
+0012     
+0013     index = index + nchoosek(N,i);
+0014     
+0015 <span class="keyword">end</span>
+0016 
+0017 <span class="comment">% build set of concepts with same size numerator</span>
+0018 concepts_size_M = nchoosek(subsystem,M);
+0019 <span class="comment">% find the concept of interest</span>
+0020 [location] = ismember(concepts_size_M,numerator,<span class="string">'rows'</span>);
+0021 
+0022 <span class="comment">% add to total</span>
+0023 index = index + find(location == 1);</pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

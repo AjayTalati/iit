@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Normalization</title>
+  <meta name="keywords" content="Normalization">
+  <meta name="description" content="% Normalize by number of connections">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; Normalization.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>Normalization
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>% Normalize by number of connections</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function Norm = Normalization(xp_1,xp_2,numerator_part1,numerator_part2,xf_1,xf_2) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> % Normalize by number of connections
+ function Norm = Normalization(denom_part1,denom_part2,numerator_part1,numerator_part2)
+  
+     Norm = length(numerator_part1)*length(denom_part2) + length(numerator_part2)*length(denom_part1);
+ 
+ end</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="phi_comp_bORf.html" class="code" title="function [phi_MIP prob prob_prod_MIP MIP network] = phi_comp_bORf(subsystem,numerator,denom,whole_sys_state,network,bf,M1,M2,bfcut_option)">phi_comp_bORf</a>	Larissa: for smart purviews, op_context is assumed 0, op_min is assumed</li><li><a href="phi_comp_bf.html" class="code" title="function [phi_MIP, prob, prob_prod_MIP, MIP, network] = phi_comp_bf(subsystem,numerator,denom_past,denom_future,whole_sys_state,network)">phi_comp_bf</a>	compute small phi of a given purview...?</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% % Normalize by number of connections</span>
+0002 <span class="comment">% function Norm = Normalization(denom_part1,denom_part2,numerator_part1,numerator_part2)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%     Norm = length(numerator_part1)*length(denom_part2) + length(numerator_part2)*length(denom_part1);</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% end</span>
+0007 <span class="comment">%</span>
+0008  
+0009 <span class="comment">% Normalize by average mutual information between numerator and denominator elements (old way)</span>
+0010 <a name="_sub0" href="#_subfunctions" class="code">function Norm = Normalization(xp_1,xp_2,numerator_part1,numerator_part2,xf_1,xf_2)</a>
+0011 
+0012 <span class="keyword">if</span> nargin == 4
+0013     Norm = min(length(numerator_part1),length(xp_2)) + min(length(numerator_part2),length(xp_1));
+0014 <span class="keyword">else</span>
+0015     Norm = min(length(numerator_part1),length(xp_2)) + min(length(numerator_part2),length(xp_1)) <span class="keyword">...</span>
+0016         + min(length(numerator_part1),length(xf_2)) + min(length(numerator_part2),length(xf_1));
+0017 <span class="keyword">end</span>
+0018 <span class="keyword">end</span>
+0019 
+0020 <span class="comment">% %Normalize by number of connections from numerator to denominator elements</span>
+0021 <span class="comment">% %(regardless of number of numerator elements)</span>
+0022 <span class="comment">% function Norm = Normalization(denom_part1,denom_part2,numerator_part1,numerator_part2)</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%     Norm = ~isempty(numerator_part1)*numel(denom_part2) + ~isempty(numerator_part2)*numel(denom_part1);</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

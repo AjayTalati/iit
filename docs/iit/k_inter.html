@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of k_inter</title>
+  <meta name="keywords" content="k_inter">
+  <meta name="description" content="% compute Interdistace between two distributions using the kernel.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; k_inter.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>k_inter
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>% compute Interdistace between two distributions using the kernel.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [inter] = k_inter(P,Q) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">% compute Interdistace between two distributions using the kernel. 
+ This is to be used 3 times to compute the actual &quot;distance&quot; (see function
+ k_distance)
+
+ P,Q: Distributions as column vectors</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="k_distance.html" class="code" title="function [k_diff, intra_1, intra_2, inter] = k_distance(P,Q)">k_distance</a>	% compute Intra and interdistance based on the Kernel idea, for distributions</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [inter] = k_inter(P,Q)</a>
+0002 
+0003 <span class="comment">%% compute Interdistace between two distributions using the kernel.</span>
+0004 <span class="comment">% This is to be used 3 times to compute the actual &quot;distance&quot; (see function</span>
+0005 <span class="comment">% k_distance)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% P,Q: Distributions as column vectors</span>
+0008 
+0009 op_sim = 0;    <span class="comment">%0: similarity is 2^-(distance), 1: similarity is 1/(distance+1)</span>
+0010 op_sqr = 0;    <span class="comment">%0: no square root of prod. of dist. 1: Sqrt of prod.</span>
+0011 
+0012 <span class="comment">%%</span>
+0013 
+0014 N=length(P);
+0015 
+0016 
+0017 
+0018 
+0019 <span class="comment">% if (N &lt;= 5)</span>
+0020     
+0021 <span class="comment">%     tic</span>
+0022     A = repmat((0:N-1)',1,N);
+0023     B = A';
+0024     hamming_distance_factors = 2.^(-sum(dec2bin(bitxor(A,B)) == <span class="string">'1'</span>,2));
+0025 
+0026     distribution_products = P * Q';
+0027     distribution_products = distribution_products(:);
+0028 
+0029     inter = sum(distribution_products.*hamming_distance_factors);
+0030 
+0031 <span class="comment">%     toc</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%     tic</span>
+0034 <span class="comment">%     A = repmat((0:N-1)',1,N);</span>
+0035 <span class="comment">%     B = A';</span>
+0036 <span class="comment">%     hamming_distance_factors = exp((-sum(dec2bin(bitxor(A,B)) == '1',2))*log(2));</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">%     distribution_products = P * Q';</span>
+0039 <span class="comment">%     distribution_products = distribution_products(:);</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%     inter = sum(distribution_products.*hamming_distance_factors)</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%     toc</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">% % else</span>
+0046 <span class="comment">%     tic</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">%     tot = 0;</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">%     if (op_sim==0) &amp;&amp; (op_sqr==0)</span>
+0051 <span class="comment">%         for i=1:N</span>
+0052 <span class="comment">%             for j =1:N</span>
+0053 <span class="comment">%                 tot = tot + 2^-(sum(dec2bin(bitxor(i-1,j-1)) == '1')) * P(i)*Q(j);</span>
+0054 <span class="comment">%             end</span>
+0055 <span class="comment">%         end</span>
+0056 <span class="comment">%     elseif (op_sim==0) &amp;&amp; (op_sqr==1)</span>
+0057 <span class="comment">%         for i=1:N</span>
+0058 <span class="comment">%             for j =1:N</span>
+0059 <span class="comment">%                 tot = tot + 2^-(sum(dec2bin(bitxor(i-1,j-1)) == '1')) * sqrt(P(i)*Q(j));</span>
+0060 <span class="comment">%             end</span>
+0061 <span class="comment">%         end</span>
+0062 <span class="comment">%     elseif (op_sim==1) &amp;&amp; (op_sqr==0)</span>
+0063 <span class="comment">%         for i=1:N</span>
+0064 <span class="comment">%             for j =1:N</span>
+0065 <span class="comment">%                 tot = tot + 1/(1+(sum(dec2bin(bitxor(i-1,j-1)) == '1'))) * P(i)*Q(j);</span>
+0066 <span class="comment">%             end</span>
+0067 <span class="comment">%         end</span>
+0068 <span class="comment">%     elseif (op_sim==1) &amp;&amp; (op_sqr==1)</span>
+0069 <span class="comment">%         for i=1:N</span>
+0070 <span class="comment">%             for j =1:N</span>
+0071 <span class="comment">%                 tot = tot + 1/(1+(sum(dec2bin(bitxor(i-1,j-1)) == '1'))) * sqrt(P(i)*Q(j));</span>
+0072 <span class="comment">%             end</span>
+0073 <span class="comment">%         end</span>
+0074 <span class="comment">%     end</span>
+0075 <span class="comment">%     inter = tot</span>
+0076 <span class="comment">%     toc</span>
+0077 <span class="comment">% end</span>
+0078     
+0079 <span class="keyword">end</span>
+0080</pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

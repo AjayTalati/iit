@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of convert_logic_gates_removal</title>
+  <meta name="keywords" content="convert_logic_gates_removal">
+  <meta name="description" content="old_inputs and new_inputs are cell arrays">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; convert_logic_gates_removal.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>convert_logic_gates_removal
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>old_inputs and new_inputs are cell arrays</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function new_logic_gates = convert_logic_gates_removal(prev_logic_gates, old_inputs, new_inputs) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> old_inputs and new_inputs are cell arrays</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="cpt_removal_network.html" class="code" title="function Rem_network = cpt_removal_network(this_subset, network)">cpt_removal_network</a>	build a cell array that contains all of the subsets</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function new_logic_gates = convert_logic_gates_removal(prev_logic_gates, old_inputs, new_inputs)</a>
+0002 <span class="comment">% old_inputs and new_inputs are cell arrays</span>
+0003 new_logic_gates = prev_logic_gates;
+0004 
+0005 
+0006 <span class="keyword">for</span> i = 1:numel(prev_logic_gates)
+0007     <span class="keyword">if</span> numel(new_inputs{i}) &lt; numel(old_inputs{i}) <span class="comment">%if not, nothing changes</span>
+0008         <span class="keyword">if</span> isempty(new_inputs{i})
+0009             new_logic_gates(i) = 0; <span class="comment">% doesn't exist any more, outputs 0 always</span>
+0010         <span class="keyword">else</span>
+0011             
+0012             logic_type = prev_logic_gates(i);
+0013 
+0014             <span class="comment">% AND</span>
+0015             <span class="keyword">if</span> logic_type == 1
+0016                     new_logic_gates(i) = 0; <span class="comment">% doesn't exist any more</span>
+0017             <span class="comment">% OR  elseif logic_type == 2    stays OR, e.g. output = any(input); for one input this is equivalent to COPY</span>
+0018                 
+0019             <span class="comment">% XOR elseif logic_type == 3    stays XOR, e.g. output = sum(input) == 1; for one input this is equivalent to COPY</span>
+0020 
+0021             <span class="comment">% COPY if no input, it's lost anyways</span>
+0022             
+0023             <span class="comment">% NOT - should have only one input --&gt; is either destroyed or stays the same</span>
+0024             
+0025             <span class="comment">% NULL - doesn't have inputs anyways</span>
+0026             
+0027             <span class="comment">% MAJORITY -&gt; converted to linear threshold unit with Threshold as before</span>
+0028             <span class="keyword">elseif</span> logic_type == 7  
+0029 
+0030                 Thres = ceil(numel(old_inputs{i})/2);
+0031                 new_logic_gates(i) = 10+Thres;
+0032 
+0033             <span class="comment">% MINORITY -&gt; converted to below threshold unit with Threshold as before</span>
+0034             <span class="keyword">elseif</span> logic_type == 8
+0035                 
+0036                 Thres = ceil(numel(old_inputs{i})/2);  <span class="comment">%it's still ceil, because the below threshold unit will be &quot;&lt;&quot; not &quot;&lt;=&quot;</span>
+0037                 new_logic_gates(i) = 20+Thres;
+0038 
+0039             <span class="comment">%PARITY -&gt; gets destroyed (easiest)</span>
+0040             <span class="keyword">elseif</span> logic_type == 9
+0041                 new_logic_gates(i) = 0; <span class="comment">% doesn't exist any more</span>
+0042             
+0043             <span class="comment">%Linear Threshold units keep their Threshold, i.e. don't change</span>
+0044 
+0045             <span class="keyword">end</span>
+0046         <span class="keyword">end</span>
+0047     <span class="keyword">end</span>  
+0048 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

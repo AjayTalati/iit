@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of bipartition</title>
+  <meta name="keywords" content="bipartition">
+  <meta name="description" content="X: subset, B1: group #1, B2: group #2">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; bipartition.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>bipartition
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>X: subset, B1: group #1, B2: group #2</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [B1 B2 N_b] = bipartition(X,N_max,op) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> X: subset, B1: group #1, B2: group #2</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="phi_comp_bORf.html" class="code" title="function [phi_MIP prob prob_prod_MIP MIP network] = phi_comp_bORf(subsystem,numerator,denom,whole_sys_state,network,bf,M1,M2,bfcut_option)">phi_comp_bORf</a>	Larissa: for smart purviews, op_context is assumed 0, op_min is assumed</li><li><a href="phi_comp_bf.html" class="code" title="function [phi_MIP, prob, prob_prod_MIP, MIP, network] = phi_comp_bf(subsystem,numerator,denom_past,denom_future,whole_sys_state,network)">phi_comp_bf</a>	compute small phi of a given purview...?</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [B1 B2 N_b] = bipartition(X,N_max,op)</a>
+0002 <span class="comment">% X: subset, B1: group #1, B2: group #2</span>
+0003 
+0004 <span class="keyword">if</span> nargin &lt; 3
+0005     op = 0;
+0006 <span class="keyword">end</span>
+0007 
+0008 <span class="keyword">if</span> op == 1
+0009     N_max = floor(N_max/2);
+0010 <span class="keyword">end</span>
+0011 
+0012 N = length(X); <span class="comment">% number of elements</span>
+0013 
+0014 N_b = 0; <span class="comment">% number of bipartition</span>
+0015 <span class="keyword">for</span> i=0: N_max
+0016     N_b = N_b + nchoosek(N,i);
+0017 <span class="keyword">end</span>
+0018 
+0019 B1 = cell(N_b,1);
+0020 B2 = cell(N_b,1);
+0021 
+0022 i_b = 1;
+0023 <span class="keyword">for</span> i=0: N_max
+0024     <span class="keyword">if</span> i== 0
+0025         B1{i_b} = [];
+0026         B2{i_b} = X;
+0027         i_b = i_b + 1;
+0028     <span class="keyword">else</span>
+0029         C_b = nchoosek(1:N,i);
+0030         N_C = size(C_b,1); <span class="comment">% this equals nchoosek(N,i)</span>
+0031         <span class="keyword">for</span> j= 1:N_C
+0032             B1{i_b} = X(C_b(j,:));
+0033             B2_temp = 1:N;
+0034             B2_temp(C_b(j,:)) = [];
+0035             B2{i_b} = X(B2_temp);
+0036             i_b = i_b + 1;
+0037         <span class="keyword">end</span>
+0038     <span class="keyword">end</span>
+0039     
+0040 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

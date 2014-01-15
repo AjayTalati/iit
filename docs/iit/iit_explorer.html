@@ -1,0 +1,1044 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of iit_explorer</title>
+  <meta name="keywords" content="iit_explorer">
+  <meta name="description" content="IIT_EXPLORER MATLAB code for iit_explorer.fig">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; iit_explorer.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>iit_explorer
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>IIT_EXPLORER MATLAB code for iit_explorer.fig</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = iit_explorer(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> IIT_EXPLORER MATLAB code for iit_explorer.fig
+      IIT_EXPLORER, by itself, creates a new IIT_EXPLORER or raises the existing
+      singleton*.
+
+      H = IIT_EXPLORER returns the handle to a new IIT_EXPLORER or the handle to
+      the existing singleton*.
+
+      IIT_EXPLORER('CALLBACK',hObject,eventData,handles,...) calls the local
+      function named CALLBACK in IIT_EXPLORER.M with the given input arguments.
+
+      IIT_EXPLORER('Property','Value',...) creates a new IIT_EXPLORER or raises the
+      existing singleton*.  Starting from the left, property value pairs are
+      applied to the GUI before iit_explorer_OpeningFcn gets called.  An
+      unrecognized property name or invalid value makes property application
+      stop.  All inputs are passed to iit_explorer_OpeningFcn via varargin.
+
+      *See GUI Options on GUIDE's Tools menu.  Choose &quot;GUI allows only one
+      instance to run (singleton)&quot;.
+
+ See also: GUIDE, GUIDATA, GUIHANDLES</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="IRR_points.html" class="code" title="function [IRR_REP IRR_phi IRR_MIP M_IRR] = IRR_points(prob_M, phi_M,MIP_M,subset,M_i_max)">IRR_points</a>	% Irreducible points</li><li><a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>	compute BRs and FRs for a single perspective but given some fixed</li><li><a href="conceptscatter3D2D.html" class="code" title="function [ax, height, extra_plots] = conceptscatter3D2D(x,nWholeConcepts, whole_purviews, part_purviews,highlight_indices, parent_panel, view_option, dim_option, all_phi, unconstrained)">conceptscatter3D2D</a>	BASED ON GPLOTMATRIX</li><li><a href="convi.html" class="code" title="function ind = convi(M_pb)">convi</a>	% M_pb is based on binary counting</li><li><a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>	</li><li><a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>	This function finds the complement of a M1 where M is the full set</li><li><a href="plot_PHI_Cut_concepts.html" class="code" title="function [PastDistr, FutDistr, phi_w_concepts, CutPastDistr, CutFutDistr, CutPhi] = plot_PHI_Cut_concepts(M,MIP,BFCut,M_IRR_M,prob_M, phi_M,concept_MIP_M, network)">plot_PHI_Cut_concepts</a>	</li><li><a href="plot_REP.html" class="code" title="function [] = plot_REP(Big_phi, REP_cell,phi,MIP_cell, M, plot_panel)">plot_REP</a>	op_min = options(9);</li><li><a href="plot_partition_bar.html" class="code" title="function plot_partition_bar(concepts, nWholeConcepts, whole_phis, parts_phis, selected_indices, plot_panel,whole_purviews, parts_purviews, Big_phi_MIP)">plot_partition_bar</a>	function plot_partition_bar(Big_phi, REP_cell,phi,MIP_cell, M, plot_panel)</li><li><a href="trans10.html" class="code" title="function x = trans10(sigma)">trans10</a>	</li><li><a href="trans2.html" class="code" title="function [binary] = trans2(value,length)">trans2</a>	TRANS2(VALUE,LENGTH) returns an array of LENGTH 0's and 1's, representing</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="iit_run.html" class="code" title="function iit_run(tpm, in_connect_mat, current_state, in_noise, in_options, in_nodes, past_state)">iit_run</a>	IIT_RUN Computes concepts, small and big phi, and partition information</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function iit_explorer_OpeningFcn(hObject, eventdata, handles, varargin)</a></li><li><a href="#_sub2" class="code">function varargout = iit_explorer_OutputFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub3" class="code">function view_menu_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub4" class="code">function view_menu_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub5" class="code">function nodes_list_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub6" class="code">function nodes_list_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub7" class="code">function complex_button_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub8" class="code">function state_index = get_state_index(handles)</a></li><li><a href="#_sub9" class="code">function partition_list_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub10" class="code">function partition_list_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub11" class="code">function purviews_list_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub12" class="code">function purviews_list_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub13" class="code">function refresh_subset_button_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub14" class="code">function select_MIP(handles, subset, state_index, subset_index)</a></li><li><a href="#_sub15" class="code">function plot_partition(handles)</a></li><li><a href="#_sub16" class="code">function [partition_p1 partition1_index partition_p2 partition2_index] = get_partitions(handles)</a></li><li><a href="#_sub17" class="code">function state_list_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub18" class="code">function state_list_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub19" class="code">function panel_slider_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub20" class="code">function panel_slider_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub21" class="code">function mip_button_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub22" class="code">function partition_plot_refresh_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub23" class="code">function clear_purview_list_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub24" class="code">function past_future_list_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub25" class="code">function past_future_list_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub26" class="code">function output_concepts_list_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub27" class="code">function output_concepts_list_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub28" class="code">function output_concepts_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub29" class="code">function [subset subset_index state_index] = get_subset_and_state(handles)</a></li><li><a href="#_sub30" class="code">function [subset subset_index] = get_subset(handles)</a></li><li><a href="#_sub31" class="code">function partition_plot_menu_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub32" class="code">function partition_plot_menu_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub33" class="code">function update_purviews_list(handles)</a></li><li><a href="#_sub34" class="code">function partition_panel_slider_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub35" class="code">function partition_panel_slider_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub36" class="code">function state_selection_menu_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub37" class="code">function state_selection_menu_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub38" class="code">function export_plot_button_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub39" class="code">function Untitled_1_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub40" class="code">function BFCut_list_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub41" class="code">function BFCut_list_CreateFcn(hObject, eventdata, handles)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function varargout = iit_explorer(varargin)</a>
+0002 <span class="comment">% IIT_EXPLORER MATLAB code for iit_explorer.fig</span>
+0003 <span class="comment">%      IIT_EXPLORER, by itself, creates a new IIT_EXPLORER or raises the existing</span>
+0004 <span class="comment">%      singleton*.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%      H = IIT_EXPLORER returns the handle to a new IIT_EXPLORER or the handle to</span>
+0007 <span class="comment">%      the existing singleton*.</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%      IIT_EXPLORER('CALLBACK',hObject,eventData,handles,...) calls the local</span>
+0010 <span class="comment">%      function named CALLBACK in IIT_EXPLORER.M with the given input arguments.</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%      IIT_EXPLORER('Property','Value',...) creates a new IIT_EXPLORER or raises the</span>
+0013 <span class="comment">%      existing singleton*.  Starting from the left, property value pairs are</span>
+0014 <span class="comment">%      applied to the GUI before iit_explorer_OpeningFcn gets called.  An</span>
+0015 <span class="comment">%      unrecognized property name or invalid value makes property application</span>
+0016 <span class="comment">%      stop.  All inputs are passed to iit_explorer_OpeningFcn via varargin.</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%      *See GUI Options on GUIDE's Tools menu.  Choose &quot;GUI allows only one</span>
+0019 <span class="comment">%      instance to run (singleton)&quot;.</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% See also: GUIDE, GUIDATA, GUIHANDLES</span>
+0022 
+0023 <span class="comment">% Edit the above text to modify the response to help iit_explorer</span>
+0024 
+0025 <span class="comment">% Last Modified by GUIDE v2.5 20-Feb-2013 14:54:00</span>
+0026 
+0027 <span class="comment">% Begin initialization code - DO NOT EDIT</span>
+0028 gui_Singleton = 1;
+0029 gui_State = struct(<span class="string">'gui_Name'</span>,       mfilename, <span class="keyword">...</span>
+0030                    <span class="string">'gui_Singleton'</span>,  gui_Singleton, <span class="keyword">...</span>
+0031                    <span class="string">'gui_OpeningFcn'</span>, @<a href="#_sub1" class="code" title="subfunction iit_explorer_OpeningFcn(hObject, eventdata, handles, varargin)">iit_explorer_OpeningFcn</a>, <span class="keyword">...</span>
+0032                    <span class="string">'gui_OutputFcn'</span>,  @<a href="#_sub2" class="code" title="subfunction varargout = iit_explorer_OutputFcn(hObject, eventdata, handles)">iit_explorer_OutputFcn</a>, <span class="keyword">...</span>
+0033                    <span class="string">'gui_LayoutFcn'</span>,  [] , <span class="keyword">...</span>
+0034                    <span class="string">'gui_Callback'</span>,   []);
+0035 <span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+0036     gui_State.gui_Callback = str2func(varargin{1});
+0037 <span class="keyword">end</span>
+0038 
+0039 <span class="keyword">if</span> nargout
+0040     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+0041 <span class="keyword">else</span>
+0042     gui_mainfcn(gui_State, varargin{:});
+0043 <span class="keyword">end</span>
+0044 <span class="comment">% End initialization code - DO NOT EDIT</span>
+0045 
+0046 
+0047 <span class="comment">% --- Executes just before iit_explorer is made visible.</span>
+0048 <a name="_sub1" href="#_subfunctions" class="code">function iit_explorer_OpeningFcn(hObject, eventdata, handles, varargin)</a>
+0049 <span class="comment">% This function has no output args, see OutputFcn.</span>
+0050 <span class="comment">% hObject    handle to figure</span>
+0051 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0052 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0053 <span class="comment">% varargin   command line arguments to iit_explorer (see VARARGIN)</span>
+0054 
+0055 <span class="comment">% set(hObject, 'Renderer', 'painters')</span>
+0056 
+0057 <span class="comment">% Choose default command line output for iit_explorer</span>
+0058 handles.output = hObject;
+0059 
+0060 <span class="comment">% Update handles structure</span>
+0061 guidata(hObject, handles);
+0062 
+0063 <span class="comment">% UIWAIT makes iit_explorer wait for user response (see UIRESUME)</span>
+0064 <span class="comment">% uiwait(handles.iit_explorer);</span>
+0065 
+0066 <span class="comment">% Set initial View</span>
+0067 set(handles.Concepts,<span class="string">'Visible'</span>,<span class="string">'Off'</span>)
+0068 set(handles.SystemPartitions,<span class="string">'Visible'</span>,<span class="string">'Off'</span>)
+0069 
+0070 <span class="comment">% load data</span>
+0071 <span class="keyword">if</span> nargin == 4 &amp;&amp; isstruct(varargin{1})
+0072     handles.data = varargin{1};
+0073     guidata(hObject,handles)
+0074 <span class="keyword">else</span>
+0075     fprintf(<span class="string">'Please load a struct when opening IIT_EXPLORER\n'</span>);
+0076     handles.output = <span class="string">'ERROR'</span>;
+0077     guidata(hObject,handles)
+0078     close(gcf)
+0079     <span class="keyword">return</span>
+0080 <span class="keyword">end</span>
+0081 
+0082 handles.mip_axes = [];
+0083 guidata(hObject,handles);
+0084 handles.export_plot = 0;
+0085 guidata(hObject,handles);
+0086 
+0087 num_states = 2^handles.data.num_nodes;
+0088 all_states = length(handles.data.Big_phi_M) &gt; 1;
+0089 
+0090 <span class="comment">% setup state listbox</span>
+0091 <span class="keyword">if</span> all_states
+0092     states = cell(1,num_states + 1);
+0093     states{1} = <span class="string">'Average'</span>;
+0094     <span class="keyword">for</span> i = 1:num_states
+0095         states{i + 1} = dec2bin(i-1,handles.data.num_nodes);
+0096     <span class="keyword">end</span>
+0097 <span class="keyword">else</span>
+0098     states = {<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(handles.data.current_state')};
+0099     set(handles.state_list,<span class="string">'Enable'</span>,<span class="string">'off'</span>)
+0100 <span class="keyword">end</span>
+0101 set(handles.state_list,<span class="string">'String'</span>,states);
+0102 
+0103 <span class="comment">% setup subset listbox</span>
+0104 nodes = cell(1,handles.data.num_nodes);
+0105 <span class="keyword">for</span> i = 1:handles.data.num_nodes
+0106     nodes{i} = num2str(i);
+0107 <span class="keyword">end</span>
+0108 set(handles.nodes_list,<span class="string">'String'</span>,nodes)
+0109 set(handles.nodes_list,<span class="string">'Value'</span>,handles.data.Complex{1})
+0110 
+0111 set(handles.overview_axes_panel,<span class="string">'Visible'</span>,<span class="string">'off'</span>);
+0112 set(handles.summary_panel,<span class="string">'Visible'</span>,<span class="string">'off'</span>);
+0113 
+0114 <a href="#_sub13" class="code" title="subfunction refresh_subset_button_Callback(hObject, eventdata, handles)">refresh_subset_button_Callback</a>(handles.refresh_subset_button,eventdata,handles)
+0115 
+0116 
+0117 
+0118 <span class="comment">% set(handles.overview_scroll_panel,'Parent',handles.overview_axes_panel)</span>
+0119 
+0120 
+0121 
+0122 
+0123 
+0124 <span class="comment">% --- Outputs from this function are returned to the command line.</span>
+0125 <a name="_sub2" href="#_subfunctions" class="code">function varargout = iit_explorer_OutputFcn(hObject, eventdata, handles) </a>
+0126 <span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+0127 <span class="comment">% hObject    handle to figure</span>
+0128 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0129 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0130 
+0131 <span class="comment">% Get default command line output from handles structure</span>
+0132 
+0133 varargout{1} = <span class="string">'Explorer Closed.'</span>;
+0134 
+0135 
+0136 <span class="comment">% --- Executes on selection change in view_menu.</span>
+0137 <a name="_sub3" href="#_subfunctions" class="code">function view_menu_Callback(hObject, eventdata, handles)</a>
+0138 <span class="comment">% hObject    handle to view_menu (see GCBO)</span>
+0139 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0140 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0141 
+0142 <span class="comment">% Hints: contents = cellstr(get(hObject,'String')) returns view_menu contents as cell array</span>
+0143 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from view_menu</span>
+0144 
+0145 subset = handles.data.subset; subset_index = handles.data.subset_index;
+0146 state_index = handles.data.state_index;
+0147 
+0148 view_choices = cellstr(get(hObject,<span class="string">'String'</span>));
+0149 <span class="comment">% turn all views off</span>
+0150 <span class="keyword">for</span> i = 1:length(view_choices)
+0151     
+0152     this_view = view_choices{i}(view_choices{i} ~= <span class="string">' '</span>);
+0153     eval([<span class="string">'set(handles.'</span> this_view <span class="string">',''Visible'',''Off'')'</span>])
+0154     
+0155 <span class="keyword">end</span>
+0156 
+0157 <span class="comment">% turn selected view on</span>
+0158 view = view_choices{get(hObject,<span class="string">'Value'</span>)};
+0159 view_no_spaces = view(view ~= <span class="string">' '</span>);
+0160 eval([<span class="string">'set(handles.'</span> view_no_spaces <span class="string">',''Visible'',''On'')'</span>])
+0161 
+0162 <span class="keyword">if</span> strcmp(view,<span class="string">'Overview'</span>)
+0163     
+0164     set(handles.overview_axes_panel,<span class="string">'Visible'</span>,<span class="string">'off'</span>)
+0165     
+0166     drawnow
+0167     
+0168     current_display_elements = allchild(handles.overview_axes_panel);
+0169 
+0170     <span class="keyword">for</span> i = 1:length(current_display_elements)
+0171             delete(current_display_elements(i))
+0172     <span class="keyword">end</span>
+0173 
+0174 
+0175 
+0176     set(handles.overview_axes_text,<span class="string">'Visible'</span>,<span class="string">'off'</span>)
+0177     set(handles.big_phi_text,<span class="string">'String'</span>,[<span class="string">'Big Phi = '</span> num2str(handles.data.Big_phi_M{state_index}(subset_index))])
+0178     set(handles.big_phi_MIP_text,<span class="string">'String'</span>,[<span class="string">'Big Phi MIP = '</span> num2str(handles.data.Big_phi_MIP{state_index}(subset_index))])
+0179     set(handles.MIP_text,<span class="string">'String'</span>,{<span class="string">'MIP:'</span>,[<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(handles.data.complex_MIP_M{state_index}{subset_index}) <span class="string">'-'</span><span class="keyword">...</span>
+0180                                             <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(<a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>(subset,handles.data.complex_MIP_M{state_index}{subset_index}))]})
+0181     <span class="keyword">if</span> handles.data.BFCut_M{state_index}{subset_index} == 1
+0182         BFCutString = <span class="string">'&lt;-- BR cut'</span>;
+0183     <span class="keyword">else</span>
+0184         BFCutString = <span class="string">'--&gt; FR cut'</span>;
+0185     <span class="keyword">end</span>    
+0186     set(handles.BFCut_text,<span class="string">'String'</span>,{<span class="string">'Cut direction:'</span>,BFCutString})
+0187     <span class="keyword">if</span> ~isempty(handles.data.purviews_M{state_index}{subset_index}) <span class="comment">%Should not happen, but just in case</span>
+0188         set(handles.sum_small_phi_text,<span class="string">'String'</span>,[<span class="string">'Sum Small Phi = '</span> num2str(sum(handles.data.small_phi_M{state_index}{subset_index}(:,1)))])
+0189         set(handles.num_core_concepts_text,<span class="string">'String'</span>,[<span class="string">'# Core Concepts = '</span> num2str(sum(handles.data.small_phi_M{state_index}{subset_index}(:,1) ~= 0))])
+0190 
+0191         [IRR_REP IRR_phi IRR_MIP M_IRR] = <a href="IRR_points.html" class="code" title="function [IRR_REP IRR_phi IRR_MIP M_IRR] = IRR_points(prob_M, phi_M,MIP_M,subset,M_i_max)">IRR_points</a>(handles.data.concepts_M{state_index},<span class="keyword">...</span>
+0192                                                      handles.data.small_phi_M{state_index},<span class="keyword">...</span>
+0193                                                      handles.data.concept_MIP_M{state_index},subset, subset_index);
+0194         <span class="keyword">if</span> handles.export_plot
+0195             figure_handle = figure;
+0196             panel = uipanel(<span class="string">'Parent'</span>,figure_handle);
+0197             set(handles.export_plot_button,<span class="string">'BackgroundColor'</span>,[0.9294    0.9294    0.9294]);
+0198         <span class="keyword">else</span>
+0199             panel = handles.overview_axes_panel;
+0200         <span class="keyword">end</span>
+0201 
+0202         <a href="plot_REP.html" class="code" title="function [] = plot_REP(Big_phi, REP_cell,phi,MIP_cell, M, plot_panel)">plot_REP</a>(handles.data.Big_phi_M{state_index}(subset_index), IRR_REP, IRR_phi, IRR_MIP,<span class="keyword">...</span>
+0203                                             subset, panel)
+0204     <span class="keyword">end</span>
+0205     <span class="comment">% reset export_panel flag</span>
+0206     handles.export_plot = 0;
+0207     guidata(hObject,handles);
+0208 
+0209 
+0210     set(handles.summary_panel,<span class="string">'Visible'</span>,<span class="string">'on'</span>)
+0211     set(handles.overview_axes_panel,<span class="string">'Visible'</span>,<span class="string">'on'</span>)
+0212     set(handles.panel_slider,<span class="string">'Value'</span>,1.0)
+0213     
+0214 <span class="keyword">elseif</span> strcmp(view,<span class="string">'Concepts'</span>)
+0215     
+0216     N = length(subset);
+0217     
+0218     M_cell = cell(2^N-1,1);
+0219     
+0220     k = 1;
+0221     <span class="keyword">for</span> i = 1:N 
+0222         C = nchoosek(subset,i); 
+0223         N_C = size(C,1);
+0224         <span class="keyword">for</span> j = 1:N_C <span class="comment">% for all combos of size i</span>
+0225             x0 = C(j,:); <span class="comment">% pick a combination</span>
+0226             M_cell{k} = x0;<span class="comment">% store combo</span>
+0227             k = k + 1;
+0228         <span class="keyword">end</span>
+0229     <span class="keyword">end</span>
+0230 
+0231     num_concepts = length(M_cell);
+0232     concept_names = cell(2*num_concepts,1);
+0233     <span class="keyword">for</span> i = 1:num_concepts
+0234         concept_names{i} = [<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(M_cell{i}) <span class="string">'_past'</span>];
+0235     <span class="keyword">end</span>
+0236     <span class="keyword">for</span> i = num_concepts+1:2*num_concepts
+0237         concept_names{i} = [<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(M_cell{i-num_concepts}) <span class="string">'_future'</span>];
+0238     <span class="keyword">end</span>
+0239     set(handles.output_concepts_list,<span class="string">'String'</span>,concept_names)
+0240     set(handles.output_concepts_list,<span class="string">'Value'</span>,[]);    
+0241 
+0242 <span class="keyword">elseif</span> strcmp(view,<span class="string">'System Partitions'</span>)
+0243     
+0244     partition_names = cell(length(handles.data.complex_MIP_all_M{state_index}{subset_index}),1);
+0245     <span class="keyword">for</span> i = 1:length(handles.data.complex_MIP_all_M{state_index}{subset_index})
+0246         partition_names{i} = [<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(handles.data.complex_MIP_all_M{state_index}{subset_index}{i}) <span class="string">'-'</span><span class="keyword">...</span>
+0247                              <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(<a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>(subset,handles.data.complex_MIP_all_M{state_index}{subset_index}{i}))];
+0248     <span class="keyword">end</span>
+0249     set(handles.partition_list,<span class="string">'String'</span>,partition_names)
+0250     
+0251     <a href="#_sub14" class="code" title="subfunction select_MIP(handles, subset, state_index, subset_index)">select_MIP</a>(handles, subset, state_index, subset_index)
+0252 
+0253     <a href="#_sub33" class="code" title="subfunction update_purviews_list(handles)">update_purviews_list</a>(handles)
+0254     
+0255     <a href="#_sub15" class="code" title="subfunction plot_partition(handles)">plot_partition</a>(handles);
+0256     
+0257 <span class="keyword">end</span>
+0258 
+0259 
+0260 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0261 <a name="_sub4" href="#_subfunctions" class="code">function view_menu_CreateFcn(hObject, eventdata, handles)</a>
+0262 <span class="comment">% hObject    handle to view_menu (see GCBO)</span>
+0263 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0264 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0265 
+0266 <span class="comment">% Hint: popupmenu controls usually have a white background on Windows.</span>
+0267 <span class="comment">%       See ISPC and COMPUTER.</span>
+0268 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0269     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0270 <span class="keyword">end</span>
+0271 
+0272 
+0273 <span class="comment">% --- Executes on selection change in nodes_list.</span>
+0274 <a name="_sub5" href="#_subfunctions" class="code">function nodes_list_Callback(hObject, eventdata, handles)</a>
+0275 <span class="comment">% hObject    handle to nodes_list (see GCBO)</span>
+0276 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0277 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0278 
+0279 <span class="comment">% Hints: contents = cellstr(get(hObject,'String')) returns nodes_list contents as cell array</span>
+0280 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from nodes_list</span>
+0281 
+0282 
+0283 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0284 <a name="_sub6" href="#_subfunctions" class="code">function nodes_list_CreateFcn(hObject, eventdata, handles)</a>
+0285 <span class="comment">% hObject    handle to nodes_list (see GCBO)</span>
+0286 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0287 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0288 
+0289 <span class="comment">% Hint: listbox controls usually have a white background on Windows.</span>
+0290 <span class="comment">%       See ISPC and COMPUTER.</span>
+0291 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0292     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0293 <span class="keyword">end</span>
+0294 
+0295 
+0296 <span class="comment">% --- Executes on button press in complex_button.</span>
+0297 <a name="_sub7" href="#_subfunctions" class="code">function complex_button_Callback(hObject, eventdata, handles)</a>
+0298 <span class="comment">% hObject    handle to complex_button (see GCBO)</span>
+0299 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0300 <span class="comment">% handles    structure with handles and user data (see GUIDATA)\</span>
+0301 
+0302 state_index = <a href="#_sub8" class="code" title="subfunction state_index = get_state_index(handles)">get_state_index</a>(handles);
+0303 set(handles.nodes_list,<span class="string">'Value'</span>,handles.data.Complex{state_index})
+0304 
+0305 <a href="#_sub13" class="code" title="subfunction refresh_subset_button_Callback(hObject, eventdata, handles)">refresh_subset_button_Callback</a>(handles.refresh_subset_button, eventdata, handles)
+0306 
+0307 
+0308 
+0309 <a name="_sub8" href="#_subfunctions" class="code">function state_index = get_state_index(handles)</a>
+0310 
+0311 state_choice = get(handles.state_list,<span class="string">'Value'</span>);
+0312 <span class="keyword">if</span> length(get(handles.state_list,<span class="string">'String'</span>)) == 1
+0313     state_index = 1;
+0314 <span class="keyword">else</span>
+0315     state_index = <a href="trans10.html" class="code" title="function x = trans10(sigma)">trans10</a>(flipud(<a href="trans2.html" class="code" title="function [binary] = trans2(value,length)">trans2</a>(state_choice - 2,handles.data.num_nodes)));
+0316 <span class="keyword">end</span>
+0317 
+0318 
+0319 <span class="comment">% % --------------------------------------------------------------------</span>
+0320 <span class="comment">% function brush_toggle_OffCallback(hObject, eventdata, handles)</span>
+0321 <span class="comment">% % hObject    handle to brush_toggle (see GCBO)</span>
+0322 <span class="comment">% % eventdata  reserved - to be defined in a future version of MATLAB</span>
+0323 <span class="comment">% % handles    structure with handles and user data (see GUIDATA)</span>
+0324 <span class="comment">% brush off</span>
+0325 <span class="comment">%</span>
+0326 <span class="comment">%</span>
+0327 <span class="comment">% % --------------------------------------------------------------------</span>
+0328 <span class="comment">% function brush_toggle_OnCallback(hObject, eventdata, handles)</span>
+0329 <span class="comment">% % hObject    handle to brush_toggle (see GCBO)</span>
+0330 <span class="comment">% % eventdata  reserved - to be defined in a future version of MATLAB</span>
+0331 <span class="comment">% % handles    structure with handles and user data (see GUIDATA)</span>
+0332 <span class="comment">% brush on</span>
+0333 <span class="comment">%</span>
+0334 <span class="comment">% % below is an attempt to get</span>
+0335 <span class="comment">% % for i = 1:length(handles.mip_axes)</span>
+0336 <span class="comment">% %</span>
+0337 <span class="comment">% %     brushed = findall(handles.mip_axes{i},'tag','Brushing');</span>
+0338 <span class="comment">% %     set(handles.brushed,'Parent',handles.mip_plot_panel,'Clipping','on')</span>
+0339 <span class="comment">% %</span>
+0340 <span class="comment">% % end</span>
+0341 
+0342 
+0343 <span class="comment">% --- Executes on selection change in partition_list.</span>
+0344 <a name="_sub9" href="#_subfunctions" class="code">function partition_list_Callback(hObject, eventdata, handles)</a>
+0345 <span class="comment">% hObject    handle to partition_list (see GCBO)</span>
+0346 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0347 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0348 
+0349 <span class="comment">% Hints: contents = cellstr(get(hObject,'String')) returns partition_list contents as cell array</span>
+0350 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from partition_list</span>
+0351 
+0352 <a href="#_sub33" class="code" title="subfunction update_purviews_list(handles)">update_purviews_list</a>(handles)
+0353 set(handles.partition_plot_refresh,<span class="string">'BackgroundColor'</span>,<span class="string">'g'</span>)
+0354 
+0355 
+0356 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0357 <a name="_sub10" href="#_subfunctions" class="code">function partition_list_CreateFcn(hObject, eventdata, handles)</a>
+0358 <span class="comment">% hObject    handle to partition_list (see GCBO)</span>
+0359 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0360 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0361 
+0362 <span class="comment">% Hint: listbox controls usually have a white background on Windows.</span>
+0363 <span class="comment">%       See ISPC and COMPUTER.</span>
+0364 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0365     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0366 <span class="keyword">end</span>
+0367 
+0368 
+0369 <span class="comment">% --- Executes on selection change in purviews_list.</span>
+0370 <a name="_sub11" href="#_subfunctions" class="code">function purviews_list_Callback(hObject, eventdata, handles)</a>
+0371 <span class="comment">% hObject    handle to purviews_list (see GCBO)</span>
+0372 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0373 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0374 
+0375 <span class="comment">% Hints: contents = cellstr(get(hObject,'String')) returns purviews_list contents as cell array</span>
+0376 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from purviews_list</span>
+0377 
+0378 set(handles.partition_plot_refresh,<span class="string">'BackgroundColor'</span>,<span class="string">'g'</span>)
+0379 
+0380 
+0381 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0382 <a name="_sub12" href="#_subfunctions" class="code">function purviews_list_CreateFcn(hObject, eventdata, handles)</a>
+0383 <span class="comment">% hObject    handle to purviews_list (see GCBO)</span>
+0384 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0385 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0386 
+0387 <span class="comment">% Hint: listbox controls usually have a white background on Windows.</span>
+0388 <span class="comment">%       See ISPC and COMPUTER.</span>
+0389 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0390     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0391 <span class="keyword">end</span>
+0392 
+0393 <span class="comment">%Larissa</span>
+0394 <span class="comment">% --- Executes on button press in refresh_subset_button.</span>
+0395 <a name="_sub13" href="#_subfunctions" class="code">function refresh_subset_button_Callback(hObject, eventdata, handles)</a>
+0396 <span class="comment">% hObject    handle to refresh_subset_button (see GCBO)</span>
+0397 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0398 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0399 
+0400 [handles.data.subset handles.data.subset_index handles.data.state_index] = <a href="#_sub29" class="code" title="subfunction [subset subset_index state_index] = get_subset_and_state(handles)">get_subset_and_state</a>(handles);
+0401 guidata(gcf,handles)
+0402 
+0403 subset_index = handles.data.subset_index;
+0404 state_index = handles.data.state_index;
+0405 
+0406 <span class="keyword">if</span> isempty(nnz(cell2mat(handles.data.BFCut_M{1})))
+0407     set(handles.overview_axes_panel,<span class="string">'Visible'</span>,<span class="string">'off'</span>)
+0408     set(handles.overview_axes_text,<span class="string">'String'</span>,<span class="string">'This state in not realizable.'</span>,<span class="string">'Visible'</span>,<span class="string">'on'</span>)
+0409     <span class="keyword">return</span>
+0410 <span class="keyword">end</span>
+0411 
+0412 <span class="keyword">if</span> isempty(handles.data.purviews_M{state_index}{subset_index})
+0413     set(handles.overview_axes_panel,<span class="string">'Visible'</span>,<span class="string">'off'</span>)
+0414     <span class="keyword">if</span> handles.data.network.options(3)==0
+0415         set(handles.overview_axes_text,<span class="string">'String'</span>,<span class="string">'Only the full complex was calculated.'</span>,<span class="string">'Visible'</span>,<span class="string">'on'</span>)
+0416     <span class="keyword">else</span>
+0417         set(handles.overview_axes_text,<span class="string">'String'</span>,<span class="string">'This set of elements is not strongly connected or has no concepts.'</span>,<span class="string">'Visible'</span>,<span class="string">'on'</span>)
+0418     <span class="keyword">end</span>
+0419     <span class="keyword">return</span>
+0420 <span class="keyword">end</span>
+0421 
+0422 <a href="#_sub3" class="code" title="subfunction view_menu_Callback(hObject, eventdata, handles)">view_menu_Callback</a>(handles.view_menu, eventdata, handles)
+0423     
+0424 
+0425 
+0426     
+0427 <a name="_sub14" href="#_subfunctions" class="code">function select_MIP(handles, subset, state_index, subset_index)</a>
+0428 
+0429 partition_names = get(handles.partition_list,<span class="string">'String'</span>);
+0430 MIP_string = [<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(handles.data.complex_MIP_M{state_index}{subset_index}) <span class="string">'-'</span><span class="keyword">...</span>
+0431                                             <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(<a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>(subset,handles.data.complex_MIP_M{state_index}{subset_index}))];
+0432 MIP_index = find(strcmp(MIP_string,partition_names));
+0433 set(handles.partition_list,<span class="string">'Value'</span>,MIP_index)
+0434 
+0435 
+0436 
+0437 
+0438 <span class="comment">%Larissa: This still needs to be checked if qualia plot is correct!</span>
+0439 <a name="_sub15" href="#_subfunctions" class="code">function plot_partition(handles)</a>
+0440 
+0441 subset = handles.data.subset; subset_index = handles.data.subset_index;
+0442 state_index = handles.data.state_index;
+0443 
+0444 <span class="keyword">if</span> isempty(handles.data.purviews_M{state_index}{subset_index})
+0445     set(handles.mip_plot_panel,<span class="string">'Visible'</span>,<span class="string">'off'</span>)
+0446     set(handles.partition_plot_info,<span class="string">'String'</span>,<span class="string">'This set of elements is not strongly connected or has no concepts.'</span>,<span class="string">'Visible'</span>,<span class="string">'on'</span>)
+0447     <span class="keyword">return</span>
+0448 <span class="keyword">end</span>
+0449 
+0450 [partition1 partition1_index partition2 partition2_index] = <a href="#_sub16" class="code" title="subfunction [partition_p1 partition1_index partition_p2 partition2_index] = get_partitions(handles)">get_partitions</a>(handles);
+0451 
+0452 partition_index = 0;
+0453 <span class="keyword">for</span> i = 1:length(partition1)-1
+0454     partition_index = partition_index + nchoosek(length(subset),i);
+0455 <span class="keyword">end</span>
+0456 [ignore_var additional] = intersect(nchoosek(subset,length(partition1)),partition1,<span class="string">'rows'</span>);
+0457 partition_index = partition_index + additional;
+0458 
+0459 system_partition_text = [<span class="string">'System: '</span> <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(subset)];
+0460 partition_choices = get(handles.partition_list,<span class="string">'String'</span>);
+0461 partition_text = partition_choices{get(handles.partition_list,<span class="string">'Value'</span>)};
+0462 system_partition_text = [system_partition_text <span class="string">', Partition: '</span> partition_text];
+0463 big_phi_partition_text = [<span class="string">'Big Phi (partition) = '</span> num2str(handles.data.Big_phi_MIP_all_M{state_index}{subset_index}(partition_index,1))];
+0464 
+0465 highlight_indices = get(handles.purviews_list,<span class="string">'Value'</span>);
+0466 
+0467 <span class="keyword">if</span> ~isempty(highlight_indices)
+0468     purviews_list = get(handles.purviews_list,<span class="string">'String'</span>);
+0469     selected_concepts_text = [<span class="string">'Selected Concepts: '</span> purviews_list{highlight_indices(1)}];
+0470     <span class="keyword">for</span> i = 2:length(highlight_indices)
+0471         selected_concepts_text = [selected_concepts_text <span class="string">', '</span> purviews_list{highlight_indices(i)}];
+0472     <span class="keyword">end</span>
+0473 <span class="keyword">else</span>
+0474     selected_concepts_text = <span class="string">'Selected Concepts: None'</span>;
+0475 <span class="keyword">end</span>
+0476 
+0477 direction_choices = get(handles.past_future_list,<span class="string">'String'</span>);
+0478 direction_text = [<span class="string">'Temporal Direction: '</span> direction_choices{get(handles.past_future_list,<span class="string">'Value'</span>)}];
+0479 
+0480 Cutdirection_choices = get(handles.BFCut_list,<span class="string">'String'</span>);
+0481 Cutdirection_text = [<span class="string">'Cut Direction: '</span> Cutdirection_choices{get(handles.BFCut_list,<span class="string">'Value'</span>)}];
+0482 
+0483 partition_info = {system_partition_text, big_phi_partition_text, selected_concepts_text, direction_text, Cutdirection_text};
+0484 
+0485 set(handles.partition_plot_info,<span class="string">'String'</span>,partition_info)
+0486 
+0487 existing_axes = findobj(handles.mip_plot_panel,<span class="string">'Parent'</span>,handles.mip_plot_panel);
+0488 <span class="keyword">for</span> k = 1:length(existing_axes)
+0489    delete(existing_axes(k))
+0490 <span class="keyword">end</span>
+0491 
+0492 N = length(subset);
+0493 
+0494 set(handles.mip_loading_text,<span class="string">'Visible'</span>,<span class="string">'on'</span>)
+0495 set(handles.mip_plot_panel,<span class="string">'Visible'</span>,<span class="string">'off'</span>)
+0496 
+0497 drawnow
+0498 
+0499 [w_concept_dists_p w_concept_dists_f w_phi_concepts p_concept_dists_p p_concept_dists_f parts_phi_concepts] = <a href="plot_PHI_Cut_concepts.html" class="code" title="function [PastDistr, FutDistr, phi_w_concepts, CutPastDistr, CutFutDistr, CutPhi] = plot_PHI_Cut_concepts(M,MIP,BFCut,M_IRR_M,prob_M, phi_M,concept_MIP_M, network)">plot_PHI_Cut_concepts</a>(subset, partition1, get(handles.BFCut_list,<span class="string">'Value'</span>),<span class="keyword">...</span>
+0500                                                             handles.data.purviews_M{state_index},handles.data.concepts_M{state_index}, handles.data.small_phi_M{state_index},<span class="keyword">...</span>
+0501                                                             handles.data.concept_MIP_M{state_index}, handles.data.network);
+0502 plot_choices = get(handles.partition_plot_menu,<span class="string">'String'</span>);
+0503 plot_choice_index = get(handles.partition_plot_menu,<span class="string">'Value'</span>);
+0504 plot_choice = plot_choices{plot_choice_index};
+0505 
+0506 <span class="comment">%Larissa: it would be nice if we also had phi_back and phi_future for the</span>
+0507 <span class="comment">%cut system</span>
+0508 all_phi = [w_phi_concepts; parts_phi_concepts];
+0509 
+0510 <span class="keyword">if</span> get(handles.past_future_list,<span class="string">'Value'</span>) == 1
+0511     all_concepts = [w_concept_dists_p'; p_concept_dists_p'];
+0512     unconstrained = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(handles.data.network.nodes,[],subset,handles.data.network.current_state,<span class="string">'backward'</span>,[],handles.data.network.past_state);   
+0513 <span class="keyword">else</span>
+0514     all_concepts = [w_concept_dists_f'; p_concept_dists_f'];
+0515     unconstrained = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(handles.data.network.nodes,[],subset,handles.data.network.current_state,<span class="string">'forward'</span>,[],handles.data.network.past_state);
+0516 <span class="keyword">end</span>
+0517 unconstrained = unconstrained(:);
+0518 
+0519 <span class="comment">%Larissa: For the moment all (Before it was only the ones that still exist)</span>
+0520 part_purviews = handles.data.purviews_M{state_index}{subset_index};
+0521 
+0522 <span class="comment">% options for plot view</span>
+0523 
+0524 <span class="comment">% 3D &amp; 2D Scatter - Variance</span>
+0525 <span class="comment">% 3D Scatter - Variance</span>
+0526 <span class="comment">% 3D Scatter - PCA (unavail)</span>
+0527 <span class="comment">% 2D Scatter - Variance</span>
+0528 <span class="comment">% Concept Bar Graphs</span>
+0529 
+0530 <span class="comment">% reset panel position</span>
+0531 set(handles.mip_plot_panel,<span class="string">'Position'</span>,[0.14600231749710313,0.01160541586073501,0.8122827346465816,0.9052224371373307]);
+0532 
+0533 dim_choices = get(handles.state_selection_menu,<span class="string">'String'</span>);
+0534 dim_choice = dim_choices{get(handles.state_selection_menu,<span class="string">'Value'</span>)};
+0535 
+0536 <span class="comment">% display chosen plot view</span>
+0537 <span class="keyword">if</span> strcmp(plot_choice,<span class="string">'3D &amp; 2D Scatter'</span>)
+0538 
+0539     <span class="keyword">if</span> handles.export_plot
+0540         figure_handle = figure;
+0541         panel = uipanel(<span class="string">'Parent'</span>,figure_handle);
+0542         set(handles.export_plot_button,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0543     <span class="keyword">else</span>
+0544         panel = handles.mip_plot_panel;
+0545     <span class="keyword">end</span>
+0546     
+0547     set(handles.partition_panel_slider,<span class="string">'Visible'</span>,<span class="string">'off'</span>)
+0548     <a href="conceptscatter3D2D.html" class="code" title="function [ax, height, extra_plots] = conceptscatter3D2D(x,nWholeConcepts, whole_purviews, part_purviews,highlight_indices, parent_panel, view_option, dim_option, all_phi, unconstrained)">conceptscatter3D2D</a>(all_concepts,size(w_concept_dists_p,2), handles.data.purviews_M{state_index}{subset_index},<span class="keyword">...</span>
+0549             part_purviews, highlight_indices, panel, <span class="string">'2D3D'</span>, dim_choice, all_phi, unconstrained);
+0550         
+0551     handles.export_plot = 0;
+0552     guidata(handles.iit_explorer,handles);
+0553     
+0554 <span class="keyword">elseif</span> strcmp(plot_choice,<span class="string">'3D Scatter'</span>)
+0555     
+0556     
+0557     <span class="keyword">if</span> handles.export_plot
+0558         figure_handle = figure;
+0559         panel = uipanel(<span class="string">'Parent'</span>,figure_handle);
+0560         set(handles.export_plot_button,<span class="string">'BackgroundColor'</span>,[0.9294    0.9294    0.9294]);
+0561     <span class="keyword">else</span>
+0562         panel = handles.mip_plot_panel;
+0563     <span class="keyword">end</span>
+0564 
+0565     
+0566     set(handles.partition_panel_slider,<span class="string">'Visible'</span>,<span class="string">'off'</span>)
+0567     <a href="conceptscatter3D2D.html" class="code" title="function [ax, height, extra_plots] = conceptscatter3D2D(x,nWholeConcepts, whole_purviews, part_purviews,highlight_indices, parent_panel, view_option, dim_option, all_phi, unconstrained)">conceptscatter3D2D</a>(all_concepts,size(w_concept_dists_p,2), handles.data.purviews_M{state_index}{subset_index},<span class="keyword">...</span>
+0568             part_purviews, highlight_indices, panel, <span class="string">'3D'</span>,dim_choice, all_phi, unconstrained);
+0569         
+0570     handles.export_plot = 0;
+0571     guidata(handles.iit_explorer,handles);
+0572     
+0573 <span class="comment">%     figure_handle = figure(999);</span>
+0574 <span class="comment">%     my_panel = uipanel('Parent',figure_handle);</span>
+0575 <span class="comment">%     set(handles.partition_panel_slider,'Visible','off')</span>
+0576 <span class="comment">%     conceptscatter3D2D(all_concepts,size(w_concept_dists_p,2), handles.data.purviews_M{state_index}{subset_index},...</span>
+0577 <span class="comment">%             part_purviews, highlight_indices, my_panel, '3D',dim_choice);</span>
+0578         
+0579         
+0580 <span class="keyword">elseif</span> strcmp(plot_choice,<span class="string">'2D Scatter'</span>)
+0581 
+0582     
+0583     <span class="keyword">if</span> handles.export_plot
+0584         figure_handle = figure;
+0585         panel = uipanel(<span class="string">'Parent'</span>,figure_handle);
+0586         set(handles.export_plot_button,<span class="string">'BackgroundColor'</span>,[0.9294    0.9294    0.9294]);
+0587     <span class="keyword">else</span>
+0588         panel = handles.mip_plot_panel;
+0589     <span class="keyword">end</span>
+0590     
+0591     set(handles.partition_panel_slider,<span class="string">'Visible'</span>,<span class="string">'off'</span>)
+0592     <a href="conceptscatter3D2D.html" class="code" title="function [ax, height, extra_plots] = conceptscatter3D2D(x,nWholeConcepts, whole_purviews, part_purviews,highlight_indices, parent_panel, view_option, dim_option, all_phi, unconstrained)">conceptscatter3D2D</a>(all_concepts,size(w_concept_dists_p,2), handles.data.purviews_M{state_index}{subset_index},<span class="keyword">...</span>
+0593             part_purviews, highlight_indices, panel, <span class="string">'2D'</span>,dim_choice, all_phi);  
+0594         
+0595     handles.export_plot = 0;
+0596     guidata(handles.iit_explorer,handles);
+0597     
+0598 <span class="keyword">elseif</span> strcmp(plot_choice,<span class="string">'Concept Bar Graphs'</span>)
+0599     
+0600     <span class="keyword">if</span> handles.export_plot
+0601         figure_handle = figure;
+0602         panel = uipanel(<span class="string">'Parent'</span>,figure_handle);
+0603         set(handles.export_plot_button,<span class="string">'BackgroundColor'</span>,[0.9294    0.9294    0.9294]);
+0604     <span class="keyword">else</span>
+0605         panel = handles.mip_plot_panel;
+0606     <span class="keyword">end</span>    
+0607     
+0608     set(handles.partition_panel_slider,<span class="string">'Visible'</span>,<span class="string">'on'</span>)
+0609         
+0610     <a href="plot_partition_bar.html" class="code" title="function plot_partition_bar(concepts, nWholeConcepts, whole_phis, parts_phis, selected_indices, plot_panel,whole_purviews, parts_purviews, Big_phi_MIP)">plot_partition_bar</a>(all_concepts,size(w_concept_dists_p,2), w_phi_concepts, parts_phi_concepts,<span class="keyword">...</span>
+0611         highlight_indices, panel, handles.data.purviews_M{state_index}{subset_index},<span class="keyword">...</span>
+0612             part_purviews, handles.data.Big_phi_MIP_all_M{state_index}{subset_index}(partition_index,1));
+0613         
+0614     set(handles.partition_panel_slider,<span class="string">'Value'</span>,1.0)
+0615     
+0616     handles.export_plot = 0;
+0617     guidata(handles.iit_explorer,handles);
+0618 
+0619 <span class="keyword">end</span>
+0620 
+0621 
+0622 <span class="comment">%     linkdata on</span>
+0623 
+0624 set(handles.mip_loading_text,<span class="string">'Visible'</span>,<span class="string">'off'</span>)
+0625 set(handles.mip_plot_panel,<span class="string">'Visible'</span>,<span class="string">'on'</span>) 
+0626 
+0627 <a name="_sub16" href="#_subfunctions" class="code">function [partition_p1 partition1_index partition_p2 partition2_index] = get_partitions(handles)</a>
+0628 
+0629 subset = handles.data.subset; subset_index = handles.data.subset_index;
+0630 state_index = handles.data.state_index;
+0631 
+0632 partition_index = get(handles.partition_list,<span class="string">'Value'</span>);
+0633 
+0634 partition_p1 = handles.data.complex_MIP_all_M{state_index}{subset_index}{partition_index};
+0635 partition1_index = <a href="convi.html" class="code" title="function ind = convi(M_pb)">convi</a>(partition_p1) - 1;
+0636 partition_p2 = <a href="pick_rest.html" class="code" title="function M2 = pick_rest(M,M1)">pick_rest</a>(subset,partition_p1);
+0637 partition2_index = <a href="convi.html" class="code" title="function ind = convi(M_pb)">convi</a>(partition_p2) - 1;
+0638 
+0639 
+0640 <span class="comment">% --- Executes on selection change in state_list.</span>
+0641 <a name="_sub17" href="#_subfunctions" class="code">function state_list_Callback(hObject, eventdata, handles)</a>
+0642 <span class="comment">% hObject    handle to state_list (see GCBO)</span>
+0643 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0644 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0645 
+0646 <span class="comment">% Hints: contents = cellstr(get(hObject,'String')) returns state_list contents as cell array</span>
+0647 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from state_list</span>
+0648 
+0649 
+0650 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0651 <a name="_sub18" href="#_subfunctions" class="code">function state_list_CreateFcn(hObject, eventdata, handles)</a>
+0652 <span class="comment">% hObject    handle to state_list (see GCBO)</span>
+0653 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0654 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0655 
+0656 <span class="comment">% Hint: listbox controls usually have a white background on Windows.</span>
+0657 <span class="comment">%       See ISPC and COMPUTER.</span>
+0658 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0659     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0660 <span class="keyword">end</span>
+0661 
+0662 
+0663 <span class="comment">% --- Executes on slider movement.</span>
+0664 <a name="_sub19" href="#_subfunctions" class="code">function panel_slider_Callback(hObject, eventdata, handles)</a>
+0665 <span class="comment">% hObject    handle to panel_slider (see GCBO)</span>
+0666 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0667 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0668 
+0669 <span class="comment">% Hints: get(hObject,'Value') returns position of slider</span>
+0670 <span class="comment">%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider</span>
+0671 
+0672 shift = get(hObject,<span class="string">'Value'</span>);
+0673 position = get(handles.overview_axes_panel,<span class="string">'Position'</span>);
+0674 position(2) = (1 - position(4))*shift;
+0675 set(handles.overview_axes_panel,<span class="string">'Position'</span>,position)
+0676 
+0677 
+0678 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0679 <a name="_sub20" href="#_subfunctions" class="code">function panel_slider_CreateFcn(hObject, eventdata, handles)</a>
+0680 <span class="comment">% hObject    handle to panel_slider (see GCBO)</span>
+0681 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0682 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0683 
+0684 <span class="comment">% Hint: slider controls usually have a light gray background.</span>
+0685 <span class="keyword">if</span> isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0686     set(hObject,<span class="string">'BackgroundColor'</span>,[.9 .9 .9]);
+0687 <span class="keyword">end</span>
+0688 
+0689 
+0690 <span class="comment">% --- Executes on button press in mip_button.</span>
+0691 <a name="_sub21" href="#_subfunctions" class="code">function mip_button_Callback(hObject, eventdata, handles)</a>
+0692 <span class="comment">% hObject    handle to mip_button (see GCBO)</span>
+0693 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0694 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0695 
+0696 subset = handles.data.subset; subset_index = handles.data.subset_index;
+0697 state_index = handles.data.state_index;
+0698 
+0699 <a href="#_sub14" class="code" title="subfunction select_MIP(handles, subset, state_index, subset_index)">select_MIP</a>(handles, subset, state_index, subset_index)
+0700 
+0701 set(handles.partition_plot_refresh,<span class="string">'BackgroundColor'</span>,<span class="string">'g'</span>)
+0702 
+0703 
+0704 <span class="comment">% --- Executes on button press in partition_plot_refresh.</span>
+0705 <a name="_sub22" href="#_subfunctions" class="code">function partition_plot_refresh_Callback(hObject, eventdata, handles)</a>
+0706 <span class="comment">% hObject    handle to partition_plot_refresh (see GCBO)</span>
+0707 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0708 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0709 
+0710 <a href="#_sub15" class="code" title="subfunction plot_partition(handles)">plot_partition</a>(handles)
+0711 set(handles.partition_plot_refresh,<span class="string">'BackgroundColor'</span>,[.9294 .9294 .9294])
+0712 
+0713 
+0714 <span class="comment">% --- Executes on button press in clear_purview_list.</span>
+0715 <a name="_sub23" href="#_subfunctions" class="code">function clear_purview_list_Callback(hObject, eventdata, handles)</a>
+0716 <span class="comment">% hObject    handle to clear_purview_list (see GCBO)</span>
+0717 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0718 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0719 
+0720 set(handles.purviews_list,<span class="string">'Value'</span>,[]);
+0721 <span class="comment">% plot_partition(handles)</span>
+0722 
+0723 set(handles.partition_plot_refresh,<span class="string">'BackgroundColor'</span>,<span class="string">'g'</span>)
+0724 
+0725 
+0726 <span class="comment">% --- Executes on selection change in past_future_list.</span>
+0727 <a name="_sub24" href="#_subfunctions" class="code">function past_future_list_Callback(hObject, eventdata, handles)</a>
+0728 <span class="comment">% hObject    handle to past_future_list (see GCBO)</span>
+0729 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0730 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0731 
+0732 <span class="comment">% Hints: contents = cellstr(get(hObject,'String')) returns past_future_list contents as cell array</span>
+0733 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from past_future_list</span>
+0734 set(handles.partition_plot_refresh,<span class="string">'BackgroundColor'</span>,<span class="string">'g'</span>)
+0735 
+0736 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0737 <a name="_sub25" href="#_subfunctions" class="code">function past_future_list_CreateFcn(hObject, eventdata, handles)</a>
+0738 <span class="comment">% hObject    handle to past_future_list (see GCBO)</span>
+0739 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0740 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0741 
+0742 <span class="comment">% Hint: listbox controls usually have a white background on Windows.</span>
+0743 <span class="comment">%       See ISPC and COMPUTER.</span>
+0744 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0745     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0746 <span class="keyword">end</span>
+0747 
+0748 
+0749 <span class="comment">% --- Executes on selection change in output_concepts_list.</span>
+0750 <a name="_sub26" href="#_subfunctions" class="code">function output_concepts_list_Callback(hObject, eventdata, handles)</a>
+0751 <span class="comment">% hObject    handle to output_concepts_list (see GCBO)</span>
+0752 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0753 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0754 
+0755 <span class="comment">% Hints: contents = cellstr(get(hObject,'String')) returns output_concepts_list contents as cell array</span>
+0756 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from output_concepts_list</span>
+0757 
+0758 
+0759 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0760 <a name="_sub27" href="#_subfunctions" class="code">function output_concepts_list_CreateFcn(hObject, eventdata, handles)</a>
+0761 <span class="comment">% hObject    handle to output_concepts_list (see GCBO)</span>
+0762 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0763 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0764 
+0765 <span class="comment">% Hint: listbox controls usually have a white background on Windows.</span>
+0766 <span class="comment">%       See ISPC and COMPUTER.</span>
+0767 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0768     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0769 <span class="keyword">end</span>
+0770 
+0771 
+0772 <span class="comment">% --- Executes on button press in output_concepts.</span>
+0773 <a name="_sub28" href="#_subfunctions" class="code">function output_concepts_Callback(hObject, eventdata, handles)</a>
+0774 <span class="comment">% hObject    handle to output_concepts (see GCBO)</span>
+0775 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0776 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0777 
+0778 concept_indices = get(handles.output_concepts_list,<span class="string">'Value'</span>);
+0779 
+0780 subset = handles.data.subset; subset_index = handles.data.subset_index;
+0781 state_index = handles.data.state_index;
+0782 
+0783 concept_count = length(get(handles.output_concepts_list,<span class="string">'String'</span>))/2;
+0784 
+0785 <span class="keyword">for</span> i = 1:length(concept_indices)
+0786     
+0787     concept_names = cellstr(get(handles.output_concepts_list,<span class="string">'String'</span>));
+0788     name = concept_names{concept_indices(i)};
+0789     name = [<span class="string">'purview_'</span> <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(subset) <span class="string">'_'</span> name];
+0790     name(name == <span class="string">'['</span>) = [];
+0791     name(name == <span class="string">']'</span>) = [];
+0792     name(name == <span class="string">' '</span>) = [];  
+0793     <span class="keyword">if</span> concept_indices(i) &lt;= concept_count
+0794         assignin(<span class="string">'base'</span>,name,handles.data.concepts_M{state_index}{subset_index,1}{concept_indices(i)}{1})
+0795     <span class="keyword">else</span>
+0796         assignin(<span class="string">'base'</span>,name,handles.data.concepts_M{state_index}{subset_index,1}{concept_indices(i)-concept_count}{2})
+0797     <span class="keyword">end</span>
+0798 
+0799 <span class="keyword">end</span>
+0800 <span class="comment">% Larissa: This doesn't work right now</span>
+0801 <span class="comment">%plot_partition(handles);</span>
+0802 
+0803 <a name="_sub29" href="#_subfunctions" class="code">function [subset subset_index state_index] = get_subset_and_state(handles)</a>
+0804 
+0805 [subset subset_index] = <a href="#_sub30" class="code" title="subfunction [subset subset_index] = get_subset(handles)">get_subset</a>(handles);
+0806 
+0807 state_index = <a href="#_sub8" class="code" title="subfunction state_index = get_state_index(handles)">get_state_index</a>(handles);
+0808 
+0809 <a name="_sub30" href="#_subfunctions" class="code">function [subset subset_index] = get_subset(handles)</a>
+0810 
+0811 subset = get(handles.nodes_list,<span class="string">'Value'</span>);
+0812 subset_index = <a href="convi.html" class="code" title="function ind = convi(M_pb)">convi</a>(subset) - 1;
+0813 
+0814 <span class="comment">% make sure we don't return the empty set:</span>
+0815 <span class="keyword">if</span> subset_index == 0; subset_index = 1; <span class="keyword">end</span>
+0816 
+0817 
+0818 <span class="comment">% --- Executes on selection change in partition_plot_menu.</span>
+0819 <a name="_sub31" href="#_subfunctions" class="code">function partition_plot_menu_Callback(hObject, eventdata, handles)</a>
+0820 <span class="comment">% hObject    handle to partition_plot_menu (see GCBO)</span>
+0821 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0822 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0823 
+0824 <span class="comment">% Hints: contents = cellstr(get(hObject,'String')) returns partition_plot_menu contents as cell array</span>
+0825 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from partition_plot_menu</span>
+0826 
+0827 set(handles.partition_plot_refresh,<span class="string">'BackgroundColor'</span>,<span class="string">'g'</span>)
+0828 
+0829 <span class="keyword">if</span> any(get(hObject,<span class="string">'Value'</span>) == [1 2 3])
+0830     set(handles.state_selection_menu,<span class="string">'Visible'</span>,<span class="string">'on'</span>)
+0831 <span class="keyword">else</span>
+0832     set(handles.state_selection_menu,<span class="string">'Visible'</span>,<span class="string">'off'</span>)
+0833 <span class="keyword">end</span>
+0834 
+0835 
+0836 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0837 <a name="_sub32" href="#_subfunctions" class="code">function partition_plot_menu_CreateFcn(hObject, eventdata, handles)</a>
+0838 <span class="comment">% hObject    handle to partition_plot_menu (see GCBO)</span>
+0839 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0840 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0841 
+0842 <span class="comment">% Hint: popupmenu controls usually have a white background on Windows.</span>
+0843 <span class="comment">%       See ISPC and COMPUTER.</span>
+0844 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0845     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0846 <span class="keyword">end</span>
+0847 
+0848 <a name="_sub33" href="#_subfunctions" class="code">function update_purviews_list(handles)</a>
+0849 
+0850 
+0851 subset_index = handles.data.subset_index;
+0852 state_index = handles.data.state_index;
+0853 [ignore_var partition1_index ignore_var partition2_index] = <a href="#_sub16" class="code" title="subfunction [partition_p1 partition1_index partition_p2 partition2_index] = get_partitions(handles)">get_partitions</a>(handles);
+0854 
+0855 <span class="comment">%Larissa: For the moment show all, even the partitioned with phi = 0</span>
+0856 num_concepts_whole = length(handles.data.purviews_M{state_index}{subset_index,1});
+0857 <span class="comment">%num_concepts_part1 = length(handles.data.purviews_M{state_index}{partition1_index,1});</span>
+0858 <span class="comment">%num_concepts_part2 = length(handles.data.purviews_M{state_index}{partition2_index,1});</span>
+0859 <span class="comment">%num_concepts = num_concepts_whole + num_concepts_part1 + num_concepts_part2;</span>
+0860 num_concepts = 2*num_concepts_whole;
+0861 
+0862 concept_names = cell(num_concepts,1);
+0863 
+0864 <span class="keyword">for</span> i = 1:num_concepts_whole
+0865     concept_names{i} = [<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(handles.data.purviews_M{state_index}{subset_index}{i}) <span class="string">'_whole'</span>];
+0866 <span class="keyword">end</span>
+0867 <span class="keyword">for</span> i = 1:num_concepts_whole
+0868     concept_names{num_concepts_whole+i} = [<a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(handles.data.purviews_M{state_index}{subset_index}{i}) <span class="string">'_part'</span>];
+0869 <span class="keyword">end</span>
+0870 <span class="comment">% for i = num_concepts_whole + 1 : num_concepts_whole + num_concepts_part1</span>
+0871 <span class="comment">%     concept_names{i} = [mod_mat2str(handles.data.purviews_M{state_index}{partition1_index}{i-num_concepts_whole}) '_part1'];</span>
+0872 <span class="comment">% end</span>
+0873 <span class="comment">%</span>
+0874 <span class="comment">% for i = num_concepts_whole + num_concepts_part1 + 1:num_concepts</span>
+0875 <span class="comment">%     concept_names{i} = [mod_mat2str(handles.data.purviews_M{state_index}{partition2_index}{i-num_concepts_part1-num_concepts_whole}) '_part1'];</span>
+0876 <span class="comment">% end</span>
+0877 
+0878 set(handles.purviews_list,<span class="string">'String'</span>,concept_names)
+0879 set(handles.purviews_list,<span class="string">'Value'</span>,[]);
+0880 
+0881 
+0882 <span class="comment">% --- Executes on slider movement.</span>
+0883 <a name="_sub34" href="#_subfunctions" class="code">function partition_panel_slider_Callback(hObject, eventdata, handles)</a>
+0884 <span class="comment">% hObject    handle to partition_panel_slider (see GCBO)</span>
+0885 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0886 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0887 
+0888 <span class="comment">% Hints: get(hObject,'Value') returns position of slider</span>
+0889 <span class="comment">%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider</span>
+0890 
+0891 shift = get(hObject,<span class="string">'Value'</span>);
+0892 position = get(handles.mip_plot_panel,<span class="string">'Position'</span>);
+0893 position(2) = (1 - position(4))*shift;
+0894 set(handles.mip_plot_panel,<span class="string">'Position'</span>,position)
+0895 
+0896 
+0897 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0898 <a name="_sub35" href="#_subfunctions" class="code">function partition_panel_slider_CreateFcn(hObject, eventdata, handles)</a>
+0899 <span class="comment">% hObject    handle to partition_panel_slider (see GCBO)</span>
+0900 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0901 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0902 
+0903 <span class="comment">% Hint: slider controls usually have a light gray background.</span>
+0904 <span class="keyword">if</span> isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0905     set(hObject,<span class="string">'BackgroundColor'</span>,[.9 .9 .9]);
+0906 <span class="keyword">end</span>
+0907 
+0908 
+0909 <span class="comment">% --- Executes on selection change in state_selection_menu.</span>
+0910 <a name="_sub36" href="#_subfunctions" class="code">function state_selection_menu_Callback(hObject, eventdata, handles)</a>
+0911 <span class="comment">% hObject    handle to state_selection_menu (see GCBO)</span>
+0912 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0913 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0914 
+0915 <span class="comment">% Hints: contents = cellstr(get(hObject,'String')) returns state_selection_menu contents as cell array</span>
+0916 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from state_selection_menu</span>
+0917 set(handles.partition_plot_refresh,<span class="string">'BackgroundColor'</span>,<span class="string">'g'</span>)
+0918 
+0919 
+0920 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0921 <a name="_sub37" href="#_subfunctions" class="code">function state_selection_menu_CreateFcn(hObject, eventdata, handles)</a>
+0922 <span class="comment">% hObject    handle to state_selection_menu (see GCBO)</span>
+0923 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0924 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0925 
+0926 <span class="comment">% Hint: popupmenu controls usually have a white background on Windows.</span>
+0927 <span class="comment">%       See ISPC and COMPUTER.</span>
+0928 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0929     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0930 <span class="keyword">end</span>
+0931 
+0932 
+0933 <span class="comment">% --- Executes on button press in export_plot_button.</span>
+0934 <a name="_sub38" href="#_subfunctions" class="code">function export_plot_button_Callback(hObject, eventdata, handles)</a>
+0935 <span class="comment">% hObject    handle to export_plot_button (see GCBO)</span>
+0936 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0937 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0938 
+0939 <span class="keyword">if</span> handles.export_plot
+0940     handles.export_plot = 0;
+0941     set(hObject,<span class="string">'BackgroundColor'</span>,[.9294 .9294 .9294])
+0942 <span class="keyword">else</span>
+0943     handles.export_plot = 1;
+0944     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'red'</span>)
+0945 <span class="keyword">end</span>
+0946 guidata(gcf,handles);
+0947 
+0948 
+0949 <span class="comment">% --------------------------------------------------------------------</span>
+0950 <a name="_sub39" href="#_subfunctions" class="code">function Untitled_1_Callback(hObject, eventdata, handles)</a>
+0951 <span class="comment">% hObject    handle to Untitled_1 (see GCBO)</span>
+0952 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0953 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0954 
+0955 
+0956 <span class="comment">% --- Executes on selection change in BFCut_list.</span>
+0957 <a name="_sub40" href="#_subfunctions" class="code">function BFCut_list_Callback(hObject, eventdata, handles)</a>
+0958 <span class="comment">% hObject    handle to BFCut_list (see GCBO)</span>
+0959 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0960 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0961 
+0962 <span class="comment">% Hints: contents = cellstr(get(hObject,'String')) returns BFCut_list contents as cell array</span>
+0963 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from BFCut_list</span>
+0964 
+0965 
+0966 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0967 <a name="_sub41" href="#_subfunctions" class="code">function BFCut_list_CreateFcn(hObject, eventdata, handles)</a>
+0968 <span class="comment">% hObject    handle to BFCut_list (see GCBO)</span>
+0969 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0970 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0971 
+0972 <span class="comment">% Hint: listbox controls usually have a white background on Windows.</span>
+0973 <span class="comment">%       See ISPC and COMPUTER.</span>
+0974 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0975     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0976 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

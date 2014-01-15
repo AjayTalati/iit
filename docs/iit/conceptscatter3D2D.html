@@ -1,0 +1,507 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of conceptscatter3D2D</title>
+  <meta name="keywords" content="conceptscatter3D2D">
+  <meta name="description" content="BASED ON GPLOTMATRIX">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; conceptscatter3D2D.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>conceptscatter3D2D
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>BASED ON GPLOTMATRIX</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ax, height, extra_plots] = conceptscatter3D2D(x,nWholeConcepts, whole_purviews, part_purviews,highlight_indices, parent_panel, view_option, dim_option, all_phi, unconstrained) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> BASED ON GPLOTMATRIX</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="iit_explorer.html" class="code" title="function varargout = iit_explorer(varargin)">iit_explorer</a>	IIT_EXPLORER MATLAB code for iit_explorer.fig</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function datatipTxt = gplotmatrixDatatipCallback(obj,evt)</a></li><li><a href="#_sub2" class="code">function [ogroup,glabel,gname,multigroup] = mgrp2idx(group,rows,sep);</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ax, height, extra_plots] = conceptscatter3D2D(x,nWholeConcepts, whole_purviews, part_purviews,</a><span class="keyword">...</span>
+0002                                             highlight_indices, parent_panel, view_option, dim_option, all_phi, unconstrained)
+0003 <span class="comment">% BASED ON GPLOTMATRIX</span>
+0004 
+0005 
+0006 
+0007 num_dims = min(size(x,2),8);
+0008 num_nodes = log2(size(x,2));
+0009 
+0010 <span class="comment">% princomp(x)</span>
+0011 
+0012 <span class="keyword">if</span> strcmp(dim_option,<span class="string">'Variance'</span>)
+0013     concept_value = var(x);
+0014     
+0015 <span class="keyword">elseif</span> strcmp(dim_option,<span class="string">'Mode'</span>)
+0016 <span class="comment">%     concept_value = max(x);</span>
+0017     concept_value = sum(x,1);
+0018 <span class="keyword">end</span>
+0019 
+0020 [ignore_var state_ordering] = sort(concept_value,<span class="string">'descend'</span>);
+0021 
+0022 nPartsConcepts = size(x,1) - nWholeConcepts;
+0023 
+0024 whole = x(1:nWholeConcepts,:);
+0025 part = x(nWholeConcepts+1:<span class="keyword">end</span>,:);
+0026 
+0027 w_highlight_indices = highlight_indices(highlight_indices &lt;= nWholeConcepts);
+0028 p_highlight_indices = highlight_indices(highlight_indices &gt; nWholeConcepts) - nWholeConcepts;
+0029 
+0030 w_nonhighlight_indices = setdiff(1:nWholeConcepts,w_highlight_indices);
+0031 p_nonhighlight_indices = setdiff(1:nPartsConcepts,p_highlight_indices);
+0032 
+0033 whole_selected_labels = cell(length(w_highlight_indices),1);
+0034 <span class="keyword">for</span> i = 1:length(w_highlight_indices)
+0035     whole_selected_labels{i} = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(whole_purviews{w_highlight_indices(i)});
+0036 <span class="keyword">end</span>
+0037 
+0038 whole_nonselected_labels = cell(length(w_nonhighlight_indices),1);
+0039 <span class="keyword">for</span> i = 1:length(w_nonhighlight_indices)
+0040     whole_nonselected_labels{i} = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(whole_purviews{w_nonhighlight_indices(i)});
+0041 <span class="keyword">end</span>
+0042 
+0043 part_selected_labels = cell(length(p_highlight_indices),1);
+0044 <span class="keyword">for</span> i = 1:length(p_highlight_indices)
+0045     part_selected_labels{i} = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(part_purviews{p_highlight_indices(i)});
+0046 <span class="keyword">end</span>
+0047 
+0048 part_nonselected_labels = cell(length(p_highlight_indices),1);
+0049 <span class="keyword">for</span> i = 1:length(p_nonhighlight_indices)
+0050     part_nonselected_labels{i} = <a href="mod_mat2str.html" class="code" title="function x_s = mod_mat2str(x)">mod_mat2str</a>(part_purviews{p_nonhighlight_indices(i)});
+0051 <span class="keyword">end</span>
+0052 
+0053 dims = size(x,2);
+0054 
+0055 rows = 7; 
+0056 cols = rows;
+0057 extra_plots = rows - dims;
+0058 
+0059 pos = get(parent_panel,<span class="string">'Position'</span>);
+0060 width = pos(3)/rows;
+0061 height = width;
+0062 space = .04; <span class="comment">% 2 percent space between axes</span>
+0063 xlim = repmat(cat(3,zeros(rows,1),ones(rows,1)),[rows 1 1]);
+0064 ylim = repmat(cat(3,zeros(rows,1)',ones(rows,1)'),[1 cols 1]);
+0065 
+0066 
+0067 x_bound = [0 1 0];
+0068 y_bound = [1 0 0];
+0069 
+0070 
+0071 ax = cell(nchoosek(num_dims,2)+1,1); <span class="comment">% all pairs of dims plus the 3D plot</span>
+0072 ax_index = 1;
+0073 
+0074 <span class="keyword">if</span> any(strcmp(view_option,{<span class="string">'2D'</span>,<span class="string">'2D3D'</span>}))
+0075     
+0076     <span class="keyword">for</span> i = 8:-1:2 <span class="comment">% count down from rows to 1</span>
+0077        <span class="keyword">for</span> j = i-1:-1:1, <span class="comment">% count down from cols to 1</span>
+0078 
+0079 
+0080 
+0081             axPos = [(j-1)*width+space (rows-i+1)*height+space <span class="keyword">...</span>
+0082                 width*(1-space) height*(1-space)];
+0083             ax{ax_index} = axes(<span class="string">'Position'</span>,axPos, <span class="string">'visible'</span>, <span class="string">'on'</span>, <span class="string">'Box'</span>,<span class="string">'on'</span>,<span class="string">'Parent'</span>,parent_panel,<span class="keyword">...</span>
+0084                 <span class="string">'DrawMode'</span>,<span class="string">'fast'</span>,<span class="string">'Clipping'</span>,<span class="string">'On'</span>);
+0085 
+0086             xlim(i,j,:) = get(ax{ax_index},<span class="string">'xlim'</span>);
+0087             ylim(i,j,:) = get(ax{ax_index},<span class="string">'ylim'</span>);
+0088 
+0089 
+0090 
+0091             <span class="keyword">if</span> (i &lt;= num_dims)
+0092 
+0093                 set(ax{ax_index},<span class="string">'Visible'</span>,<span class="string">'on'</span>)
+0094                 state1 = state_ordering(i);
+0095                 state2 = state_ordering(j);
+0096 
+0097                 <span class="keyword">for</span> l = 1:nWholeConcepts
+0098                     <span class="keyword">if</span> all_phi(2,l)==0
+0099                         color = [.5 .5 .5];
+0100                     <span class="keyword">else</span>
+0101                         color = [1, 0, 0];
+0102                     <span class="keyword">end</span>    
+0103                     plot(ax{ax_index},part(l,state2),part(l,state1),<span class="string">'d'</span>,<span class="string">'color'</span>,color,<span class="string">'Clipping'</span>,<span class="string">'on'</span>);
+0104                     <span class="comment">%text(part(p_nonhighlight_indices,state2),part(p_nonhighlight_indices,state1),part_nonselected_labels)</span>
+0105                     hold on;
+0106                 <span class="keyword">end</span>
+0107 
+0108                 plot(ax{ax_index},whole(w_nonhighlight_indices,state2),<span class="keyword">...</span>
+0109                     whole(w_nonhighlight_indices,state1),<span class="string">'*b'</span>,<span class="string">'Clipping'</span>,<span class="string">'on'</span>)
+0110                 hold on;
+0111 
+0112 
+0113                 plot(ax{ax_index},whole(w_highlight_indices,state2), <span class="keyword">...</span>
+0114                     whole(w_highlight_indices,state1),<span class="string">'og'</span>,<span class="string">'MarkerSize'</span>,8,<span class="string">'Clipping'</span>,<span class="string">'on'</span>);
+0115                 hold on;
+0116 
+0117                 plot(ax{ax_index},part(p_highlight_indices,state2), part(p_highlight_indices,state1),<span class="string">'og'</span>,<span class="string">'MarkerSize'</span>,8,<span class="string">'Clipping'</span>,<span class="string">'on'</span>);
+0118                 hold on;
+0119 
+0120                 choices = nchoosek([1 2 3],2);
+0121 
+0122                 <span class="keyword">for</span> k = 1:size(choices,1)
+0123 
+0124                     hold on
+0125                     plot(ax{ax_index},x_bound(choices(k,:)),y_bound(choices(k,:)),<span class="string">'k'</span>,<span class="string">'Clipping'</span>,<span class="string">'on'</span>);
+0126 
+0127                 <span class="keyword">end</span>
+0128             <span class="keyword">else</span>
+0129                 set(ax{ax_index},<span class="string">'Visible'</span>,<span class="string">'off'</span>)
+0130             <span class="keyword">end</span>
+0131 
+0132 
+0133 
+0134             <span class="keyword">if</span> j == 1 &amp;&amp; i &lt;= num_dims
+0135                 ylabel(ax{ax_index},dec2bin(state1-1,num_nodes))
+0136             <span class="keyword">end</span>
+0137             <span class="keyword">if</span> i == num_dims &amp;&amp; j &lt;= num_dims
+0138                 xlabel(ax{ax_index},dec2bin(state2-1,num_nodes))
+0139             <span class="keyword">end</span>
+0140 
+0141             set(ax{ax_index},<span class="string">'xlimmode'</span>,<span class="string">'manual'</span>,<span class="string">'ylimmode'</span>,<span class="string">'manual'</span>,<span class="string">'xgrid'</span>,<span class="string">'off'</span>,<span class="string">'ygrid'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+0142                     <span class="string">'xlim'</span>,[-.25 1.25],<span class="string">'ylim'</span>,[-.25 1.25],<span class="string">'xticklabel'</span>,<span class="string">''</span>,<span class="string">'yticklabel'</span>,<span class="string">''</span>,<span class="string">'Clipping'</span>,<span class="string">'on'</span>)
+0143             ax_index = ax_index + 1;
+0144 
+0145        <span class="keyword">end</span>
+0146     <span class="keyword">end</span>
+0147 <span class="keyword">end</span>
+0148 
+0149 
+0150 <span class="keyword">if</span> any(strcmp(view_option,{<span class="string">'3D'</span>,<span class="string">'2D3D'</span>})) 
+0151     
+0152     <span class="keyword">if</span> strcmp(view_option,<span class="string">'2D3D'</span>)
+0153         row_pos = ceil(rows/2) - .5;
+0154         col_pos = (rows - row_pos);
+0155         size_scale = row_pos + 1.25;
+0156         horiz_offset = 0;
+0157     <span class="keyword">else</span>
+0158         row_pos = ceil(rows/8) - .5;
+0159         col_pos = row_pos;
+0160         size_scale = 24*row_pos;
+0161         horiz_offset = .25;
+0162     <span class="keyword">end</span>
+0163 
+0164     axPos = [row_pos*width+space-horiz_offset col_pos*height+space <span class="keyword">...</span>
+0165             width*(1-space)*size_scale height*(1-space)*size_scale];
+0166     axes3D = axes(<span class="string">'Position'</span>,axPos, <span class="string">'visible'</span>, <span class="string">'on'</span>, <span class="string">'Box'</span>,<span class="string">'on'</span>,<span class="string">'Parent'</span>,parent_panel,<span class="string">'DrawMode'</span>,<span class="string">'fast'</span>);
+0167 
+0168     ax{ax_index} = axes3D;
+0169 
+0170     <span class="comment">%Unconstrained</span>
+0171     scatter3(ax{ax_index},unconstrained(state_ordering(1)),unconstrained(state_ordering(2)),<span class="keyword">...</span>
+0172         unconstrained(state_ordering(3)),<span class="string">'Marker'</span>,<span class="string">'x'</span>,<span class="string">'MarkerEdgeColor'</span>,<span class="string">'k'</span>,<span class="string">'SizeData'</span>,100,<span class="string">'Clipping'</span>,<span class="string">'on'</span>)
+0173     hold on
+0174     
+0175     <span class="keyword">for</span> l = 1:nWholeConcepts
+0176         <span class="keyword">if</span> all_phi(2,l)==0
+0177             color = [.5 .5 .5];
+0178         <span class="keyword">else</span>
+0179             color = [1, 0, 0];
+0180         <span class="keyword">end</span>   
+0181         scatter3(ax{ax_index},part(l,state_ordering(1)),part(l,state_ordering(2)),<span class="keyword">...</span>
+0182             part(l,state_ordering(3)),<span class="string">'Marker'</span>,<span class="string">'d'</span>,<span class="string">'MarkerEdgeColor'</span>,color,<span class="string">'SizeData'</span>,75*all_phi(2,l)*4,<span class="string">'Clipping'</span>,<span class="string">'on'</span>)
+0183         hold on
+0184     <span class="keyword">end</span>
+0185     <span class="keyword">for</span> l = 1:nWholeConcepts
+0186         scatter3(ax{ax_index},whole(l,state_ordering(1)),whole(l,state_ordering(2)),<span class="keyword">...</span>
+0187             whole(l,state_ordering(3)),<span class="string">'Marker'</span>,<span class="string">'*'</span>,<span class="string">'MarkerEdgeColor'</span>,<span class="string">'b'</span>,<span class="string">'SizeData'</span>,75*all_phi(1,l)*4,<span class="string">'Clipping'</span>,<span class="string">'on'</span>)
+0188     <span class="keyword">end</span>
+0189     hold on
+0190 
+0191     scatter3(ax{ax_index},whole(w_highlight_indices,state_ordering(1)),whole(w_highlight_indices,state_ordering(2)),<span class="keyword">...</span>
+0192         whole(w_highlight_indices,state_ordering(3)),<span class="string">'Marker'</span>,<span class="string">'o'</span>,<span class="string">'MarkerEdgeColor'</span>,<span class="string">'g'</span>,<span class="string">'SizeData'</span>,100,<span class="string">'Clipping'</span>,<span class="string">'on'</span>)
+0193     hold on
+0194 
+0195     scatter3(ax{ax_index},part(p_highlight_indices,state_ordering(1)),part(p_highlight_indices,state_ordering(2)),<span class="keyword">...</span>
+0196         part(p_highlight_indices,state_ordering(3)),<span class="string">'Marker'</span>,<span class="string">'o'</span>,<span class="string">'MarkerEdgeColor'</span>,<span class="string">'g'</span>,<span class="string">'SizeData'</span>,100,<span class="string">'Clipping'</span>,<span class="string">'on'</span>)
+0197     hold on
+0198 
+0199     xlabel(ax{ax_index},dec2bin(state_ordering(1)-1,num_nodes))
+0200     ylabel(ax{ax_index},dec2bin(state_ordering(2)-1,num_nodes))
+0201     zlabel(ax{ax_index},dec2bin(state_ordering(3)-1,num_nodes))
+0202 
+0203 
+0204     set(ax{ax_index},<span class="string">'xlimmode'</span>,<span class="string">'manual'</span>,<span class="string">'ylimmode'</span>,<span class="string">'manual'</span>,<span class="keyword">...</span>
+0205             <span class="string">'xlim'</span>,[-.25 1.25],<span class="string">'ylim'</span>,[-.25 1.25],<span class="string">'zlim'</span>,[-.25 1.25],<span class="keyword">...</span>
+0206             <span class="string">'CameraViewAngleMode'</span>,<span class="string">'manual'</span>,<span class="string">'Clipping'</span>,<span class="string">'on'</span>)
+0207 
+0208 
+0209 
+0210     <span class="comment">% plot tetrahedron bounds</span>
+0211     x_bound = [0 0 1 0];
+0212     y_bound = [0 1 0 0];
+0213     z_bound = [0 0 0 1];
+0214     choices = nchoosek([1 2 3 4],2);
+0215 
+0216     <span class="keyword">for</span> i = 1:size(choices,1)
+0217 
+0218         hold on
+0219         plot3(ax{ax_index},x_bound(choices(i,:)),y_bound(choices(i,:)),z_bound(choices(i,:)),<span class="string">'k'</span>,<span class="string">'Clipping'</span>,<span class="string">'on'</span>);
+0220 
+0221     <span class="keyword">end</span>
+0222     <span class="keyword">if</span> strcmp(view_option,<span class="string">'3D'</span>)
+0223     <span class="comment">%     text(part(p_nonhighlight_indices,state_ordering(1)),part(p_nonhighlight_indices,state_ordering(2)),...</span>
+0224     <span class="comment">%         part(p_nonhighlight_indices,state_ordering(3)),part_nonselected_labels)</span>
+0225         text(part(p_highlight_indices,state_ordering(1))+.03,part(p_highlight_indices,state_ordering(2)),<span class="keyword">...</span>
+0226             part(p_highlight_indices,state_ordering(3)),part_selected_labels)
+0227     <span class="comment">%     text(whole(w_nonhighlight_indices,state_ordering(1)),whole(w_nonhighlight_indices,state_ordering(2)),...</span>
+0228     <span class="comment">%         whole(w_nonhighlight_indices,state_ordering(3)),whole_nonselected_labels)</span>
+0229         text(whole(w_highlight_indices,state_ordering(1)),whole(w_highlight_indices,state_ordering(2)),<span class="keyword">...</span>
+0230             whole(w_highlight_indices,state_ordering(3)),whole_selected_labels)
+0231     <span class="keyword">end</span>
+0232 <span class="keyword">end</span>
+0233 <span class="comment">% linkdata on</span>
+0234 
+0235 <span class="comment">% replace with real data</span>
+0236 <span class="comment">% whole = x(1:nWholeConcepts,:);</span>
+0237 <span class="comment">% part = x(nWholeConcepts+1:end,:);</span>
+0238 <span class="comment">% assignin('base','whole',whole)</span>
+0239 <span class="comment">% assignin('base','part',part)</span>
+0240 
+0241 
+0242 <span class="comment">% x(:) = in_data(:);</span>
+0243 <span class="comment">% assignin('base','x',x);</span>
+0244 
+0245 
+0246 <span class="comment">% ld = linkdata(gcf)</span>
+0247 <span class="comment">% fieldnames(ld)</span>
+0248 
+0249 <span class="comment">% xlimmin = min(xlim(:,:,1),[],1); xlimmax = max(xlim(:,:,2),[],1);</span>
+0250 <span class="comment">% ylimmin = min(ylim(:,:,1),[],2); ylimmax = max(ylim(:,:,2),[],2);</span>
+0251 <span class="comment">%</span>
+0252 <span class="comment">% % % Set all the limits of a row or column to be the same and leave</span>
+0253 <span class="comment">% % % just a 5% gap between data and axes.</span>
+0254 <span class="comment">% inset = .05;</span>
+0255 <span class="comment">% for i=2:rows,</span>
+0256 <span class="comment">%   set(ax(i,1),'ylim',[ylimmin(i,1) ylimmax(i,1)])</span>
+0257 <span class="comment">%   dy = diff(get(ax(i,1),'ylim'))*inset;</span>
+0258 <span class="comment">%   set(ax(i,1:i-1),'ylim',[ylimmin(i,1)-dy ylimmax(i,1)+dy])</span>
+0259 <span class="comment">% end</span>
+0260 <span class="comment">% for j=1:cols-1,</span>
+0261 <span class="comment">%   set(ax(j+1,j),'xlim',[xlimmin(1,j) xlimmax(1,j)])</span>
+0262 <span class="comment">%   dx = diff(get(ax(1,j),'xlim'))*inset;</span>
+0263 <span class="comment">%   set(ax(j+1:rows,j),'xlim',[xlimmin(1,j)-dx xlimmax(1,j)+dx])</span>
+0264 <span class="comment">%   if ax2filled(j)</span>
+0265 <span class="comment">%      set(ax2(j),'xlim',[xlimmin(1,j)-dx xlimmax(1,j)+dx])</span>
+0266 <span class="comment">%   end</span>
+0267 <span class="comment">% end</span>
+0268 
+0269 
+0270 
+0271 <span class="comment">% % Label plots one way or the other</span>
+0272 <span class="comment">% if (donames &amp;&amp; ~isempty(xnam))</span>
+0273 <span class="comment">%    for j=1:cols</span>
+0274 <span class="comment">%       set(gcf,'CurrentAx',ax(j,j));</span>
+0275 <span class="comment">%       h = text((...</span>
+0276 <span class="comment">%           xlimmin(1,j)+xlimmax(1,j))/2, (ylimmin(j,1)+ylimmax(j,1))/2, -.1,...</span>
+0277 <span class="comment">%           xnam{j}, 'HorizontalAlignment','center',...</span>
+0278 <span class="comment">%           'VerticalAlignment','middle');</span>
+0279 <span class="comment">%    end</span>
+0280 <span class="comment">% else</span>
+0281 <span class="comment">%    if ~isempty(xnam)</span>
+0282 <span class="comment">%       for j=1:cols, xlabel(ax(rows,j),xnam{j}); end</span>
+0283 <span class="comment">%    end</span>
+0284 <span class="comment">%    if ~isempty(ynam)</span>
+0285 <span class="comment">%       for i=1:rows, ylabel(ax(i,1),ynam{i}); end</span>
+0286 <span class="comment">%    end</span>
+0287 <span class="comment">% end</span>
+0288 
+0289 <span class="comment">% Ticks and labels on outer plots only</span>
+0290 <span class="comment">% set(ax(1:rows-1,:),'xticklabel','')</span>
+0291 <span class="comment">% set(ax(:,2:cols),'yticklabel','')</span>
+0292 <span class="comment">% set(BigAx,'XTick',get(ax(rows,1),'xtick'),'YTick',get(ax(rows,1),'ytick'), ...</span>
+0293 <span class="comment">%           'userdata',ax,'tag','PlotMatrixBigAx')</span>
+0294 
+0295 <span class="comment">% Create legend if requested; base it on the top right plot</span>
+0296 <span class="comment">% if (doleg)</span>
+0297 <span class="comment">%    gn = gn(ismember(1:size(gn,1),g),:);</span>
+0298 <span class="comment">%    legend(ax(1,cols),gn);</span>
+0299 <span class="comment">% end</span>
+0300 
+0301 <span class="comment">% Make BigAx the CurrentAxes</span>
+0302 <span class="comment">% set(gcf,'CurrentAx',BigAx)</span>
+0303 <span class="comment">% if ~hold_state,</span>
+0304 <span class="comment">%    set(gcf,'NextPlot','replace')</span>
+0305 <span class="comment">% end</span>
+0306 
+0307 
+0308 
+0309 
+0310 <span class="comment">% Also set Title and X/YLabel visibility to on and strings to empty</span>
+0311 <span class="comment">% set([get(BigAx,'Title'); get(BigAx,'XLabel'); get(BigAx,'YLabel')], ...</span>
+0312 <span class="comment">%  'String','','Visible','on')</span>
+0313 
+0314 <span class="comment">% if nargout~=0,</span>
+0315 <span class="comment">%   h = hh;</span>
+0316 <span class="comment">%   if any(ax2filled)</span>
+0317 <span class="comment">%      ax = [ax; ax2(:)'];</span>
+0318 <span class="comment">%   end</span>
+0319 <span class="comment">% end</span>
+0320 
+0321 <span class="comment">% -----------------------------</span>
+0322 <a name="_sub1" href="#_subfunctions" class="code">function datatipTxt = gplotmatrixDatatipCallback(obj,evt)</a>
+0323 
+0324 target = get(evt,<span class="string">'Target'</span>);
+0325 ind = get(evt,<span class="string">'DataIndex'</span>);
+0326 pos = get(evt,<span class="string">'Position'</span>);
+0327 
+0328 dtcallbackdata = getappdata(target,<span class="string">'dtcallbackdata'</span>);
+0329 [BigAx,gnum,row,col] = dtcallbackdata{:};
+0330 
+0331 ginds = getappdata(BigAx,<span class="string">'ginds'</span>);
+0332 xnam = getappdata(BigAx,<span class="string">'xnam'</span>);
+0333 ynam = getappdata(BigAx,<span class="string">'ynam'</span>);
+0334 xdat = getappdata(BigAx,<span class="string">'x'</span>);
+0335 ydat = getappdata(BigAx,<span class="string">'y'</span>);
+0336 XvsX = getappdata(BigAx,<span class="string">'XvsX'</span>);
+0337 gn = getappdata(BigAx,<span class="string">'gn'</span>);
+0338 
+0339 gind = ginds{gnum};
+0340 obsind = gind(ind);
+0341 
+0342 xvals = xdat(obsind,:);
+0343 yvals = ydat(obsind,:);
+0344 
+0345 x = xvals(col);
+0346 y = yvals(row);
+0347 
+0348 <span class="keyword">if</span> x~=pos(1) || y~=pos(2)
+0349     <span class="comment">% Something is inconsistent, display default datatip.</span>
+0350     datatipTxt = {sprintf(<span class="string">'X: %s'</span>,num2str(pos(1))),sprintf(<span class="string">'Y: %s'</span>,num2str(pos(2)))};
+0351 <span class="keyword">else</span>
+0352     <span class="keyword">if</span> isempty(xnam)
+0353         xnam = cell(size(xdat,2),1);
+0354         <span class="keyword">for</span> i = 1:size(xdat,2)
+0355             xnam{i} = sprintf(<span class="string">'xvar%s'</span>,num2str(i));
+0356         <span class="keyword">end</span>
+0357     <span class="keyword">end</span>
+0358     <span class="keyword">if</span> isempty(ynam)
+0359         ynam = cell(size(ydat,2),1);
+0360         <span class="keyword">for</span> i = 1:size(ydat,2)
+0361             ynam{i} = sprintf(<span class="string">'yvar%s'</span>,num2str(i));
+0362         <span class="keyword">end</span>
+0363     <span class="keyword">end</span>
+0364 
+0365     <span class="comment">% Generate datatip text.</span>
+0366     datatipTxt = {
+0367         [xnam{col},<span class="string">': '</span>,num2str(x)],<span class="keyword">...</span>
+0368         [ynam{row},<span class="string">': '</span>,num2str(y)],<span class="keyword">...</span>
+0369         <span class="string">''</span>,<span class="keyword">...</span>
+0370         sprintf(<span class="string">'Observation: %s'</span>,num2str(obsind)),<span class="keyword">...</span>
+0371         };
+0372 
+0373     <span class="keyword">if</span> ~isempty(gn)
+0374         datatipTxt{end+1} = [<span class="string">'Group: '</span>,gn{gnum}];
+0375     <span class="keyword">end</span>
+0376     datatipTxt{end+1} = <span class="string">''</span>;
+0377 
+0378     xnamTxt = cell(length(xvals),1);
+0379     <span class="keyword">for</span> i=1:length(xvals)
+0380         xnamTxt{i} = [xnam{i} <span class="string">': '</span> num2str(xvals(i))];
+0381     <span class="keyword">end</span>
+0382     datatipTxt = {datatipTxt{:}, xnamTxt{:}};
+0383     
+0384     <span class="keyword">if</span> ~XvsX
+0385         ynamTxt = cell(length(yvals),1);
+0386         <span class="keyword">for</span> i=1:length(yvals)
+0387             ynamTxt{i} = [ynam{i} <span class="string">': '</span> num2str(yvals(i))];
+0388         <span class="keyword">end</span>
+0389         datatipTxt = {datatipTxt{:}, ynamTxt{:}};
+0390     <span class="keyword">end</span>
+0391 
+0392 <span class="keyword">end</span>
+0393 
+0394 <a name="_sub2" href="#_subfunctions" class="code">function [ogroup,glabel,gname,multigroup] = mgrp2idx(group,rows,sep); </a>
+0395 <span class="comment">%MGRP2IDX Convert multiple grouping variables to index vector</span>
+0396 <span class="comment">%   [OGROUP,GLABEL,GNAME,MULTIGROUP] = MGRP2IDX(GROUP,ROWS) takes</span>
+0397 <span class="comment">%   the inputs GROUP, ROWS, and SEP.  GROUP is a grouping variable (numeric</span>
+0398 <span class="comment">%   vector, string matrix, or cell array of strings) or a cell array</span>
+0399 <span class="comment">%   of grouping variables.  ROWS is the number of observations.</span>
+0400 <span class="comment">%   SEP is a separator for the grouping variable values.</span>
+0401 <span class="comment">%</span>
+0402 <span class="comment">%   The output OGROUP is a vector of group indices.  GLABEL is a cell</span>
+0403 <span class="comment">%   array of group labels, each label consisting of the values of the</span>
+0404 <span class="comment">%   various grouping variables separated by the characters in SEP.</span>
+0405 <span class="comment">%   GNAME is a cell array containing one column per grouping variable</span>
+0406 <span class="comment">%   and one row for each distinct combination of grouping variable</span>
+0407 <span class="comment">%   values.  MULTIGROUP is 1 if there are multiple grouping variables</span>
+0408 <span class="comment">%   or 0 if there are not.</span>
+0409  
+0410 <span class="comment">%   Tom Lane, 12-17-99</span>
+0411 <span class="comment">%   Copyright 1993-2002 The MathWorks, Inc.</span>
+0412 <span class="comment">%   $Revision: 1.4 $  $Date: 2002/02/04 19:25:44 $</span>
+0413  
+0414 multigroup = (iscell(group) &amp; size(group,1)==1); 
+0415 <span class="keyword">if</span> (~multigroup) 
+0416    [ogroup,gname] = grp2idx(group); 
+0417    glabel = gname; 
+0418 <span class="keyword">else</span> 
+0419    <span class="comment">% Group according to each distinct combination of grouping variables</span>
+0420    ngrps = size(group,2); 
+0421    grpmat = zeros(rows,ngrps); 
+0422    namemat = cell(1,ngrps); 
+0423     
+0424    <span class="comment">% Get integer codes and names for each grouping variable</span>
+0425    <span class="keyword">for</span> j=1:ngrps 
+0426       [g,gn] = grp2idx(group{1,j}); 
+0427       grpmat(:,j) = g; 
+0428       namemat{1,j} = gn; 
+0429    <span class="keyword">end</span> 
+0430     
+0431    <span class="comment">% Find all unique combinations</span>
+0432    [urows,ui,uj] = unique(grpmat,<span class="string">'rows'</span>); 
+0433     
+0434    <span class="comment">% Create a cell array, one col for each grouping variable value</span>
+0435    <span class="comment">% and one row for each observation</span>
+0436    ogroup = uj; 
+0437    gname = cell(size(urows)); 
+0438    <span class="keyword">for</span> j=1:ngrps 
+0439       gn = namemat{1,j}; 
+0440       gname(:,j) = gn(urows(:,j)); 
+0441    <span class="keyword">end</span> 
+0442     
+0443    <span class="comment">% Create another cell array of multi-line texts to use as labels</span>
+0444    glabel = cell(size(gname,1),1); 
+0445    <span class="keyword">if</span> (nargin &gt; 2) 
+0446       nl = sprintf(sep); 
+0447    <span class="keyword">else</span> 
+0448       nl = sprintf(<span class="string">'\n'</span>); 
+0449    <span class="keyword">end</span> 
+0450    fmt = sprintf(<span class="string">'%%s%s'</span>,nl); 
+0451    lnl = length(fmt)-3;        <span class="comment">% one less than the length of nl</span>
+0452    <span class="keyword">for</span> j=1:length(glabel) 
+0453       gn = sprintf(fmt, gname{j,:}); 
+0454       gn(end-lnl:end) = []; 
+0455       glabel{j,1} = gn; 
+0456    <span class="keyword">end</span> 
+0457 <span class="keyword">end</span> 
+0458</pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

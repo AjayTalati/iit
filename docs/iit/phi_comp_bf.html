@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of phi_comp_bf</title>
+  <meta name="keywords" content="phi_comp_bf">
+  <meta name="description" content="compute small phi of a given purview...?">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; phi_comp_bf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>phi_comp_bf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>compute small phi of a given purview...?</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [phi_MIP, prob, prob_prod_MIP, MIP, network] = phi_comp_bf(subsystem,numerator,denom_past,denom_future,whole_sys_state,network) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> compute small phi of a given purview...?</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="L1norm.html" class="code" title="function D = L1norm(prob,prob2)">L1norm</a>	% compute distance based on L1 norm divided by two to approximate the earth movers</li><li><a href="Normalization.html" class="code" title="function Norm = Normalization(xp_1,xp_2,numerator_part1,numerator_part2,xf_1,xf_2)">Normalization</a>	% Normalize by number of connections</li><li><a href="bipartition.html" class="code" title="function [B1 B2 N_b] = bipartition(X,N_max,op)">bipartition</a>	X: subset, B1: group #1, B2: group #2</li><li><a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>	compute BRs and FRs for a single perspective but given some fixed</li><li><a href="subsystem2index.html" class="code" title="function index = subsystem2index(subsystem)">subsystem2index</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="phi_comp_ex.html" class="code" title="function [phi prob prob_prod_MIP MIP network] = phi_comp_ex(subsystem,numerator,whole_sys_state,subsets_subsys,network)">phi_comp_ex</a>	% compute small phi for a purview</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [X_min i_min j_min k_min] = min3(X,X2,op_normalize)</a></li><li><a href="#_sub2" class="code">function [phi_min_choice, i_min, j_min] = min2(phi,phi_norm,op_normalize)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [phi_MIP, prob, prob_prod_MIP, MIP, network] = phi_comp_bf(subsystem,numerator,denom_past,denom_future,whole_sys_state,network)</a>
+0002 <span class="comment">% compute small phi of a given purview...?</span>
+0003 
+0004 op_normalize = network.options(6);
+0005 op_small_phi = network.options(4);
+0006 op_parfor = network.options(9);
+0007 op_extNodes = network.options(11);
+0008 op_complex = network.options(3);
+0009 
+0010 num_nodes_denom_past = length(denom_past);
+0011 num_nodes_numerator = length(numerator);
+0012 
+0013 <span class="keyword">if</span> op_parfor == 2 &amp;&amp; op_extNodes == 0 &amp;&amp; op_complex == 1
+0014     BRs = network.BRs{<a href="subsystem2index.html" class="code" title="function index = subsystem2index(subsystem)">subsystem2index</a>(subsystem)};
+0015     FRs = network.FRs{<a href="subsystem2index.html" class="code" title="function index = subsystem2index(subsystem)">subsystem2index</a>(subsystem)};
+0016 <span class="keyword">else</span>    
+0017     BRs = network.BRs;
+0018     FRs = network.FRs;
+0019 <span class="keyword">end</span>
+0020 
+0021 <span class="keyword">if</span> op_extNodes == 0
+0022     extNodes = setdiff(network.full_system, subsystem);
+0023 <span class="keyword">else</span>
+0024     extNodes = [];
+0025 <span class="keyword">end</span>   
+0026 
+0027 <span class="comment">%% unpartitioned transition repertoire</span>
+0028 current = sum(2.^(numerator-1))+1; past = sum(2.^(denom_past-1))+1; future = sum(2.^(denom_future-1))+1;
+0029 
+0030 <span class="keyword">if</span> isempty(BRs{current,past})
+0031     BRs{current,past} = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(network.nodes,numerator,denom_past,whole_sys_state,<span class="string">'backward'</span>,extNodes,network.past_state);
+0032 <span class="keyword">end</span>
+0033 prob_bw = BRs{current,past};
+0034 
+0035 <span class="keyword">if</span> isempty(FRs{current,future})
+0036     FRs{current,future} = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(network.nodes,numerator,denom_future,whole_sys_state,<span class="string">'forward'</span>,extNodes);
+0037 <span class="keyword">end</span>
+0038 prob_fw = FRs{current,future};
+0039 
+0040 
+0041 prob = cell(2,1);
+0042 prob{1} = prob_bw(:);
+0043 prob{2} = prob_fw(:);
+0044 
+0045 <span class="comment">%% more than one</span>
+0046 <span class="keyword">if</span> num_nodes_denom_past ~= 0
+0047     [denom_past_partitions_1 denom_past_partitions_2 num_denom_partitions] = <a href="bipartition.html" class="code" title="function [B1 B2 N_b] = bipartition(X,N_max,op)">bipartition</a>(denom_past,num_nodes_denom_past); <span class="comment">% partition of denom_past</span>
+0048 <span class="keyword">else</span>
+0049     denom_past_partitions_1{1} = []; denom_past_partitions_2{1} = []; num_denom_partitions = 1;
+0050 <span class="keyword">end</span>
+0051 [num_numerator_partitions1 num_numerator_partitions2 num_numerator_partitions] = <a href="bipartition.html" class="code" title="function [B1 B2 N_b] = bipartition(X,N_max,op)">bipartition</a>(numerator,num_nodes_numerator,1); <span class="comment">% partition of numerator</span>
+0052 
+0053 MIP = cell(2,2,2);
+0054 phi_MIP = zeros(1,2);
+0055 prob_prod_MIP = cell(2,1);
+0056 
+0057 phi_cand = zeros(num_denom_partitions,num_numerator_partitions,2,2);
+0058 prob_prod_vec = cell(num_denom_partitions,num_numerator_partitions,2);
+0059 
+0060 <span class="keyword">for</span> bf = 1:2 <span class="comment">% past and future</span>
+0061   phi_zero_found = 0;  
+0062 <span class="keyword">for</span> i = 1:num_denom_partitions <span class="comment">% past or future</span>
+0063     denom_part1 = denom_past_partitions_1{i};
+0064     denom_part2 = denom_past_partitions_2{i};
+0065 
+0066     <span class="keyword">for</span> j = 1:num_numerator_partitions <span class="comment">% present</span>
+0067         numerator_part1 = num_numerator_partitions1{j};
+0068         numerator_part2 = num_numerator_partitions2{j};
+0069         
+0070         Norm = <a href="Normalization.html" class="code" title="function Norm = Normalization(xp_1,xp_2,numerator_part1,numerator_part2,xf_1,xf_2)">Normalization</a>(denom_part1,denom_part2,numerator_part1,numerator_part2);
+0071        
+0072         current_1 = sum(2.^(numerator_part1-1))+1;
+0073         current_2 = sum(2.^(numerator_part2-1))+1;
+0074         other_1 = sum(2.^(denom_part1-1))+1;
+0075         other_2 = sum(2.^(denom_part2-1))+1;
+0076 
+0077             <span class="keyword">if</span> Norm ~= 0
+0078 
+0079                 <span class="keyword">if</span> bf == 1
+0080                     <span class="keyword">if</span> isempty(BRs{current_1,other_1})
+0081                             BRs{current_1,other_1} = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(network.nodes,numerator_part1,denom_part1,whole_sys_state,<span class="string">'backward'</span>,extNodes,network.past_state);
+0082                     <span class="keyword">end</span>
+0083                     prob_p1 = BRs{current_1,other_1};
+0084 
+0085                     <span class="keyword">if</span> isempty(BRs{current_2,other_2})
+0086                             BRs{current_2,other_2} = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(network.nodes,numerator_part2,denom_part2,whole_sys_state,<span class="string">'backward'</span>,extNodes,network.past_state);
+0087                     <span class="keyword">end</span>
+0088                     prob_p2 = BRs{current_2,other_2};
+0089 
+0090                 <span class="keyword">else</span>
+0091 
+0092                     <span class="keyword">if</span> isempty(FRs{current_1,other_1})
+0093                         FRs{current_1,other_1} = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(network.nodes,numerator_part1,denom_part1,whole_sys_state,<span class="string">'forward'</span>,extNodes);
+0094                     <span class="keyword">end</span>
+0095                     prob_p1 = FRs{current_1,other_1};
+0096 
+0097                     <span class="keyword">if</span> isempty(FRs{current_2,other_2})
+0098                         FRs{current_2,other_2} = <a href="comp_pers_cpt.html" class="code" title="function perspective = comp_pers_cpt(nodes,num_nodes_indices,denom_nodes_indices,numerator_state,bf_option,extNodes,past_state, M1, M2, bfcut_option)">comp_pers_cpt</a>(network.nodes,numerator_part2,denom_part2,whole_sys_state,<span class="string">'forward'</span>,extNodes);
+0099                     <span class="keyword">end</span>
+0100                     prob_p2 = FRs{current_2,other_2};
+0101 
+0102                 <span class="keyword">end</span>
+0103                 
+0104                     <span class="keyword">if</span> isempty(prob_p1)
+0105                         prob_p = prob_p2(:);
+0106                     <span class="keyword">elseif</span> isempty(prob_p2)
+0107                         prob_p = prob_p1(:);
+0108                     <span class="keyword">else</span>
+0109                         prob_p_test = bsxfun(@times,prob_p1,prob_p2);
+0110                         prob_p = prob_p_test(:);
+0111                     <span class="keyword">end</span>
+0112                 prob_prod_vec{i,j,bf} = prob_p;
+0113                 
+0114                 <span class="keyword">if</span> (op_small_phi == 0)
+0115                     phi = KLD(prob{bf},prob_p);
+0116                 <span class="keyword">elseif</span> op_small_phi == 1
+0117                     phi = <a href="L1norm.html" class="code" title="function D = L1norm(prob,prob2)">L1norm</a>(prob{bf},prob_p); 
+0118                 <span class="keyword">elseif</span> op_small_phi == 2
+0119                     <span class="comment">%phi = emd_hat_gd_metric_mex(prob{bf},prob_p,gen_dist_matrix(length(prob_p)));</span>
+0120                     phi = emd_hat_gd_metric_mex(prob{bf},prob_p,network.gen_dist_matrix(1:length(prob_p),1:length(prob_p)));                  
+0121                 <span class="keyword">elseif</span> (op_small_phi == 3) <span class="comment">%Larissa: add option 3: search with L1, if nonzero recalculate with EMD</span>
+0122                     phi = <a href="L1norm.html" class="code" title="function D = L1norm(prob,prob2)">L1norm</a>(prob{bf},prob_p);
+0123                 <span class="keyword">end</span>
+0124                 
+0125             <span class="keyword">else</span>
+0126                 prob_prod_vec{i,j,bf} = [];
+0127                 phi = Inf;
+0128             <span class="keyword">end</span>
+0129             
+0130             <span class="keyword">if</span> phi == 0
+0131                 phi_zero_found = 1;
+0132                 <span class="keyword">break</span>
+0133             <span class="keyword">end</span>
+0134             
+0135             phi_cand(i,j,bf,1) = phi;
+0136             phi_cand(i,j,bf,2) = phi/Norm;
+0137     <span class="keyword">end</span>
+0138         <span class="keyword">if</span> phi_zero_found
+0139             <span class="keyword">break</span>
+0140         <span class="keyword">end</span>
+0141 <span class="keyword">end</span>
+0142     
+0143         <span class="keyword">if</span> phi_zero_found
+0144             phi_MIP(bf)  = 0;
+0145 
+0146         <span class="keyword">else</span>
+0147             <span class="keyword">if</span> (op_small_phi == 3) <span class="comment">%Recalculate those that are &gt; 0 with Emd</span>
+0148                 <span class="keyword">for</span> i = 1:num_denom_partitions
+0149                     <span class="keyword">for</span> j = 1:num_numerator_partitions
+0150                         <span class="comment">% only works without normalization as is</span>
+0151                         <span class="keyword">if</span> phi_cand(i,j,bf,1) ~= inf
+0152                             phi_cand(i,j,bf,1) = emd_hat_gd_metric_mex(prob{bf},prob_prod_vec{i,j,bf},network.gen_dist_matrix(1:length(prob_p),1:length(prob_p))); 
+0153                         <span class="keyword">end</span>
+0154                     <span class="keyword">end</span>
+0155                 <span class="keyword">end</span>
+0156             <span class="keyword">end</span>    
+0157             [phi_MIP(bf) i j] = <a href="#_sub2" class="code" title="subfunction [phi_min_choice, i_min, j_min] = min2(phi,phi_norm,op_normalize)">min2</a>(phi_cand(:,:,bf,1),phi_cand(:,:,bf,2),op_normalize);
+0158             prob_prod_MIP{bf} = prob_prod_vec{i,j,bf};
+0159 
+0160             MIP{1,1,bf} = denom_past_partitions_1{i};
+0161             MIP{2,1,bf} = denom_past_partitions_2{i};
+0162             MIP{1,2,bf} = num_numerator_partitions1{j};
+0163             MIP{2,2,bf} = num_numerator_partitions2{j};
+0164         <span class="keyword">end</span>
+0165 <span class="keyword">end</span>
+0166 
+0167 <span class="keyword">if</span> op_parfor == 2 &amp;&amp; op_extNodes == 0
+0168     network.BRs{<a href="subsystem2index.html" class="code" title="function index = subsystem2index(subsystem)">subsystem2index</a>(subsystem)} = BRs;
+0169     network.FRs{<a href="subsystem2index.html" class="code" title="function index = subsystem2index(subsystem)">subsystem2index</a>(subsystem)} = FRs;
+0170 <span class="keyword">else</span>    
+0171     network.BRs = BRs;
+0172     network.FRs = FRs;
+0173 <span class="keyword">end</span>
+0174 <span class="keyword">end</span>
+0175 
+0176 <a name="_sub1" href="#_subfunctions" class="code">function [X_min i_min j_min k_min] = min3(X,X2,op_normalize)</a>
+0177 X_min = Inf; <span class="comment">% minimum of normalized phi (or unnormalized if op_normalize == 0)</span>
+0178 X_min2 = Inf; <span class="comment">% minimum of phi</span>
+0179 i_min = 1;
+0180 j_min = 1;
+0181 k_min = 1;
+0182 
+0183 <span class="keyword">if</span> (op_normalize == 1)
+0184     <span class="keyword">for</span> i=1: size(X,1)
+0185         <span class="keyword">for</span> j=1: size(X,2)
+0186             <span class="keyword">for</span> k=1: size(X,3)
+0187                 <span class="keyword">if</span> X(i,j,k) &lt;= X_min &amp;&amp; X2(i,j,k) &lt;= X_min2
+0188                     X_min = X(i,j,k);
+0189                     X_min2 = X2(i,j,k);
+0190                     i_min = i;
+0191                     j_min = j;
+0192                     k_min = k;
+0193                 <span class="keyword">end</span>            
+0194             <span class="keyword">end</span>
+0195         <span class="keyword">end</span>
+0196     <span class="keyword">end</span>
+0197 <span class="keyword">else</span>
+0198     <span class="keyword">for</span> i=1: size(X,1)
+0199         <span class="keyword">for</span> j=1: size(X,2)
+0200             <span class="keyword">for</span> k=1: size(X,3)
+0201                 <span class="keyword">if</span> X2(i,j,k) &lt;= X_min
+0202     <span class="comment">%                 X_min = X(i,j,k);</span>
+0203                     X_min = X2(i,j,k);
+0204                     i_min = i;
+0205                     j_min = j;
+0206                     k_min = k;
+0207                 <span class="keyword">end</span>            
+0208             <span class="keyword">end</span>
+0209         <span class="keyword">end</span>
+0210     <span class="keyword">end</span>
+0211 <span class="keyword">end</span>
+0212 <span class="keyword">end</span>
+0213 
+0214 
+0215 <a name="_sub2" href="#_subfunctions" class="code">function [phi_min_choice, i_min, j_min] = min2(phi,phi_norm,op_normalize)</a>
+0216 phi_norm_min = Inf; <span class="comment">% minimum of normalized phi</span>
+0217 phi_min = Inf; <span class="comment">% minimum of phi</span>
+0218 i_min = 1;
+0219 j_min = 1;
+0220 epsilon = 10^-10;
+0221 
+0222 <span class="keyword">if</span> (op_normalize == 1 || op_normalize == 2)
+0223     <span class="keyword">for</span> i=1: size(phi,1)
+0224         <span class="keyword">for</span> j=1: size(phi,2)
+0225 <span class="comment">%             if phi_norm(i,j) &lt;= phi_norm_min &amp;&amp; phi(i,j) &lt;= phi_min</span>
+0226             dif = phi_norm_min - phi_norm(i,j); 
+0227             <span class="keyword">if</span> dif &gt; epsilon || abs(dif) &lt; epsilon  <span class="comment">%Larissa: instead of phi &lt;= phi_min</span>
+0228                 phi_min = phi(i,j);
+0229                 phi_norm_min = phi_norm(i,j);
+0230                 i_min = i;
+0231                 j_min = j;
+0232             <span class="keyword">end</span>
+0233         <span class="keyword">end</span>
+0234     <span class="keyword">end</span>
+0235 <span class="keyword">else</span>
+0236     <span class="keyword">for</span> i=1: size(phi,1)
+0237         <span class="keyword">for</span> j=1: size(phi,2)
+0238             dif = phi_min - phi(i,j); 
+0239             <span class="keyword">if</span> dif &gt; epsilon || abs(dif) &lt; epsilon
+0240                 phi_min = phi(i,j);
+0241                 phi_norm_min = phi_norm(i,j);
+0242                 i_min = i;
+0243                 j_min = j;
+0244             <span class="keyword">end</span>
+0245         <span class="keyword">end</span>
+0246     <span class="keyword">end</span>
+0247 <span class="keyword">end</span>
+0248 
+0249 <span class="keyword">if</span> (op_normalize == 0 || op_normalize == 1)
+0250     phi_min_choice = phi_min;
+0251 <span class="keyword">else</span>
+0252     phi_min_choice = phi_norm_min;
+0253 <span class="keyword">end</span>
+0254 
+0255 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

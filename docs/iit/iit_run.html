@@ -1,0 +1,334 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of iit_run</title>
+  <meta name="keywords" content="iit_run">
+  <meta name="description" content="IIT_RUN Computes concepts, small and big phi, and partition information">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; iit_run.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>iit_run
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>IIT_RUN Computes concepts, small and big phi, and partition information</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function iit_run(tpm, in_connect_mat, current_state, in_noise, in_options, in_nodes, past_state) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> IIT_RUN Computes concepts, small and big phi, and partition information
+ for all subsets of a system (exluding the empty set) over a binary network.
+
+   IIT_RUN(TPM, connect_mat, CURRENT_STATE, NOISE, OPTIONS) takes a TPM in
+   state X node form, that is TPM(i,j) is the probability node_i = 1 at 
+   time t+1 given that the system is in state j at time t. connect_mat is the
+   connectivity matrix of the network such that connect_mat(i,j) = 1 when j has a
+   directed edge to i, and connect_mat(i,j) = 0 otherwise. current_state is the
+   state of the system at time t (only used if the options are not set to
+   compute over all states). NOISE is a global noise put on all
+   outgoing messages and must take a value on the interval [0,.5]. OPTIONS
+   is a structure of options for the algoirthm created using the
+   set_options function
+
+   see also set_options</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="big_phi_all.html" class="code" title="function [Big_phi_M phi_M prob_M subsets MIP_M M_IRR_M network MIP_M_subsys] = big_phi_all(network,whole_sys_state)">big_phi_all</a>	compute Big-phi in every possible subset</li><li><a href="big_phi_comp_fb.html" class="code" title="function [Big_phi phi_all_values prob_cell MIP M_IRR network] = big_phi_comp_fb(subsystem,whole_sys_state,network)">big_phi_comp_fb</a>	%  compute big phi for a subset, subsystem</li><li><a href="complex_search.html" class="code" title="function [Big_phi_MIP MIP Complex M_i_max BFCut Big_phi_MIP_M MIP_M Big_phi_MIP_all_M MIP_all_M BFCut_M] = complex_search(Big_phi_M,M_cell,M_IRR_M,N,prob_M, phi_M,options,concept_MIP_M,network)">complex_search</a>	% Find complex</li><li><a href="dec2multibase.html" class="code" title="function [multidec_array] = dec2multibase(value,state_size_vec)">dec2multibase</a>	TRANS2(VALUE,STATE_SIZE_VEC) returns an array of LENGTH 0's and 1's, representing</li><li><a href="gen_dist_matrix.html" class="code" title="function D = gen_dist_matrix(N)">gen_dist_matrix</a>	generates the distance matrix between vertices which can be used as</li><li><a href="iit_explorer.html" class="code" title="function varargout = iit_explorer(varargin)">iit_explorer</a>	IIT_EXPLORER MATLAB code for iit_explorer.fig</li><li><a href="partial_prob_comp.html" class="code" title="function prob = partial_prob_comp(x0_b,x1_b,x1,p,b_table,op_fb,M,C_j)">partial_prob_comp</a>	compute the conditional probability p(x0_b | x1_b)</li><li><a href="trans2.html" class="code" title="function [binary] = trans2(value,length)">trans2</a>	TRANS2(VALUE,LENGTH) returns an array of LENGTH 0's and 1's, representing</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="iit.html" class="code" title="function varargout = iit(varargin)">iit</a>	VERSION v0.04 - 11.14.2012</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function iit_run(tpm, in_connect_mat, current_state, in_noise, in_options, in_nodes, past_state)</a>
+0002 <span class="comment">% IIT_RUN Computes concepts, small and big phi, and partition information</span>
+0003 <span class="comment">% for all subsets of a system (exluding the empty set) over a binary network.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%   IIT_RUN(TPM, connect_mat, CURRENT_STATE, NOISE, OPTIONS) takes a TPM in</span>
+0006 <span class="comment">%   state X node form, that is TPM(i,j) is the probability node_i = 1 at</span>
+0007 <span class="comment">%   time t+1 given that the system is in state j at time t. connect_mat is the</span>
+0008 <span class="comment">%   connectivity matrix of the network such that connect_mat(i,j) = 1 when j has a</span>
+0009 <span class="comment">%   directed edge to i, and connect_mat(i,j) = 0 otherwise. current_state is the</span>
+0010 <span class="comment">%   state of the system at time t (only used if the options are not set to</span>
+0011 <span class="comment">%   compute over all states). NOISE is a global noise put on all</span>
+0012 <span class="comment">%   outgoing messages and must take a value on the interval [0,.5]. OPTIONS</span>
+0013 <span class="comment">%   is a structure of options for the algoirthm created using the</span>
+0014 <span class="comment">%   set_options function</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">%   see also set_options</span>
+0017 
+0018 <span class="keyword">if</span> nargin &lt; 7
+0019     past_state = [];
+0020 <span class="keyword">end</span>    
+0021 <span class="comment">%% parallel computing</span>
+0022 <span class="comment">% in_options(9) = 0;</span>
+0023 <span class="comment">% if a pool is open, close it</span>
+0024 <span class="keyword">if</span> matlabpool(<span class="string">'size'</span>)
+0025     matlabpool close force;
+0026 <span class="keyword">end</span>
+0027 
+0028 <span class="comment">% if parallel option is on, open a new pool</span>
+0029 op_parallel = in_options(1);
+0030 op_PHIconcept_fig = 0;
+0031 op_extNodes = in_options(11);
+0032 <span class="keyword">if</span> op_parallel
+0033     matlabpool;
+0034 <span class="keyword">end</span>
+0035 <span class="comment">%% begin timer and disp notification</span>
+0036 tic
+0037 
+0038 fprintf(<span class="string">'\nRunning...\n\n'</span>)
+0039 
+0040 <span class="comment">%% initialize data</span>
+0041 
+0042 <span class="comment">% get num_nodes, the number of nodes in the whole system</span>
+0043 <span class="comment">% note that in_nodes is the number of nodes in the GRAPH = 2*num_nodes</span>
+0044 num_nodes = length(in_nodes)/2;
+0045 
+0046 network.connect_mat = in_connect_mat;
+0047 network.options = in_options;
+0048 network.nodes = in_nodes;
+0049 network.num_nodes = num_nodes;
+0050 network.tpm = tpm;
+0051 network.full_system = 1:num_nodes;
+0052 network.num_subsets = 2^num_nodes;
+0053 network.current_state = current_state;
+0054 network.past_state = past_state;
+0055 network.num_states = prod([network.nodes(network.full_system).num_states]);
+0056 
+0057 <span class="comment">% get rid of everyting below</span>
+0058 output_data.tpm = tpm;
+0059 output_data.J = network.connect_mat;
+0060 output_data.current_state = current_state;
+0061 output_data.noise = in_noise;
+0062 output_data.options = network.options;
+0063 output_data.num_nodes = num_nodes;
+0064 
+0065 <span class="comment">% output_data.tpm = tpm;</span>
+0066 <span class="comment">% output_data.current_state = current_state;</span>
+0067 network.noise = in_noise;
+0068 <span class="comment">% output_data.num_nodes = num_nodes;</span>
+0069 
+0070 <span class="comment">% binary table and states list</span>
+0071 <span class="comment">% need to rethink use of b_table when allowing for more than binary nodes</span>
+0072 network.b_table = cell(network.num_subsets,network.num_nodes);
+0073 <span class="keyword">for</span> i = network.full_system
+0074     <span class="keyword">for</span> j = 1:2^i
+0075         network.b_table{j,i} = <a href="trans2.html" class="code" title="function [binary] = trans2(value,length)">trans2</a>(j-1,i);
+0076     <span class="keyword">end</span>
+0077 <span class="keyword">end</span>
+0078 
+0079 network.states = zeros(network.num_nodes,network.num_states);
+0080 <span class="keyword">for</span> i = 0:network.num_states - 1
+0081     network.states(:,i+1) = <a href="dec2multibase.html" class="code" title="function [multidec_array] = dec2multibase(value,state_size_vec)">dec2multibase</a>(i,[network.nodes(network.full_system).num_states]);
+0082 <span class="keyword">end</span>
+0083 
+0084 <span class="keyword">if</span> network.options(4) &gt;= 2 || network.options(5) == 2
+0085     network.gen_dist_matrix = <a href="gen_dist_matrix.html" class="code" title="function D = gen_dist_matrix(N)">gen_dist_matrix</a>(network.num_states);
+0086 <span class="keyword">end</span>    
+0087 
+0088 <span class="comment">%% setup main function call</span>
+0089 <span class="comment">% determine if we are averaging over all states or just one</span>
+0090 op_average = network.options(2);
+0091 <span class="keyword">if</span> op_average == 0
+0092     state_max = 1;
+0093 <span class="comment">%     network.states(:,1) = current_state;</span>
+0094 <span class="keyword">else</span>
+0095     state_max = network.num_states;
+0096 <span class="keyword">end</span>
+0097 
+0098 <span class="comment">% we should deal with different arguments not being included</span>
+0099 <span class="comment">% if nargin == 4</span>
+0100 <span class="comment">%     connect_mat = ones(num_nodes);</span>
+0101 <span class="comment">% elseif nargin == 5</span>
+0102 <span class="comment">%     connect_mat = in_connect_mat;</span>
+0103 <span class="comment">% end</span>
+0104 
+0105 <span class="comment">% find main complex (do system partitions)</span>
+0106 op_complex = network.options(3);
+0107 
+0108 
+0109 <span class="comment">% init output structs - NEW WAY!</span>
+0110 <span class="comment">% output_data.results.state(state_max).subsystem.Phi = 0;</span>
+0111 
+0112 
+0113 <span class="comment">% init cell arrays for results - OLD WAY</span>
+0114 Big_phi_M_st = cell(state_max,1);
+0115 Big_phi_MIP_st = cell(state_max,1);
+0116 MIP_st = cell(state_max,1);
+0117 Complex_st = cell(state_max,1);
+0118 prob_M_st = cell(state_max,1);
+0119 phi_M_st = cell(state_max,1);
+0120 concept_MIP_M_st = cell(state_max,1);
+0121 complex_MIP_M_st = cell(state_max,1);
+0122 Big_phi_MIP_all_M_st = cell(state_max,1);
+0123 complex_MIP_all_M_st = cell(state_max,1);
+0124 purviews_M_st = cell(state_max,1);
+0125 BFCut_st = cell(state_max,1);
+0126 BFCut_M_st = cell(state_max,1);
+0127 M_cell = cell(network.num_subsets-1,1);
+0128 
+0129 <span class="comment">%% main loop over states</span>
+0130 
+0131 <span class="comment">% for each state</span>
+0132 <span class="keyword">for</span> z = 1:state_max
+0133       
+0134     <span class="keyword">if</span> op_average
+0135         this_state = network.states(:,z);
+0136     <span class="keyword">else</span>
+0137         this_state = current_state;
+0138     <span class="keyword">end</span>
+0139     
+0140     <span class="comment">% init backward rep and forward reps for each state</span>
+0141     network.BRs = cell(network.num_subsets); <span class="comment">% backward repertoire</span>
+0142     network.FRs = cell(network.num_subsets); <span class="comment">% forward repertoire</span>
+0143         
+0144     fprintf([<span class="string">'State: '</span> num2str(this_state') <span class="string">'\n'</span>])
+0145    
+0146     <span class="comment">% is it possible to reach this state</span>
+0147     check_prob = <a href="partial_prob_comp.html" class="code" title="function prob = partial_prob_comp(x0_b,x1_b,x1,p,b_table,op_fb,M,C_j)">partial_prob_comp</a>(network.full_system,network.full_system,this_state,tpm,network.b_table,1); <span class="comment">% last argument is op_fb = 1;</span>
+0148     state_reachable = sum(check_prob);
+0149     
+0150     <span class="keyword">if</span> ~state_reachable
+0151         
+0152         fprintf(<span class="string">'\tThis state cannot be realized...\n'</span>)
+0153         
+0154         Big_phi_M_st{z} = NaN;
+0155         Big_phi_MIP_st{z} = NaN;
+0156     
+0157     <span class="keyword">else</span>
+0158         
+0159         fprintf(<span class="string">'\tComputing state...\n'</span>)      
+0160  
+0161         <span class="keyword">if</span> op_complex == 0 <span class="comment">%Larissa: Quick and dirty fix, so that it can be loaded into GUI</span>
+0162 
+0163             <span class="comment">% compute big phi in every possible subset</span>
+0164             Big_phi_M = zeros(network.num_states-1,1); <span class="comment">% Big_phi for each subset except the empty set</span>
+0165             phi_M = cell(network.num_states-1,1);
+0166             prob_M = cell(network.num_states-1,2); 
+0167             concept_MIP_M = cell(network.num_states-1,1); <span class="comment">% the partition that gives Big_phi_MIP for each subset</span>
+0168             purviews_M = cell(network.num_states-1,1);
+0169             M_cell= cell(network.num_states-1,1);
+0170             
+0171             M_cell{end} = network.full_system;
+0172             
+0173             [Big_phi_M(end) phi_M{end} prob_cell concept_MIP_M{end} purviews_M{end}] = <a href="big_phi_comp_fb.html" class="code" title="function [Big_phi phi_all_values prob_cell MIP M_IRR network] = big_phi_comp_fb(subsystem,whole_sys_state,network)">big_phi_comp_fb</a>(network.full_system,this_state,network);
+0174             toc
+0175             <span class="comment">% concept distributions</span>
+0176             prob_M(<span class="keyword">end</span>,:) = prob_cell(:); <span class="comment">% first layer is subset, second is purview, third is backward/forward</span>
+0177             
+0178         <span class="comment">% find the complex</span>
+0179         <span class="keyword">elseif</span> op_complex == 1
+0180            
+0181             [Big_phi_M phi_M prob_M M_cell concept_MIP_M purviews_M network concept_MIP_M_subs] = <a href="big_phi_all.html" class="code" title="function [Big_phi_M phi_M prob_M subsets MIP_M M_IRR_M network MIP_M_subsys] = big_phi_all(network,whole_sys_state)">big_phi_all</a>(network, this_state); <span class="comment">%Larissa: this_state should be obsolete as it is in network</span>
+0182             
+0183         <span class="keyword">end</span>                                                      
+0184         <span class="comment">% complex search</span>
+0185         [Big_phi_MIP MIP Complex M_i_max BFCut Big_phi_MIP_M complex_MIP_M Big_phi_MIP_all_M complex_MIP_M_all BFCut_M] = <span class="keyword">...</span>
+0186             <a href="complex_search.html" class="code" title="function [Big_phi_MIP MIP Complex M_i_max BFCut Big_phi_MIP_M MIP_M Big_phi_MIP_all_M MIP_all_M BFCut_M] = complex_search(Big_phi_M,M_cell,M_IRR_M,N,prob_M, phi_M,options,concept_MIP_M,network)">complex_search</a>(Big_phi_M,M_cell, purviews_M, network.num_nodes,prob_M,phi_M,network.options,concept_MIP_M,network);
+0187 
+0188         Big_phi_M_st{z} = Big_phi_M;
+0189 <span class="comment">%             output_data.results.state(z).Phi = Big_phi_M;</span>
+0190         Big_phi_MIP_st{z} = Big_phi_MIP_M;
+0191 <span class="comment">%             output_data.results.state(z).Phi_MIP = Phi_MIP;</span>
+0192         <span class="comment">% it looks like MIP is never used</span>
+0193         MIP_st{z} = MIP;
+0194 
+0195         Complex_st{z} = Complex;
+0196 <span class="comment">%             output_data.results(z).complex_set = complex_set;</span>
+0197 
+0198         prob_M_st{z} = prob_M;
+0199 <span class="comment">%             output_data.results(z).concepts = concepts;</span>
+0200 
+0201         phi_M_st{z} = phi_M;
+0202 
+0203         BFCut_st{z} = BFCut; <span class="comment">%M1-&gt;M2 noised, or M1&lt;-M2</span>
+0204         BFCut_M_st{z} = BFCut_M;
+0205 
+0206         <span class="comment">% For removals, the concepts don't yet have the right node</span>
+0207         <span class="comment">% names</span>
+0208         <span class="keyword">if</span> op_extNodes == 1
+0209            <span class="keyword">for</span> i = 1:size(Big_phi_M,1)-1 <span class="comment">%all except full system</span>
+0210                <span class="keyword">if</span> ~isempty(network.removal_networks{i})
+0211                     this_subset = network.removal_networks{i}.this_subset;
+0212                     <span class="keyword">for</span> j = 1:size(purviews_M{i},1)
+0213                         purviews_M{i}{j} = this_subset(purviews_M{i}{j});
+0214                     <span class="keyword">end</span>    
+0215                 <span class="keyword">end</span>
+0216            <span class="keyword">end</span>
+0217            concept_MIP_M = {concept_MIP_M_subs{1:end-1} concept_MIP_M{end}};
+0218          <span class="keyword">end</span>    
+0219 
+0220         concept_MIP_M_st{z} = concept_MIP_M;
+0221         complex_MIP_M_st{z} = complex_MIP_M;
+0222         Big_phi_MIP_all_M_st{z} = Big_phi_MIP_all_M;
+0223         complex_MIP_all_M_st{z} = complex_MIP_M_all;
+0224         purviews_M_st{z} = purviews_M;
+0225 
+0226         <span class="comment">%BFcut not in rewrap_data, but then we need to restructure this</span>
+0227         <span class="comment">%anyways</span>
+0228         <span class="comment">%output_data.results.state(z) = rewrap_data(Big_phi_M, phi_M, prob_M, M_cell, concept_MIP_M, purviews_M,...</span>
+0229         <span class="comment">%            Big_phi_MIP, MIP, Complex, M_i_max,  Big_phi_MIP_M, complex_MIP_M, Big_phi_MIP_all_M, complex_MIP_M_all);</span>
+0230 
+0231         <span class="keyword">if</span> op_PHIconcept_fig ==1 
+0232             [CutDistr] = PHI_Cut_concepts(Complex,MIP{1},BFCut,purviews_M, prob_M, phi_M,concept_MIP_M, network); 
+0233         <span class="keyword">end</span>                           
+0234     <span class="keyword">end</span>
+0235 <span class="keyword">end</span>
+0236 
+0237 <span class="comment">%% store output data</span>
+0238 
+0239 output_data.network = network;
+0240 
+0241 output_data.Big_phi_M = Big_phi_M_st;
+0242 output_data.Big_phi_MIP = Big_phi_MIP_st;
+0243 output_data.BFCut = BFCut_st;
+0244 <span class="comment">% KILL THIS ONE BELOW</span>
+0245 output_data.MIP = MIP_st;
+0246 output_data.Complex = Complex_st;
+0247 output_data.concepts_M = prob_M_st;
+0248 output_data.small_phi_M = phi_M_st;
+0249 output_data.concept_MIP_M = concept_MIP_M_st;
+0250 output_data.complex_MIP_M = complex_MIP_M_st;
+0251 output_data.M_cell = M_cell;
+0252 output_data.Big_phi_MIP_all_M = Big_phi_MIP_all_M_st;
+0253 output_data.complex_MIP_all_M = complex_MIP_all_M_st;
+0254 output_data.purviews_M = purviews_M_st;
+0255 output_data.BFCut_M = BFCut_M_st;
+0256 
+0257 
+0258 <span class="comment">%% finish &amp; cleanup: stop timer, save data, open explorer gui, close matlabpool</span>
+0259 toc
+0260 
+0261 fprintf(<span class="string">'Loading GUI... \n'</span>);
+0262 
+0263 <span class="comment">%The tag is only necessary for large networks and then it is very big anyways</span>
+0264 <span class="comment">%save('last_run_output.mat','output_data','-v7.3');</span>
+0265 save(<span class="string">'last_run_output.mat'</span>,<span class="string">'output_data'</span>);
+0266 <span class="comment">% save('save_test1.mat','output_data');</span>
+0267 <span class="comment">% save('save_test2.mat','output_data','-v7.3');</span>
+0268 
+0269 <a href="iit_explorer.html" class="code" title="function varargout = iit_explorer(varargin)">iit_explorer</a>(output_data)
+0270 
+0271 <span class="keyword">if</span> op_parallel
+0272     matlabpool close force;
+0273 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of KLD_old</title>
+  <meta name="keywords" content="KLD_old">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; KLD_old.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>KLD_old
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [H H1 H2] = KLD(prob,prob2) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [H H1 H2] = KLD(prob,prob2)</a>
+0002 
+0003 <span class="keyword">if</span> any((prob ~= 0) .* (prob2 == 0))
+0004     warning(<span class="string">'KL-Divergence may not be correct because prob(i) ~= 0 and prob2(i) == 0 for some i'</span>);
+0005 <span class="keyword">end</span>
+0006 
+0007 prob2(prob2==0) = 1; <span class="comment">% avoid log0 when computing entropy</span>
+0008 H1 = - sum(prob.*log2(prob2)) ;
+0009 
+0010 prob(prob==0) = 1;
+0011 H2 = - sum(prob.*log2(prob));
+0012 H = H1 - H2;
+0013 
+0014 
+0015 <span class="comment">% prob2 = prob2 + eps; % avoid log0 when computing entropy</span>
+0016 <span class="comment">% H1 = - sum(prob.*log2(prob2)) ;</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% prob = prob + eps;</span>
+0019 <span class="comment">% H2 = - sum(prob.*log2(prob));</span>
+0020 <span class="comment">% H = H1 - H2;</span>
+0021</pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

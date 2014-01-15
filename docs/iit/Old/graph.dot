@@ -1,0 +1,7 @@
+/* Created by mdot for Matlab */
+digraph m2html {
+
+  partial_prob_forward [URL="partial_prob_forward.html"];
+  patial_prob_comp_bf [URL="patial_prob_comp_bf.html"];
+  simplex_volume [URL="simplex_volume.html"];
+}

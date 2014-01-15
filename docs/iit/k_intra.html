@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of k_intra</title>
+  <meta name="keywords" content="k_intra">
+  <meta name="description" content="% compute Intradistance for a distribution">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; k_intra.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>k_intra
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>% compute Intradistance for a distribution</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [intra] = k_intra(P) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">% compute Intradistance for a distribution
+ P: Distribution</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="k_distance.html" class="code" title="function [k_diff, intra_1, intra_2, inter] = k_distance(P,Q)">k_distance</a>	% compute Intra and interdistance based on the Kernel idea, for distributions</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [intra] = k_intra(P)</a>
+0002 
+0003 <span class="comment">%% compute Intradistance for a distribution</span>
+0004 <span class="comment">% P: Distribution</span>
+0005 
+0006 <span class="comment">%%</span>
+0007 op_square_root = 0;  <span class="comment">%0: no square root; 1: square root, divide by N</span>
+0008 
+0009 N=length(P);
+0010 
+0011 <span class="comment">% if N &lt;= 5</span>
+0012     
+0013 <span class="comment">%         tic</span>
+0014     A = repmat((0:N-1)',1,N);
+0015     B = A';
+0016     hamming_distance_factors = sum(dec2bin(bitxor(A,B)) == <span class="string">'1'</span>,2);
+0017 
+0018     distribution_products = P * P';
+0019     distribution_products = distribution_products(:);
+0020 
+0021     intra = sum(distribution_products .* hamming_distance_factors)/2;
+0022 
+0023 <span class="comment">%     toc</span>
+0024 
+0025 <span class="comment">% else</span>
+0026 <span class="comment">% tic</span>
+0027 <span class="comment">%     tot = 0;</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%     if op_square_root==1</span>
+0030 <span class="comment">%         for i=1:N</span>
+0031 <span class="comment">%            for j =(i+1) : N</span>
+0032 <span class="comment">%                    tot = tot + sum(dec2bin(bitxor(i-1,j-1)) == '1') * sqrt(P(i)*P(j));</span>
+0033 <span class="comment">%            end</span>
+0034 <span class="comment">%         end</span>
+0035 <span class="comment">%         intra = tot/N;</span>
+0036 <span class="comment">%     else</span>
+0037 <span class="comment">%        for i=1:N</span>
+0038 <span class="comment">%            for j =(i+1) : N</span>
+0039 <span class="comment">%                     tot = tot + sum(dec2bin(bitxor(i-1,j-1)) == '1') * P(i)*P(j);</span>
+0040 <span class="comment">%            end</span>
+0041 <span class="comment">%        end</span>
+0042 <span class="comment">%        intra = tot</span>
+0043 <span class="comment">%     end</span>
+0044 <span class="comment">%     toc</span>
+0045 <span class="keyword">end</span>
+0046 <span class="comment">% end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

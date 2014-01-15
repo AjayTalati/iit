@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of genEMDDistanceMatrix</title>
+  <meta name="keywords" content="genEMDDistanceMatrix">
+  <meta name="description" content="wholeDists and cutDists are matrices of distributions (each column one">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">iit</a> &gt; genEMDDistanceMatrix.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for iit&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>genEMDDistanceMatrix
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>wholeDists and cutDists are matrices of distributions (each column one</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [Dist, indD] = genEMDDistanceMatrix(Dists, maxEnt, dist_mat) %past whole and cut distributions </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">wholeDists and cutDists are matrices of distributions (each column one
+distribution)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="MIP_search_reentry.html" class="code" title="function [Big_phi_MIP MIP Big_phi_cand MIP_cand BFCut] = MIP_search_reentry(subsystem,N,Big_phi_M,M_IRR_M,prob_M, phi_M,options, concept_MIP_M, network)">MIP_search_reentry</a>	%</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Dist, indD] = genEMDDistanceMatrix(Dists, maxEnt, dist_mat) </a><span class="comment">%past whole and cut distributions</span>
+0002 <span class="comment">%wholeDists and cutDists are matrices of distributions (each column one</span>
+0003 <span class="comment">%distribution)</span>
+0004 
+0005 <span class="keyword">for</span> pf = 1:2
+0006     wholeDists = [Dists(:,pf,1); maxEnt(:,pf)];
+0007     cutDists = [Dists(:,pf,2); maxEnt(:,pf)];
+0008 
+0009     <span class="comment">% should be equal!</span>
+0010     rows = size(wholeDists,1);
+0011     cols = size(cutDists,1); 
+0012     <span class="keyword">if</span> pf == 1
+0013         DistMat = zeros(rows, cols,2); 
+0014     <span class="keyword">end</span>    
+0015     <span class="keyword">for</span> i = 1:rows
+0016         <span class="keyword">for</span> j = 1:cols
+0017             DistMat(i,j,pf) = emd_hat_gd_metric_mex(wholeDists{i},cutDists{j},dist_mat(1:length(wholeDists{i}),1:length(wholeDists{i})));
+0018         <span class="keyword">end</span>    
+0019     <span class="keyword">end</span>
+0020 <span class="keyword">end</span>
+0021 Dist =  sum(DistMat,3); 
+0022 <span class="comment">%Larissa: The following does not give much increase in computation speed afterall</span>
+0023 indD = diag(Dist,0) ~= 0;
+0024 indD(end) = 1;
+0025 Dist = Dist(indD,indD);
+0026 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 14-Jan-2014 18:13:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
