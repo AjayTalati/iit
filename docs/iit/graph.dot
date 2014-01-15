@@ -1,9 +1,5 @@
 /* Created by mdot for Matlab */
 digraph m2html {
-  MIP_search -> expand_prob;
-  MIP_search -> mod_mat2str;
-  MIP_search -> pick_rest;
-  MIP_search -> trans_M;
   MIP_search_reentry -> L1norm;
   MIP_search_reentry -> comp_pers_cpt;
   MIP_search_reentry -> concept2index;
@@ -117,9 +113,7 @@ digraph m2html {
   trans_M -> trans10;
 
   IRR_points [URL="IRR_points.html"];
-  KLD_old [URL="KLD_old.html"];
   L1norm [URL="L1norm.html"];
-  MIP_search [URL="MIP_search.html"];
   MIP_search_reentry [URL="MIP_search_reentry.html"];
   Normalization [URL="Normalization.html"];
   Options_IIT [URL="Options_IIT.html"];
@@ -128,7 +122,6 @@ digraph m2html {
   bipartition [URL="bipartition.html"];
   combine [URL="combine.html"];
   comp_pers_cpt [URL="comp_pers_cpt.html"];
-  comp_pers_cpt_SxS [URL="comp_pers_cpt_SxS.html"];
   complex_search [URL="complex_search.html"];
   concept2index [URL="concept2index.html"];
   conceptscatter3D2D [URL="conceptscatter3D2D.html"];
@@ -137,10 +130,8 @@ digraph m2html {
   convert_logic_gates_removal [URL="convert_logic_gates_removal.html"];
   convi [URL="convi.html"];
   cpt_factory_tpm [URL="cpt_factory_tpm.html"];
-  cpt_factory_tpm_SxS [URL="cpt_factory_tpm_SxS.html"];
   cpt_removal_network [URL="cpt_removal_network.html"];
   dec2multibase [URL="dec2multibase.html"];
-  dec2multibase_array [URL="dec2multibase_array.html"];
   expand_prob [URL="expand_prob.html"];
   expand_prob_general [URL="expand_prob_general.html"];
   genEMDDistanceMatrix [URL="genEMDDistanceMatrix.html"];
@@ -157,13 +148,9 @@ digraph m2html {
   k_inter [URL="k_inter.html"];
   k_intra [URL="k_intra.html"];
   logic_gates [URL="logic_gates.html"];
-  make_TPM [URL="make_TPM.html"];
   make_title [URL="make_title.html"];
   make_title_fb [URL="make_title_fb.html"];
   mod_mat2str [URL="mod_mat2str.html"];
-  modaldlg [URL="modaldlg.html"];
-  mtit [URL="mtit.html"];
-  multibase2dec [URL="multibase2dec.html"];
   partial_prob_comp [URL="partial_prob_comp.html"];
   permute_stateXnode_tpm [URL="permute_stateXnode_tpm.html"];
   phi_comp_bORf [URL="phi_comp_bORf.html"];
@@ -175,9 +162,7 @@ digraph m2html {
   plot_REP [URL="plot_REP.html"];
   plot_partition_bar [URL="plot_partition_bar.html"];
   plot_phi [URL="plot_phi.html"];
-  plotquale [URL="plotquale.html"];
   prob_prod_comp [URL="prob_prod_comp.html"];
-  qualeplot [URL="qualeplot.html"];
   rewrap_data [URL="rewrap_data.html"];
   rotateXLabels [URL="rotateXLabels.html"];
   state2index [URL="state2index.html"];
@@ -185,5 +170,4 @@ digraph m2html {
   trans10 [URL="trans10.html"];
   trans2 [URL="trans2.html"];
   trans_M [URL="trans_M.html"];
-  union_edit [URL="union_edit.html"];
 }
