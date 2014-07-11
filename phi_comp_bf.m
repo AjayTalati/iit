@@ -117,7 +117,10 @@ for i = 1:num_denom_partitions % past or future
                     phi = L1norm(prob{bf},prob_p); 
                 elseif op_small_phi == 2
                     %phi = emd_hat_gd_metric_mex(prob{bf},prob_p,gen_dist_matrix(length(prob_p)));     
-                    phi = emd_hat_gd_metric_mex(prob{bf},prob_p,network.gen_dist_matrix(1:length(prob_p),1:length(prob_p)));                  
+                    phi = emd_hat_gd_metric_mex(prob{bf},prob_p,network.gen_dist_matrix(1:length(prob_p),1:length(prob_p)));     
+                    if phi < 10^-6; 
+                        phi = 0;
+                    end    
                 elseif (op_small_phi == 3) %Larissa: add option 3: search with L1, if nonzero recalculate with EMD
                     phi = L1norm(prob{bf},prob_p);
                 end
@@ -217,7 +220,7 @@ phi_norm_min = Inf; % minimum of normalized phi
 phi_min = Inf; % minimum of phi
 i_min = 1;
 j_min = 1;
-epsilon = 10^-10;
+epsilon = 10^-6;
 
 if (op_normalize == 1 || op_normalize == 2)
     for i=1: size(phi,1)

@@ -196,9 +196,9 @@ if any(strcmp(view_option,{'3D','2D3D'}))
         part(p_highlight_indices,state_ordering(3)),'Marker','o','MarkerEdgeColor','g','SizeData',100,'Clipping','on')
     hold on
 
-    xlabel(ax{ax_index},dec2bin(state_ordering(1)-1,num_nodes))
-    ylabel(ax{ax_index},dec2bin(state_ordering(2)-1,num_nodes))
-    zlabel(ax{ax_index},dec2bin(state_ordering(3)-1,num_nodes))
+    xlabel(ax{ax_index},strcat(int2str(index2state(state_ordering(1),2.*ones(1,num_nodes)))'))
+    ylabel(ax{ax_index},strcat(int2str(index2state(state_ordering(2),2.*ones(1,num_nodes)))'))
+    zlabel(ax{ax_index},strcat(int2str(index2state(state_ordering(3),2.*ones(1,num_nodes)))'))
 
 
     set(ax{ax_index},'xlimmode','manual','ylimmode','manual',...

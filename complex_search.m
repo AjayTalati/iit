@@ -67,14 +67,14 @@ end
 function [x_max i_max] = max_complex(x,M_cell)
 
 N = length(x);
-epsilon = 10^-10;
+epsilon = 10^-6;
 x_max = x(1);
 i_max = 1;
-for i = 2:N
+for i = 2:N %Larissa: This seems fishy
     if x(i) ~= 0
         dif = x_max - x(i);
         if abs(dif) < epsilon
-            if length(M_cell{i-1}) < length(M_cell{i})
+            if length(M_cell{i_max}) < length(M_cell{i})
                 x_max = x(i);
                 i_max = i;
             end

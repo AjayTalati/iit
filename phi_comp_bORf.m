@@ -293,7 +293,7 @@ phi_norm_min = Inf;
 phi_min = Inf;
 i_min = 1;
 j_min = 1;
-epsilon = 10^-10;
+epsilon = 10^-6;
 
 if (op_normalize == 1 || op_normalize == 2)
     for i=1: size(phi,1)

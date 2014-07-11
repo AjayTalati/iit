@@ -507,14 +507,19 @@ plot_choice = plot_choices{plot_choice_index};
 %cut system
 all_phi = [w_phi_concepts; parts_phi_concepts];
 
+%Larissa: Now here not in IF statement cause for oneShape I need both
+unconstrained_p = comp_pers_cpt(handles.data.network.nodes,[],subset,handles.data.network.current_state,'backward',[],handles.data.network.past_state);   
+unconstrained_f = comp_pers_cpt(handles.data.network.nodes,[],subset,handles.data.network.current_state,'forward',[],handles.data.network.past_state);
+unconstrained_p = unconstrained_p(:);
+unconstrained_f = unconstrained_f(:);
+
 if get(handles.past_future_list,'Value') == 1
     all_concepts = [w_concept_dists_p'; p_concept_dists_p'];
-    unconstrained = comp_pers_cpt(handles.data.network.nodes,[],subset,handles.data.network.current_state,'backward',[],handles.data.network.past_state);   
+    unconstrained = unconstrained_p;
 else
     all_concepts = [w_concept_dists_f'; p_concept_dists_f'];
-    unconstrained = comp_pers_cpt(handles.data.network.nodes,[],subset,handles.data.network.current_state,'forward',[],handles.data.network.past_state);
+    unconstrained = unconstrained_f;
 end
-unconstrained = unconstrained(:);
 
 %Larissa: For the moment all (Before it was only the ones that still exist)
 part_purviews = handles.data.purviews_M{state_index}{subset_index};
@@ -532,7 +537,7 @@ set(handles.mip_plot_panel,'Position',[0.14600231749710313,0.01160541586073501,0
 
 dim_choices = get(handles.state_selection_menu,'String');
 dim_choice = dim_choices{get(handles.state_selection_menu,'Value')};
-
+%plot_choice = 'One Shape'; %Larissa
 % display chosen plot view
 if strcmp(plot_choice,'3D & 2D Scatter')
 
@@ -566,6 +571,25 @@ elseif strcmp(plot_choice,'3D Scatter')
     set(handles.partition_panel_slider,'Visible','off')
     conceptscatter3D2D(all_concepts,size(w_concept_dists_p,2), handles.data.purviews_M{state_index}{subset_index},...
             part_purviews, highlight_indices, panel, '3D',dim_choice, all_phi, unconstrained);
+        
+	handles.export_plot = 0;
+    guidata(handles.iit_explorer,handles);
+    
+elseif strcmp(plot_choice,'One Shape')
+    
+    
+    if handles.export_plot
+        figure_handle = figure;
+        panel = uipanel('Parent',figure_handle);
+        set(handles.export_plot_button,'BackgroundColor',[0.9294    0.9294    0.9294]);
+    else
+        panel = handles.mip_plot_panel;
+    end
+
+    
+    set(handles.partition_panel_slider,'Visible','off')
+    plotQualiaOneShape(w_concept_dists_p, w_concept_dists_f, p_concept_dists_p, p_concept_dists_f, size(w_concept_dists_p,2), handles.data.purviews_M{state_index}{subset_index},...
+            part_purviews, highlight_indices, panel, dim_choice, all_phi, [unconstrained_p' unconstrained_f']);
         
 	handles.export_plot = 0;
     guidata(handles.iit_explorer,handles);
