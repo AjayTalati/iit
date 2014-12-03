@@ -32,10 +32,12 @@ parfor M_i = 1: 2^N-1
                                      MIP_search_reentry(M,N,Big_phi_M, M_IRR_M, prob_M, phi_M,options,concept_MIP_M, network);                                
     end                                 
     else
-        
-        Big_phi_MIP_M(M_i) = Big_phi_M(M_i);
+         % 08/23/2013 exclude self loops
+        Big_phi_MIP_M(M_i) = 0;
+        %Big_phi_MIP_M(M_i) = Big_phi_M(M_i);
         MIP_M{M_i} = M;
-        Big_phi_MIP_all_M{M_i} = Big_phi_M(M_i);
+        Big_phi_MIP_all_M{M_i} = 0;
+        %Big_phi_MIP_all_M{M_i} = Big_phi_M(M_i);
         MIP_all_M{M_i} = M;
         BFCut_M{M_i} = 0;
         

@@ -244,6 +244,14 @@ for i = 1:N
                     p = concept2index(sort([i,j,m,o]),[1:N]);
                     line(cell2mat([data(n,1) data(p,1)]), cell2mat([data(n,2) data(p,2)]), cell2mat([data(n,3) data(p,3)]), 'Color', [.7 .7 1] )
                     %line([data(n,1) data(p,1)], [data(n,2) data(p,2)], [data(n,3) data(p,3)], 'Color', [.7 .7 1] )
+                    for q = setdiff(1:N, [i,j,m,o])
+                        r = concept2index(sort([i,j,m,o,q]),[1:N]);
+                        line(cell2mat([data(n,1) data(r,1)]), cell2mat([data(n,2) data(r,2)]), cell2mat([data(n,3) data(r,3)]), 'Color', [.7 .7 1] )
+                        for s = setdiff(1:N, [i,j,m,o,q])
+                        t = concept2index(sort([i,j,m,o,q,s]),[1:N]);
+                        line(cell2mat([data(n,1) data(t,1)]), cell2mat([data(n,2) data(t,2)]), cell2mat([data(n,3) data(t,3)]), 'Color', [.7 .7 1] )
+                        end
+                    end
                 end
             end
         end    
