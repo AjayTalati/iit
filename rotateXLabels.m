@@ -193,7 +193,7 @@ end
         set( ax, 'ActivePositionProperty', 'OuterPosition' );
         
         % Make sure we find out if axes properties are changed
-        addListeners( ax );
+        % addListeners( ax );
         
     end % repositionAxes
 
