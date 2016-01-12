@@ -169,6 +169,7 @@ for i = 1:N
     %             'Position', [0.59 0.79 0.28 0.05]);
 
                 my_legend = legend('Full Concept','Partitioned Concept');
+
 %                 set(my_legend, 'Position',[.75 1-.2/panel_height .1 .18/panel_height],...
 %                 'Parent',plot_panel,...
 %                 'Clipping','on');

@@ -193,7 +193,7 @@ end
         set( ax, 'ActivePositionProperty', 'OuterPosition' );
         
         % Make sure we find out if axes properties are changed
-        addListeners( ax );
+        % addListeners( ax );
         
     end % repositionAxes
 
@@ -216,7 +216,7 @@ end
             set( xlab, 'Position', [0.5 -labelHeight 0] );
             set( titleh, 'Position', [0.5 1 0] );
         end
-        addListeners( ax );
+        %addListeners( ax );
     end % repositionXLabel
 
 %-------------------------------------------------------------------------%
@@ -358,8 +358,7 @@ end
         % Create listeners. We store the array of listeners in the axes to make
         % sure that they have the same life-span as the axes they are listening to.
         axh = handle( ax );
-        listeners = [
-            handle.listener( axh, findprop( axh, 'FontName' ), 'PropertyPostSet', @onAxesFontChanged )
+        listeners = [handle.listener( axh, findprop( axh, 'FontName' ), 'PropertyPostSet', @onAxesFontChanged )
             handle.listener( axh, findprop( axh, 'FontSize' ), 'PropertyPostSet', @onAxesFontChanged )
             handle.listener( axh, findprop( axh, 'FontWeight' ), 'PropertyPostSet', @onAxesFontChanged )
             handle.listener( axh, findprop( axh, 'FontAngle' ), 'PropertyPostSet', @onAxesFontChanged )
