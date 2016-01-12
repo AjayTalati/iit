@@ -19,19 +19,18 @@ if nargin < 7
     past_state = [];
 end    
 %% parallel computing
-% in_options(9) = 0;
 % if a pool is open, close it
-if matlabpool('size')
-    matlabpool close force;
-end
+% if matlabpool('size')
+%     matlabpool close force;
+% end
 
 % if parallel option is on, open a new pool
 op_parallel = in_options(1);
 op_PHIconcept_fig = 0;
 op_extNodes = in_options(11);
-if op_parallel
-    matlabpool;
-end
+% if op_parallel
+%     matlabpool;
+% end
 %% begin timer and disp notification
 tic
 
@@ -268,6 +267,6 @@ save('last_run_output.mat','output_data');
 
 iit_explorer(output_data)
 
-if op_parallel
-    matlabpool close force;
-end
+% if op_parallel
+%     matlabpool close force;
+% end

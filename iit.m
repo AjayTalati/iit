@@ -370,7 +370,7 @@ if op_extNodes == 0
     
     if state_reachable == 0
         set(handles.warning,'String','Current and past state are not congruent!');
-        return;
+        %return;
     else
         set(handles.warning,'String','');
     end 

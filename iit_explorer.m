@@ -537,7 +537,7 @@ set(handles.mip_plot_panel,'Position',[0.14600231749710313,0.01160541586073501,0
 
 dim_choices = get(handles.state_selection_menu,'String');
 dim_choice = dim_choices{get(handles.state_selection_menu,'Value')};
-%plot_choice = 'One Shape'; %Larissa
+plot_choice = 'One Shape'; %Larissa
 % display chosen plot view
 if strcmp(plot_choice,'3D & 2D Scatter')
 

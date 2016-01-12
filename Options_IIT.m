@@ -33,6 +33,7 @@ op_console = options(8);
 
 % Decide whether to use parfor or for loop (which uses precomputed
 % matrices) since parfor loop cannot get the network.mat (?)
+% On for op_parfor = 1, Off for op_parfor = 2 (!!)
 op_parfor = network.options(9); % used by Animat program
 
 % Whether everything is computed, or we check the connectivity of the
@@ -40,6 +41,7 @@ op_parfor = network.options(9); % used by Animat program
 % package/toolbox)
 % Also sometimes one might want to compute everything despite the fact that
 % it won't form a complex
+% Strongconn is enabled if 0 and disables if 1 (!!)
 op_strongconn = network.options(10);
 
 op_extNodes = network.options(11);

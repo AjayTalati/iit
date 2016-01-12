@@ -2,9 +2,10 @@ function [ax, height, extra_plots] = plotQualiaOneShape(whole_p, whole_f, cut_p,
                                             highlight_indices, parent_panel, dim_option, all_phi, unconstrained)
                                         
 % BASED ON GPLOTMATRIX
-Fancy = 1;
+Fancy = 0;
 if Fancy == 1
-    textCol = [1,1,1];
+%    textCol = [1,1,1];
+    textCol = [0,0,0];
 else
     textCol = [0,0,0];
 end
@@ -26,8 +27,8 @@ elseif strcmp(dim_option,'Mode')
 end
 
 [ignore_var state_ordering_temp] = sort(concept_value,'descend');
-state_ordering_f = state_ordering_temp(state_ordering_temp > 2^num_nodes/2);
-state_ordering_p = state_ordering_temp(state_ordering_temp <= 2^num_nodes/2);
+state_ordering_f = state_ordering_temp(state_ordering_temp > 2^num_nodes);
+state_ordering_p = state_ordering_temp(state_ordering_temp <= 2^num_nodes);
 %choose the two future states with max variance and the past state with max
 %variance
 state_ordering = [state_ordering_f(1:2) state_ordering_p(1)];
@@ -54,11 +55,9 @@ w_nonhighlight_indices = setdiff(1:nWholeConcepts,w_highlight_indices);
 p_nonhighlight_indices = setdiff(1:nPartsConcepts,p_highlight_indices);
 
 
-if Fancy == 1
-    whole_labels =  cell(nWholeConcepts,1);
-    for i = 1:nWholeConcepts
-        whole_labels{i} = char(whole_purviews{i}-1+'A');
-    end
+whole_labels =  cell(nWholeConcepts,1);
+for i = 1:nWholeConcepts
+    whole_labels{i} = char(whole_purviews{i}-1+'A');
 end
 
 whole_selected_labels = cell(length(w_highlight_indices),1);
@@ -121,7 +120,7 @@ hold on
 % z = r1.*cos(phi1) + Z;
 % past other axes
 if Fancy == 1
-    for dd = 1:dims-1
+    for dd = 1:min(dims-1, 15)
         r1 = 1;
         color = [0.2,0.2,0.8];
         phi1 = acos(-1 + 2*rand);
@@ -137,7 +136,7 @@ if Fancy == 1
     end
 
     % future other axes
-    for dd = 1:dims-2
+    for dd = 1:min(dims-2, 15)
         color = [0,0.5,0];
         phi1 = acos(-1 + 2*rand);
         th1 = 3/2*pi + pi/2*rand;
@@ -221,11 +220,12 @@ ylabel(ax{ax_index},dec2bin(state_ordering(2)-1,num_nodes))
 zlabel(ax{ax_index},dec2bin(state_ordering(3)-1,num_nodes))
 
 
+%N = max(whole_purviews{:}); %Larissa: This should be the largest numbered element to have the right ordering. The max won't always work... 
 N = num_nodes;
 maxEnt = [unconstrained(state_ordering)];
 data = cell(2^N-1,3);
 for s = 1:length(whole_purviews)
-    ind = concept2index(whole_purviews{s},[1:N]);  
+    ind = concept2index(whole_purviews{s},[1:N]);  %Larissa 
     data(ind,:) = num2cell(x(s,state_ordering));
 end    
 % make connections according to higher order concepts
@@ -258,52 +258,52 @@ for i = 1:N
 end
 
 
-if Fancy == 1
-    p1 = patch([-1.75 0 1.75 0],[0 -1.75 0 1.75], [-1.2 -1.2 -1.2 -1.2],'k');
-    p2 = patch([-1.75 0 0 -1.75],[0 -1.75 -1.75 0], [1.2 1.2 -1.2 -1.2],'k');
-    p3 = patch([-1.75 0 0 -1.75],[0 1.75 1.75 0], [1.2 1.2 -1.2 -1.2],'k');
-
-
-    topcolor = [0 0 1];
-    bottomcolor = [0 0 0];
-    cdata(1,1,:) = bottomcolor;
-    cdata(1,2,:) = topcolor;
-    cdata(1,3,:) = [.5 .5 1];
-    cdata(1,4,:) = topcolor;
-
-    set(p1,'CData',cdata, ...
-        'FaceColor','interp', ...
-        'EdgeColor','none', ...
-        'HitTest','off');
-
-
-    topcolor = [0 0 1];
-    bottomcolor = [0 0 0];
-    cdata(1,1,:) = bottomcolor;
-    cdata(1,2,:) = topcolor;
-    cdata(1,3,:) = topcolor;
-    cdata(1,4,:) = bottomcolor;
-
-    set(p2,'CData',cdata, ...
-        'FaceColor','interp', ...
-        'EdgeColor','none', ...
-        'HitTest','off');
-
-
-    topcolor = [0.1 0.1 1];
-    bottomcolor = [0 0 0.3];
-    cdata(1,1,:) = bottomcolor;
-    cdata(1,2,:) = topcolor;
-    cdata(1,3,:) = topcolor;
-    cdata(1,4,:) = [0 0 0.1];
-
-    set(p3,'CData',cdata, ...
-        'FaceColor','interp', ...
-        'EdgeColor','none', ...
-        'HitTest','off');
-    
-    text(whole(:,state_ordering(1)),whole(:,state_ordering(2)),whole(:,state_ordering(3)),whole_labels, 'Color', textCol)
-end
+% if Fancy == 1
+%     p1 = patch([-1.75 0 1.75 0],[0 -1.75 0 1.75], [-1.2 -1.2 -1.2 -1.2],'k');
+%     p2 = patch([-1.75 0 0 -1.75],[0 -1.75 -1.75 0], [1.2 1.2 -1.2 -1.2],'k');
+%     p3 = patch([-1.75 0 0 -1.75],[0 1.75 1.75 0], [1.2 1.2 -1.2 -1.2],'k');
+% 
+% 
+%     topcolor = [0 0 1];
+%     bottomcolor = [0 0 0];
+%     cdata(1,1,:) = bottomcolor;
+%     cdata(1,2,:) = topcolor;
+%     cdata(1,3,:) = [.5 .5 1];
+%     cdata(1,4,:) = topcolor;
+% 
+%     set(p1,'CData',cdata, ...
+%         'FaceColor','interp', ...
+%         'EdgeColor','none', ...
+%         'HitTest','off');
+% 
+% 
+%     topcolor = [0 0 1];
+%     bottomcolor = [0 0 0];
+%     cdata(1,1,:) = bottomcolor;
+%     cdata(1,2,:) = topcolor;
+%     cdata(1,3,:) = topcolor;
+%     cdata(1,4,:) = bottomcolor;
+% 
+%     set(p2,'CData',cdata, ...
+%         'FaceColor','interp', ...
+%         'EdgeColor','none', ...
+%         'HitTest','off');
+% 
+% 
+%     topcolor = [0.1 0.1 1];
+%     bottomcolor = [0 0 0.3];
+%     cdata(1,1,:) = bottomcolor;
+%     cdata(1,2,:) = topcolor;
+%     cdata(1,3,:) = topcolor;
+%     cdata(1,4,:) = [0 0 0.1];
+% 
+%     set(p3,'CData',cdata, ...
+%         'FaceColor','interp', ...
+%         'EdgeColor','none', ...
+%         'HitTest','off');
+%     
+% end
+text(whole(:,state_ordering(1)),whole(:,state_ordering(2)),whole(:,state_ordering(3)),whole_labels, 'Color', textCol)
 
 set(ax{ax_index},'xlimmode','manual','ylimmode','manual',...
         'xlim',[-1.1 1.1],'ylim',[-1.1 1.2],'zlim',[-1.1 1.1],...

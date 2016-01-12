@@ -35,10 +35,10 @@ angle = mod( angle, 360 );
 h = createNewLabels( ax, vals, labels, angle );
 
 % Reposition the axes itself to leave space for the new labels
-repositionAxes( ax );
+%repositionAxes( ax );
 
 % If an X-label is present, move it too
-repositionXLabel( ax );
+%repositionXLabel( ax );
 
 % Store angle
 setappdata( ax, 'RotateXLabelsAngle', angle );
